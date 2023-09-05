@@ -39,7 +39,7 @@
 
   <ItemGroup>
     <Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" />
-    <Files Include="..\..\broker-connector-edfi\src\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
+    <Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
   </ItemGroup>
 
   <Target Name="BuildCopyConnectorsSynergy" BeforeTargets="Build">
@@ -53,7 +53,7 @@
   </Target>
 
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
-    <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
+    <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
     </MSBuild>
     <Message Text="Executing BuildCopyConnectors EdFi task" Importance="High" />
 
