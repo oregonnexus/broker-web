@@ -14,8 +14,17 @@ namespace OregonNexus.Broker.Web.Controllers;
 [Authorize(Policy = "TransferRecords")]
 public class OutgoingController : Controller
 {
-    public IActionResult Index()
+    private readonly IRepository<OutgoingRequest> _repo;
+    
+    public OutgoingController(IRepository<OutgoingRequest> repo)
     {
-        return View();
+        _repo = repo;
+    }
+    
+    public async Task<IActionResult> Index()
+    {
+        var data = await _repo.ListAsync();
+        
+        return View(data);
     }
 }

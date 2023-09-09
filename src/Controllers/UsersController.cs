@@ -117,7 +117,7 @@ public class UsersController : Controller
         if (data.UserId is null) { throw new ArgumentException("Missing user id for processing."); }
         
         // Get existing user
-        var user = await _userManager.FindByIdAsync(data.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(data.UserId.ToString()!);
 
         if (user is null) { throw new ArgumentException("Not a valid user."); }
 
