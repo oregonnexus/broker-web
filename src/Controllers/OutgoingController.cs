@@ -8,6 +8,8 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
 using InertiaAdapter;
+using OregonNexus.Broker.Web.Helpers;
+using OregonNexus.Broker.Connector.Payload;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -15,10 +17,13 @@ namespace OregonNexus.Broker.Web.Controllers;
 public class OutgoingController : Controller
 {
     private readonly IRepository<OutgoingRequest> _repo;
+
+    private readonly FocusHelper _focusHelper;
     
-    public OutgoingController(IRepository<OutgoingRequest> repo)
+    public OutgoingController(IRepository<OutgoingRequest> repo, FocusHelper focusHelper)
     {
         _repo = repo;
+        _focusHelper = focusHelper;
     }
     
     public async Task<IActionResult> Index()
@@ -26,5 +31,41 @@ public class OutgoingController : Controller
         var data = await _repo.ListAsync();
         
         return View(data);
+    }
+
+    // TO REMOVE
+    public async Task<IActionResult> MakeRequest()
+    {
+        var details = new Dictionary<string, object>
+        {
+            {
+                typeof(Student).FullName,
+                new Student
+                {
+                    LastName = "Doe",
+                    FirstName = "John",
+                    MiddleName = "T",
+                    StudentNumber = "232434",
+                    Grade = "03",
+                    Birthdate = DateTime.Parse("08/06/2005")
+                }
+            }
+        };
+        
+        var request = new OutgoingRequest()
+        {
+            RequestDate = DateTime.UtcNow,
+            RequestStatus = RequestStatus.Sent,
+            EducationOrganizationId = await _focusHelper.CurrentDistrictEdOrgFocus(),
+            RequestDetails = new RequestDetails()
+            {
+                CreateDate = DateTime.UtcNow.AddHours(-1),
+                PayloadType = typeof(StudentCumulativeRecord).FullName,
+                Details = details
+            }
+        };
+        await _repo.AddAsync(request);
+        
+        return RedirectToAction("Index");
     }
 }
