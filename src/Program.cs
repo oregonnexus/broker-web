@@ -90,13 +90,13 @@ builder.Services.AddAuthentication()
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    })
-    .AddMicrosoftAccount(microsoftOptions =>
-    {
-        microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
-        microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
-    }
-);
+    });
+//     .AddMicrosoftAccount(microsoftOptions =>
+//     {
+//         microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+//         microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+//     }
+// );
 
 builder.Services.AddAuthorization(options => {
     options.AddPolicy("SuperAdmin",
