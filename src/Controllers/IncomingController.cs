@@ -27,18 +27,6 @@ public class IncomingController : Controller
         _incomingRequestRepository = incomingRequestRepository;
     }
 
-    public IActionResult Index()
-    private readonly BrokerDbContext _db;
-    private readonly IRepository<IncomingRequest> _incomingRequestRepository;
-
-    public IncomingController(
-        BrokerDbContext db,
-        IRepository<IncomingRequest> incomingRequestRepository)
-    {
-        _db = db;
-        _incomingRequestRepository = incomingRequestRepository;
-    }
-
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         var incomingRequests = (await _incomingRequestRepository.ListAsync(cancellationToken))
