@@ -936,6 +936,10 @@ select {
   max-width: 20rem;
 }
 
+.flex-1 {
+  flex: 1 1 0%;
+}
+
 .flex-none {
   flex: none;
 }
@@ -1322,6 +1326,11 @@ select {
   line-height: 1.75rem;
 }
 
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -1618,6 +1627,10 @@ select {
   outline-width: 2px;
 }
 
+.focus-visible\:outline-offset-0:focus-visible {
+  outline-offset: 0px;
+}
+
 .focus-visible\:outline-offset-2:focus-visible {
   outline-offset: 2px;
 }
@@ -1659,6 +1672,10 @@ select {
 
   .sm\:mt-0 {
     margin-top: 0px;
+  }
+
+  .sm\:block {
+    display: block;
   }
 
   .sm\:inline {
@@ -1711,6 +1728,10 @@ select {
 
   .sm\:items-center {
     align-items: center;
+  }
+
+  .sm\:justify-end {
+    justify-content: flex-end;
   }
 
   .sm\:gap-4 {

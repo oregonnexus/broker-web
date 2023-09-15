@@ -7,7 +7,7 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
 using OregonNexus.Broker.Data;
-using OregonNexus.Broker.Domain.Specifications;
+using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 
 namespace OregonNexus.Broker.Web.Controllers;
 

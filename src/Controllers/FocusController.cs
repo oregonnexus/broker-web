@@ -8,6 +8,7 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
 using InertiaAdapter;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -35,7 +36,7 @@ public class FocusController : Controller
         }
         else
         {
-            TempData["error"] = $"Unable to set focus.";
+            TempData[VoiceTone.Critical] = $"Unable to set focus.";
         }
         
         return Redirect(model.ReturnUrl);

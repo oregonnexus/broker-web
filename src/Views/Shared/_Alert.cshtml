@@ -1,4 +1,6 @@
-@if(TempData["success"] is not null)
+@using OregonNexus.Broker.Web.Constants.DesignSystems
+
+@if(TempData[VoiceTone.Positive] is not null)
 {
 <div class="rounded-md bg-green-50 p-4 my-2">
   <div class="flex">
@@ -8,7 +10,7 @@
       </svg>
     </div>
     <div class="ml-3">
-      <p class="text-sm font-medium text-green-800">@TempData["success"]</p>
+      <p class="text-sm font-medium text-green-800">@TempData[VoiceTone.Positive]</p>
     </div>
     <div class="ml-auto pl-3">
       <div class="-mx-1.5 -my-1.5">
@@ -24,7 +26,7 @@
 </div>
 }
 
-@if(TempData["error"] is not null)
+@if(TempData[VoiceTone.Critical] is not null)
 {
 <div class="rounded-md bg-red-50 p-4 my-2">
   <div class="flex">
@@ -34,7 +36,7 @@
       </svg>
     </div>
     <div class="ml-3">
-      <h3 class="text-sm font-medium text-red-800">@TempData["error"]</h3>
+      <h3 class="text-sm font-medium text-red-800">@TempData[VoiceTone.Critical]</h3>
     </div>
   </div>
 </div>

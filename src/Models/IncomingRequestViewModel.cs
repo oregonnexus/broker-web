@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 
 namespace OregonNexus.Broker.Web.Models;
 
@@ -24,4 +25,8 @@ public class IncomingRequestViewModel
     [Required]
     [Display(Name = "Status")]
     public required string Status { get; set; }
+
+    // TODO: Map Status to proper Voice Tone.
+    [Display(Name = "Status Tone")]
+    public string StatusTone => VoiceTone.Positive;
 }
