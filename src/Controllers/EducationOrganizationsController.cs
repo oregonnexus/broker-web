@@ -7,6 +7,7 @@ using OregonNexus.Broker.Web.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Web.Helpers;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -63,7 +64,7 @@ public class EducationOrganizationsController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(EducationOrganizationViewModel data)
     {
-        if (!ModelState.IsValid) { TempData["Error"] = "Organization not created."; return View("Add"); }
+        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "Organization not created."; return View("Add"); }
 
         var organization = new EducationOrganization()
         {
@@ -76,7 +77,7 @@ public class EducationOrganizationsController : Controller
 
         await _repo.AddAsync(organization);
 
-        TempData["Success"] = $"Created organization {organization.Name} ({organization.Id}).";
+        TempData[VoiceTone.Positive] = $"Created organization {organization.Name} ({organization.Id}).";
 
         return RedirectToAction("Index");
     }
@@ -116,7 +117,7 @@ public class EducationOrganizationsController : Controller
 
         if (organization is null) { throw new ArgumentException("Not a valid organization."); }
 
-        if (!ModelState.IsValid) { TempData["Error"] = "Organization not updated."; return View("Edit"); }
+        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "Organization not updated."; return View("Edit"); }
 
         // Prepare organization object
         organization.Name = data.Name;
@@ -133,7 +134,7 @@ public class EducationOrganizationsController : Controller
 
         await _repo.UpdateAsync(organization);
 
-        TempData["Success"] = $"Updated organization {organization.Name} ({organization.Id}).";
+        TempData[VoiceTone.Positive] = $"Updated organization {organization.Name} ({organization.Id}).";
 
         return RedirectToAction("Edit", new { Id = organization.Id });
     }
@@ -150,7 +151,7 @@ public class EducationOrganizationsController : Controller
 
         await _repo.DeleteAsync(organization);
 
-        TempData["Success"] = $"Deleted organization {organization.Name} ({organization.Id}).";
+        TempData[VoiceTone.Positive] = $"Deleted organization {organization.Name} ({organization.Id}).";
 
         return RedirectToAction("Index");
     }
