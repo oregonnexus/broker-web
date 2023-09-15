@@ -6,7 +6,6 @@ using OregonNexus.Broker.Data;
 using MediatR;
 using Autofac;
 using OregonNexus.Broker.SharedKernel;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using InertiaAdapter.Extensions;
@@ -15,7 +14,6 @@ using OregonNexus.Broker.Web.Services;
 using System.Reflection;
 using OregonNexus.Broker.Domain;
 using Microsoft.AspNetCore.Authentication;
-using OregonNexus.Broker.Connector;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,8 +48,8 @@ builder.Services.AddDbContext<BrokerDbContext>(options => {
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
-
-foreach(var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+foreach (var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
     builder.Services.AddScoped(assembly, assembly);
 }
