@@ -1,0 +1,48 @@
+﻿@model OregonNexus.Broker.Web.Models.CreateIncomingRequestViewModel
+@{
+    ViewData["Title"] = "Incoming Create";
+    Layout = "_AuthenticatedLayout";
+}
+<div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-4">Create Incoming Request</h1>
+
+    <form method="post">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="EducationOrganizationId">Education Organization</label>
+                <select id="EducationOrganizationId" name="EducationOrganizationId" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Select an Education Organization</option>
+                    @foreach (var org in Model.EducationOrganizations)
+                    {
+                        <option value="@org.Id">@org.Name</option>
+                    }
+                </select>
+                <span class="text-red-500">@Html.ValidationMessageFor(m => m.EducationOrganizationId)</span>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Student">Student</label>
+                <input id="Student" name="Student" type="text" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Student">
+                <span class="text-red-500">@Html.ValidationMessageFor(m => m.Student)</span>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="RequestStatus">Request Status</label>
+                <select id="RequestStatus" name="RequestStatus" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="RequestStatus">
+                    <option value="">Select a Request Status</option>
+                    @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+                <span class="text-red-500">@Html.ValidationMessageFor(m => m.RequestStatus)</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Create
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
