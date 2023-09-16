@@ -1,48 +1,68 @@
 ﻿@model OregonNexus.Broker.Web.Models.CreateIncomingRequestViewModel
 @{
-    ViewData["Title"] = "Incoming Create";
+    ViewData["Title"] = "Create Incoming Transfer Request";
     Layout = "_AuthenticatedLayout";
 }
-<div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-4">Create Incoming Request</h1>
 
-    <form method="post">
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="EducationOrganizationId">Education Organization</label>
-                <select id="EducationOrganizationId" name="EducationOrganizationId" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <option value="">Select an Education Organization</option>
-                    @foreach (var org in Model.EducationOrganizations)
-                    {
-                        <option value="@org.Id">@org.Name</option>
-                    }
+<div class="space-y-10 divide-y divide-gray-900/10">
+  <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+    <div class="px-4 sm:px-0">
+      <h2 class="text-base font-semibold leading-7 text-gray-900">Request</h2>
+      <p class="mt-1 text-sm leading-6 text-gray-600">Provide information about the incoming transfer request.</p>
+    </div>
+    <div class="px-4 sm:px-0 md:col-span-2">
+      <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" method="post">
+        <div class="px-4 py-6 sm:p-8">
+          <div class="grid max-w-2xl grid-cols-1 gap-6 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label asp-for="EducationOrganizationId" class="block text-sm font-medium leading-6 text-gray-900">Education Organization</label>
+              <div class="mt-2">
+                <select asp-for="EducationOrganizationId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                  <option value="">Select an Education Organization</option>
+                  @foreach (var org in Model.EducationOrganizations)
+                  {
+                  <option value="@org.Id">@org.Name</option>
+                  }
                 </select>
-                <span class="text-red-500">@Html.ValidationMessageFor(m => m.EducationOrganizationId)</span>
+              </div>
+              <p class="mt-2 text-sm text-red-600" asp-validation-for="EducationOrganizationId">@Html.ValidationMessageFor(m => m.EducationOrganizationId)</p>
             </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="Student">Student</label>
-                <input id="Student" name="Student" type="text" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Student">
-                <span class="text-red-500">@Html.ValidationMessageFor(m => m.Student)</span>
+            <div class="sm:col-span-3">
+              <label asp-for="Student" class="block text-sm font-medium leading-6 text-gray-900">Student</label>
+              <div class="mt-2">
+                <input asp-for="Student" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              </div>
+              <p class="mt-2 text-sm text-red-600" asp-validation-for="Student">@Html.ValidationMessageFor(m => m.Student)</p>
             </div>
-
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="RequestStatus">Request Status</label>
-                <select id="RequestStatus" name="RequestStatus" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="RequestStatus">
-                    <option value="">Select a Request Status</option>
-                    @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
-                    {
-                        <option value="@status">@status</option>
-                    }
+            <div class="sm:col-span-3">
+              <label asp-for="RequestStatus" class="block text-sm font-medium leading-6 text-gray-900">Request Status</label>
+              <div class="mt-2">
+                <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                  <option value="">Select a Request Status</option>
+                  @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
+                  {
+                  <option value="@status">@status</option>
+                  }
                 </select>
-                <span class="text-red-500">@Html.ValidationMessageFor(m => m.RequestStatus)</span>
+              </div>
+              <p class="mt-2 text-sm text-red-600" asp-validation-for="RequestStatus">@Html.ValidationMessageFor(m => m.RequestStatus)</p>
             </div>
-
-            <div class="flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Create
-                </button>
-            </div>
+          </div>
         </div>
-    </form>
+        <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+          <a
+            asp-controller="Incoming"
+            asp-action="Index"
+            asp-authorize
+            asp-policy="TransferRecords"
+            type="button"
+            class="text-sm font-semibold leading-6 text-gray-900"
+          >
+            Cancel
+          </a>
+          <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
