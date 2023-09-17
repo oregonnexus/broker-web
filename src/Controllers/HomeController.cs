@@ -67,15 +67,7 @@ public class HomeController : Controller
         // Temporary, taking 5 here
         var incomingRequestViewModels = incomingRequests
             .Take(5)
-            .Select(incomingRequest =>  new IncomingRequestViewModel()
-            {
-                Id = incomingRequest.Id,
-                District = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty,
-                School = incomingRequest.EducationOrganization?.Name ?? string.Empty,
-                Student = incomingRequest.Student,
-                Date = incomingRequest.RequestDate,
-                Status = incomingRequest.RequestStatus.ToFriendlyString()
-            })
+            .Select(incomingRequest =>  new IncomingRequestViewModel(incomingRequest))
             .ToList();
 
         // Temporary, taking 5 here
