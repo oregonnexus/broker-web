@@ -7,9 +7,10 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models;
 using System.Security.Claims;
 using OregonNexus.Broker.SharedKernel;
-using Microsoft.AspNetCore.Authorization;
-using OregonNexus.Broker.Data;
-using OregonNexus.Broker.Web.Extensions.RequestStatuses;
+using OregonNexus.Broker.Web.Models.Paginations;
+using Ardalis.Specification;
+using OregonNexus.Broker.Web.Specifications.Paginations;
+using OregonNexus.Broker.Web.Models.IncomingRequests;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -27,25 +28,43 @@ public class IncomingController : Controller
         _incomingRequestRepository = incomingRequestRepository;
     }
 
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(
+        IncomingRequestModel model,
+        CancellationToken cancellationToken)
     {
-        var incomingRequests = (await _incomingRequestRepository.ListAsync(cancellationToken))
-            .OrderByDescending(incomingRequest => incomingRequest.CreatedAt)
-            .ToList();
+        var searchExpressions = model.BuildSearchExpressions();
+
+        var sortExpression = model.BuildSortExpression();
+
+        var specification = new SearchableWithPaginationSpecification<IncomingRequest>.Builder(model.Page, model.Size)
+            .WithAscending(model.IsAscending)
+            .WithSortExpression(sortExpression)
+            .WithSearchExpressions(searchExpressions)
+            .WithIncludeEntities(builder => builder
+                .Include(incomingRequest => incomingRequest.EducationOrganization)
+                .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
+                )
+            .Build();
+
+        var totalItems = await _incomingRequestRepository.CountAsync(cancellationToken);
+
+        var incomingRequests = await _incomingRequestRepository.ListAsync(
+            specification,
+            cancellationToken);
 
         var incomingRequestViewModels = incomingRequests
-            .Select(incomingRequest =>  new IncomingRequestViewModel()
-            {
-                Id = incomingRequest.Id,
-                District = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty,
-                School = incomingRequest.EducationOrganization?.Name ?? string.Empty,
-                Student = incomingRequest.Student,
-                Date = incomingRequest.RequestDate,
-                Status = incomingRequest.RequestStatus.ToFriendlyString()
-            })
-            .ToList();
+            .Select(incomingRequest => new IncomingRequestViewModel(incomingRequest));
 
-        return View(incomingRequestViewModels);
+        var result = new PaginatedViewModel<IncomingRequestViewModel>(
+            incomingRequestViewModels,
+            totalItems,
+            model.Page,
+            model.Size,
+            model.SortBy,
+            model.SortDir,
+            model.SearchBy);
+
+        return View(result);
     }
 
     public async Task<IActionResult> Create()

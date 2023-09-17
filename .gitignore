@@ -141,3 +141,4 @@ _NCrunch*
 # Node JS
 node_modules
 package-lock.json
+src/src.sln

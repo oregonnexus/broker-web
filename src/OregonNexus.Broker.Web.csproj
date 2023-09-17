@@ -55,6 +55,20 @@
     <Message Text="Copied Synergy build files" Importance="High" />
   </Target> -->
 
+  <ItemGroup>
+    <None Remove="Models\Paginations\" />
+    <None Remove="Specifications\" />
+    <None Remove="Specifications\Paginations\" />
+    <None Remove="Models\IncomingRequests\" />
+    <None Remove="Models\Searchables\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Paginations\" />
+    <Folder Include="Specifications\" />
+    <Folder Include="Specifications\Paginations\" />
+    <Folder Include="Models\IncomingRequests\" />
+    <Folder Include="Models\Searchables\" />
+  </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
     <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
     </MSBuild>
