@@ -14,7 +14,16 @@
             <p class="mt-2 text-sm text-gray-700">Incoming records transfer requests.</p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <a href="/Incoming/Create" type="button" class="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Make Incoming Request</a>
+        <a
+            asp-controller="Incoming"
+            asp-action="Create"
+            asp-authorize
+            asp-policy="TransferRecords"
+            type="button"
+            class="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+            Make Incoming Request
+        </a>
         </div>
     </div>
     <div class="mt-8 flow-root overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
@@ -116,5 +125,4 @@
 
             </div>
         </nav>
-    </div>
 </div>
