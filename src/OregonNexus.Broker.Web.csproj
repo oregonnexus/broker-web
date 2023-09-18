@@ -41,50 +41,9 @@
   </Target>
 
   <ItemGroup>
-    <!-- <Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" /> -->
     <Files Include="..\..\broker-connector-edfi\src\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
   </ItemGroup>
 
-  <!-- <Target Name="BuildCopyConnectorsSynergy" BeforeTargets="Build">
-    <MSBuild Projects="..\..\broker-connector-edupointsynergy\src\OregonNexus.Broker.Connector.Edupoint.Synergy.csproj" Properties="Configuration=$(Configuration)">
-    </MSBuild>
-    <Message Text="Executing BuildCopyConnectors Synergy task" Importance="High" />
-
-    <Copy SourceFiles="@(Files)" DestinationFolder="$(TargetDir)\connectors" />
-
-    <Message Text="Copied Synergy build files" Importance="High" />
-  </Target> -->
-
-  <ItemGroup>
-    <None Remove="Models\Paginations\" />
-    <None Remove="Specifications\" />
-    <None Remove="Specifications\Paginations\" />
-    <None Remove="Models\IncomingRequests\" />
-    <None Remove="Models\Searchables\" />
-    <None Remove="Models\OutgoingRequests\" />
-    <None Remove="ViewModels\" />
-    <None Remove="ViewModels\IncomingRequests\" />
-    <None Remove="ViewModels\OutgoingRequests\" />
-    <None Remove="Models\EducationOrganizations\" />
-    <None Remove="ViewModels\EducationOrganizations\" />
-    <None Remove="ViewModels\Users\" />
-    <None Remove="Models\Users\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Paginations\" />
-    <Folder Include="Specifications\" />
-    <Folder Include="Specifications\Paginations\" />
-    <Folder Include="Models\IncomingRequests\" />
-    <Folder Include="Models\Searchables\" />
-    <Folder Include="Models\OutgoingRequests\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="ViewModels\IncomingRequests\" />
-    <Folder Include="ViewModels\OutgoingRequests\" />
-    <Folder Include="Models\EducationOrganizations\" />
-    <Folder Include="ViewModels\EducationOrganizations\" />
-    <Folder Include="ViewModels\Users\" />
-    <Folder Include="Models\Users\" />
-  </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
     <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
     </MSBuild>
