@@ -146,6 +146,9 @@
                                     </a>
                                 </th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                    <span class="sr-only">Roles</span>
+                                </th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
                                     <span class="sr-only">Edit</span>
                                 </th>
                             </tr>
@@ -172,6 +175,9 @@
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                                             @user.AllEducationOrganizations
                                         </span>
+                                    </td>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                                        <a asp-controller="UserRoles" asp-action="Index" asp-route-id="@user.UserId" class="text-indigo-600 hover:text-indigo-900">Roles</a>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                                         <a asp-controller="Users" asp-action="Update" asp-route-id="@user.UserId" class="text-indigo-600 hover:text-indigo-900">Edit</a>
