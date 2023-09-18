@@ -1,9 +1,6 @@
 ﻿using OregonNexus.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
-using OregonNexus.Broker.Web.Extensions.RequestStatuses;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Net.NetworkInformation;
 
 namespace OregonNexus.Broker.Web.ViewModels.Users;
 

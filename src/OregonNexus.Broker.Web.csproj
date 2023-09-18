@@ -44,6 +44,12 @@
     <Files Include="..\..\broker-connector-edfi\src\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Extensions\Routes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\Routes\" />
+  </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
     <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
     </MSBuild>

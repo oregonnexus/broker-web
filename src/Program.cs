@@ -14,6 +14,7 @@ using OregonNexus.Broker.Web.Services;
 using System.Reflection;
 using OregonNexus.Broker.Domain;
 using Microsoft.AspNetCore.Authentication;
+using OregonNexus.Broker.Web.Extensions.Routes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -146,8 +147,19 @@ app.UseSession();
 
 //app.UseMiddleware<ScopedHttpContextMiddleware>();
 
+app.MapControllerRoutes("organizations", "EducationOrganizations");
+app.MapControllerRoutes("incoming-requests", "Incoming");
+app.MapControllerRoutes("outgoing-requests", "Outgoing");
+app.MapControllerRoutes("users", "Users");
+app.MapControllerRoutes("roles", "UserRoles");
+app.MapControllerRoutes("settings", "Settings");
+app.MapControllerRoutes("login", "Login");
+app.MapControllerRoutes("focus", "Focus");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

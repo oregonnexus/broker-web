@@ -14,7 +14,6 @@ using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-[Route("organizations")]
 public class EducationOrganizationsController : Controller
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
@@ -67,7 +66,6 @@ public class EducationOrganizationsController : Controller
         return View(result);
     }
 
-    [Route("add")]
     public async Task<IActionResult> Create()
     {
         var educationOrganizations = await _educationOrganizationHelper.GetDistrictsOrganizationsSelectList();
@@ -101,7 +99,6 @@ public class EducationOrganizationsController : Controller
         return RedirectToAction("Index");
     }
 
-    [Route("edit")]
     public async Task<IActionResult> Update(Guid Id)
     {
         var organization = await _educationOrganizationRepository.GetByIdAsync(Id);

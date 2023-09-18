@@ -4,7 +4,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using OregonNexus.Broker.Web.Models.OutgoingRequests;
 using OregonNexus.Broker.Web.Models.Paginations;
@@ -16,7 +15,6 @@ using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "TransferRecords")]
-[Route("outgoing-requests")]
 public class OutgoingController : Controller
 {
     private readonly IRepository<OutgoingRequest> _outgoingRequestRepository;
@@ -71,7 +69,6 @@ public class OutgoingController : Controller
         return View(result);
     }
 
-    [Route("add")]
     public async Task<IActionResult> Create()
     {
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();

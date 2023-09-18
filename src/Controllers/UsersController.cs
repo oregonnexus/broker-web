@@ -1,10 +1,7 @@
-using System.Linq;
-using System.Text;
 using Ardalis.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
@@ -19,7 +16,6 @@ using OregonNexus.Broker.Web.ViewModels.Users;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-[Route("users")]
 public class UsersController : Controller
 {
     private readonly IRepository<User> _userRepository;
@@ -76,7 +72,6 @@ public class UsersController : Controller
         return View(result);
     }
 
-    [Route("add")]
     public IActionResult Create()
     {
         return View();
@@ -110,7 +105,6 @@ public class UsersController : Controller
         return RedirectToAction("Index");
     }
 
-    [Route("edit")]
     public async Task<IActionResult> Update(Guid Id)
     {
         var identityUser = await _brokerDbContext.Users.Where(x => x.Id == Id).FirstOrDefaultAsync();

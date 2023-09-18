@@ -40,7 +40,7 @@
                     <label for="searchBy" class="sr-only">Search</label>
                     <div class="flex rounded-md shadow-sm">
                         <div class="flex-grow focus-within:z-10">
-                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:block" placeholder="Search students">
+                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:block" placeholder="Search by district, school and student">
                         </div>
                         <button type="submit" class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -266,7 +266,7 @@
             },
 
             toggleFiltersSection() {
-                this.filtersSection = this.filtersSection === 'collapsed' ? 'expanded' : 'collapsed'
+                this.filtersSection = this.filtersSection === 'expanded' ? 'collapsed' : 'expanded'
                 const url = new URL(window.location.href)
                 url.searchParams.set('filtersSection', this.filtersSection)
                 window.history.replaceState({}, '', url.toString())

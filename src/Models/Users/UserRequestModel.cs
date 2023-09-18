@@ -1,6 +1,7 @@
 ﻿using OregonNexus.Broker.Domain;
 using System.Linq.Expressions;
 using OregonNexus.Broker.Web.Models.Searchables;
+using System.Net.NetworkInformation;
 
 namespace OregonNexus.Broker.Web.Models.Users;
 
@@ -8,6 +9,7 @@ public class UserRequestModel : SearchableModelWithPagination
 {
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
+    public string Type { get; set; } = default!;
 
     public Expression<Func<User, object>> BuildSortExpression()
     {
@@ -15,8 +17,10 @@ public class UserRequestModel : SearchableModelWithPagination
         var sortBy = SortBy.ToLower();
         sortExpression = sortBy switch
         {
-            "first-name" => request => request.FirstName,
-            "last-name" => request => request.LastName,
+            "firstname" => request => request.FirstName,
+            "lastname" => request => request.LastName,
+            "issuperadmin" => request => request.IsSuperAdmin,
+            "permissiontype" => request => request.AllEducationOrganizations,
             _ => request => request.LastName,
         };
         return sortExpression;
@@ -51,6 +55,11 @@ public class UserRequestModel : SearchableModelWithPagination
             searchExpressions.Add(request => request.LastName
                 .ToLower()
                 .Contains(LastName.ToLower()));
+        }
+
+        if (Enum.TryParse<PermissionType>(Type, out var requestStatus))
+        {
+            searchExpressions.Add(request => request.AllEducationOrganizations == requestStatus);
         }
 
         return searchExpressions;
