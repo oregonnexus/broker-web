@@ -1,10 +1,10 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.Models;
+namespace OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 
-public class EducationOrganizationViewModel
+public class CreateEducationOrganizationRequestViewModel
 {
     public Guid? EducationOrganizationId { get; set; }
 
@@ -23,5 +23,6 @@ public class EducationOrganizationViewModel
     [Display(Name = "District")]
     public Guid? ParentOrganizationId { get; set; }
 
-    public IEnumerable<SelectListItem>? Organizations { get; set; }
+    public IEnumerable<SelectListItem> EducationOrganizations { get; set; } = Enumerable.Empty<SelectListItem>();
+
 }

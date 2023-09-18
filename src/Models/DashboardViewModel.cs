@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
+using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
+using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 
 namespace OregonNexus.Broker.Web.Models;
 

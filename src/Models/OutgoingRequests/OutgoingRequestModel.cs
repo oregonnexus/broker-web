@@ -3,9 +3,9 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models.Searchables;
 #nullable disable
 
-namespace OregonNexus.Broker.Web.Models.IncomingRequests;
+namespace OregonNexus.Broker.Web.Models.OutgoingRequests;
 
-public class IncomingRequestModel : SearchableModelWithPagination
+public class OutgoingRequestModel : SearchableModelWithPagination
 {
     public string District { get; set; }
     public string School { get; set; }
@@ -14,9 +14,9 @@ public class IncomingRequestModel : SearchableModelWithPagination
     public DateTime? EndDate { get; set; }
     public string Status { get; set; }
 
-    public Expression<Func<IncomingRequest, object>> BuildSortExpression()
+    public Expression<Func<OutgoingRequest, object>> BuildSortExpression()
     {
-        Expression<Func<IncomingRequest, object>> sortExpression = null;
+        Expression<Func<OutgoingRequest, object>> sortExpression = null;
         var sortBy = SortBy.ToLower();
         sortExpression = sortBy switch
         {
@@ -30,9 +30,9 @@ public class IncomingRequestModel : SearchableModelWithPagination
         return sortExpression;
     }
 
-    public List<Expression<Func<IncomingRequest, bool>>> BuildSearchExpressions()
+    public List<Expression<Func<OutgoingRequest, bool>>> BuildSearchExpressions()
     {
-        var searchExpressions = new List<Expression<Func<IncomingRequest, bool>>>();
+        var searchExpressions = new List<Expression<Func<OutgoingRequest, bool>>>();
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
         {

@@ -4,17 +4,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Models;
 using System.Security.Claims;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Models.Paginations;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using OregonNexus.Broker.Web.Models.IncomingRequests;
+using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "TransferRecords")]
+[Route("incoming-requests")]
 public class IncomingController : Controller
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
@@ -46,7 +47,9 @@ public class IncomingController : Controller
                 )
             .Build();
 
-        var totalItems = await _incomingRequestRepository.CountAsync(cancellationToken);
+        var totalItems = await _incomingRequestRepository.CountAsync(
+            specification,
+            cancellationToken);
 
         var incomingRequests = await _incomingRequestRepository.ListAsync(
             specification,
@@ -67,6 +70,7 @@ public class IncomingController : Controller
         return View(result);
     }
 
+    [Route("add")]
     public async Task<IActionResult> Create()
     {
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
@@ -80,6 +84,7 @@ public class IncomingController : Controller
 
     [HttpPost]
     [Authorize]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateIncomingRequestViewModel viewModel)
     {
         if (ModelState.IsValid)

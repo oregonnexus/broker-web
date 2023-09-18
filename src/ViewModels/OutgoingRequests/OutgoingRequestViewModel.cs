@@ -3,21 +3,21 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 
-namespace OregonNexus.Broker.Web.Models;
+namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 
-public class IncomingRequestViewModel
+public class OutgoingRequestViewModel
 {
     [Required]
     public Guid Id { get; set; }
 
     [Display(Name = "District")]
-    public string District { get; set; }
+    public string District { get; set; } = string.Empty;
 
     [Display(Name = "School")]
-    public string School { get; set; }
+    public string School { get; set; } = string.Empty;
 
     [Display(Name = "Student")]
-    public string? Student { get; set; }
+    public string? Student { get; set; } = string.Empty;
 
     [Required]
     [Display(Name = "Date")]
@@ -25,23 +25,25 @@ public class IncomingRequestViewModel
 
     [Required]
     [Display(Name = "Status")]
-    public string Status { get; set; }
+    public string Status { get; set; } = string.Empty;
 
     // TODO: Map Status to proper Voice Tone.
     [Display(Name = "Status Tone")]
     public string StatusTone => VoiceTone.Positive;
 
-    public IncomingRequestViewModel(IncomingRequest incomingRequest)
+    public OutgoingRequestViewModel() { }
+
+    public OutgoingRequestViewModel(OutgoingRequest outgoingRequest)
     {
-        Id = incomingRequest.Id;
-        District = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
-        School = incomingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = incomingRequest.Student;
-        Date = incomingRequest.RequestDate;
-        Status = incomingRequest.RequestStatus.ToFriendlyString();
+        Id = outgoingRequest.Id;
+        District = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
+        School = outgoingRequest.EducationOrganization?.Name ?? string.Empty;
+        Student = outgoingRequest.Student;
+        Date = outgoingRequest.RequestDate;
+        Status = outgoingRequest.RequestStatus.ToFriendlyString();
     }
 
-    public IncomingRequestViewModel(
+    public OutgoingRequestViewModel(
         Guid id,
         string district,
         string school,

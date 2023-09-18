@@ -1,7 +1,7 @@
 ﻿using OregonNexus.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
 
-namespace OregonNexus.Broker.Web.Models;
+namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
 public class CreateIncomingRequestViewModel
 {

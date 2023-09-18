@@ -9,6 +9,8 @@ using OregonNexus.Broker.Web.Models;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Extensions.RequestStatuses;
+using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -73,15 +75,7 @@ public class HomeController : Controller
         // Temporary, taking 5 here
         var outgoingRequestViewModels = outgoingRequests
             .Take(5)
-            .Select(outgoingRequest =>  new OutgoingRequestViewModel()
-            {
-                Id = outgoingRequest.Id,
-                District = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty,
-                School = outgoingRequest.EducationOrganization?.Name ?? string.Empty,
-                Student = outgoingRequest.Student,
-                Date = outgoingRequest.RequestDate,
-                Status = outgoingRequest.RequestStatus.ToFriendlyString()
-            })
+            .Select(outgoingRequest => new OutgoingRequestViewModel(outgoingRequest))
             .ToList();
 
         var tempData = new DashboardViewModel()
