@@ -80,7 +80,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".OregonNexus.Broker.Session";
-    options.IdleTimeout = TimeSpan.Zero;
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.IsEssential = true;
 });
 
