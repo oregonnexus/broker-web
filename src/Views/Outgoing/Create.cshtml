@@ -17,7 +17,7 @@
                         <div class="sm:col-span-3">
                             <label asp-for="EducationOrganizationId" class="block text-sm font-medium leading-6 text-gray-900">Education Organization</label>
                             <div class="mt-2">
-                                <select asp-for="EducationOrganizationId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                <select asp-for="EducationOrganizationId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
                                     <option value="">Select an Education Organization</option>
                                     @foreach (var org in Model.EducationOrganizations)
                                     {
@@ -30,14 +30,14 @@
                         <div class="sm:col-span-3">
                             <label asp-for="Student" class="block text-sm font-medium leading-6 text-gray-900">Student</label>
                             <div class="mt-2">
-                                <input asp-for="Student" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <input asp-for="Student" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                             </div>
                             <p class="mt-2 text-sm text-red-600" asp-validation-for="Student">@Html.ValidationMessageFor(m => m.Student)</p>
                         </div>
                         <div class="sm:col-span-3">
                             <label asp-for="RequestStatus" class="block text-sm font-medium leading-6 text-gray-900">Request Status</label>
                             <div class="mt-2">
-                                <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
                                     <option value="">Select a Request Status</option>
                                     @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
                                     {
@@ -58,7 +58,7 @@
                        class="text-sm font-semibold leading-6 text-gray-900">
                         Cancel
                     </a>
-                    <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+                    <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
                 </div>
             </form>
         </div>
