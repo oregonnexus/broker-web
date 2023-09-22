@@ -21,7 +21,7 @@ public class IncomingRequestViewModel
 
     [Required]
     [Display(Name = "Date")]
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
     [Required]
     [Display(Name = "Status")]
@@ -33,13 +33,14 @@ public class IncomingRequestViewModel
 
     public IncomingRequestViewModel() { }
 
-    public IncomingRequestViewModel(IncomingRequest incomingRequest)
+    public IncomingRequestViewModel(Request incomingRequest)
     {
         Id = incomingRequest.Id;
         District = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         School = incomingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = incomingRequest.Student;
-        Date = incomingRequest.RequestDate;
+        //todo: serialize the json document to the student name and other properties.
+        Student = incomingRequest.Student.ToString();
+        Date = incomingRequest.CreatedAt;
         Status = incomingRequest.RequestStatus.ToFriendlyString();
     }
 

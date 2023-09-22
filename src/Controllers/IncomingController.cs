@@ -18,11 +18,11 @@ namespace OregonNexus.Broker.Web.Controllers;
 public class IncomingController : Controller
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
-    private readonly IRepository<IncomingRequest> _incomingRequestRepository;
+    private readonly IRepository<Request> _incomingRequestRepository;
 
     public IncomingController(
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IRepository<IncomingRequest> incomingRequestRepository)
+        IRepository<Request> incomingRequestRepository)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _incomingRequestRepository = incomingRequestRepository;
@@ -36,7 +36,7 @@ public class IncomingController : Controller
 
         var sortExpression = model.BuildSortExpression();
 
-        var specification = new SearchableWithPaginationSpecification<IncomingRequest>.Builder(model.Page, model.Size)
+        var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
@@ -89,13 +89,13 @@ public class IncomingController : Controller
         {
             var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
 
-            var incomingRequest = new IncomingRequest
+            var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                Student = viewModel.Student,
+                Student = null, //todo: create json doc
                 RequestStatus = viewModel.RequestStatus,
-                RequestUserId = Guid.Parse(userId),
-                RequestDate = DateTime.UtcNow
+                CreatedBy = Guid.Parse(userId),
+                CreatedAt = DateTime.UtcNow
             };
 
            await _incomingRequestRepository.AddAsync(incomingRequest);

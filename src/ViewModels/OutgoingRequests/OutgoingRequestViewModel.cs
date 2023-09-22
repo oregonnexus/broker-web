@@ -21,7 +21,7 @@ public class OutgoingRequestViewModel
 
     [Required]
     [Display(Name = "Date")]
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
     [Required]
     [Display(Name = "Status")]
@@ -33,13 +33,13 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel() { }
 
-    public OutgoingRequestViewModel(OutgoingRequest outgoingRequest)
+    public OutgoingRequestViewModel(Request outgoingRequest)
     {
         Id = outgoingRequest.Id;
         District = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         School = outgoingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = outgoingRequest.Student;
-        Date = outgoingRequest.RequestDate;
+        Student = outgoingRequest.Student.ToString();
+        Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus.ToFriendlyString();
     }
 

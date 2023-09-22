@@ -17,11 +17,11 @@ namespace OregonNexus.Broker.Web.Controllers;
 [Authorize(Policy = "TransferRecords")]
 public class OutgoingController : Controller
 {
-    private readonly IRepository<OutgoingRequest> _outgoingRequestRepository;
+    private readonly IRepository<Request> _outgoingRequestRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
 
     public OutgoingController(
-        IRepository<OutgoingRequest> outgoingRequestRepository,
+        IRepository<Request> outgoingRequestRepository,
         IRepository<EducationOrganization> educationOrganizationRepository)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
@@ -36,7 +36,7 @@ public class OutgoingController : Controller
 
         var sortExpression = model.BuildSortExpression();
 
-        var specification = new SearchableWithPaginationSpecification<OutgoingRequest>.Builder(model.Page, model.Size)
+        var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
@@ -89,13 +89,13 @@ public class OutgoingController : Controller
         {
             var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
 
-            var outgoingRequest = new OutgoingRequest
+            var outgoingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                Student = viewModel.Student,
+                Student = null,//todo: create json document.
                 RequestStatus = viewModel.RequestStatus,
-                ProcessUserId = Guid.Parse(userId),
-                RequestDate = DateTime.UtcNow
+                CreatedBy = Guid.Parse(userId),
+                CreatedAt = DateTime.UtcNow
             };
 
             await _outgoingRequestRepository.AddAsync(outgoingRequest);

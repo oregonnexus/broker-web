@@ -14,9 +14,9 @@ public class OutgoingRequestModel : SearchableModelWithPagination
     public DateTime? EndDate { get; set; }
     public string Status { get; set; }
 
-    public Expression<Func<OutgoingRequest, object>> BuildSortExpression()
+    public Expression<Func<Request, object>> BuildSortExpression()
     {
-        Expression<Func<OutgoingRequest, object>> sortExpression = null;
+        Expression<Func<Request, object>> sortExpression = null;
         var sortBy = SortBy.ToLower();
         sortExpression = sortBy switch
         {
@@ -30,9 +30,9 @@ public class OutgoingRequestModel : SearchableModelWithPagination
         return sortExpression;
     }
 
-    public List<Expression<Func<OutgoingRequest, bool>>> BuildSearchExpressions()
+    public List<Expression<Func<Request, bool>>> BuildSearchExpressions()
     {
-        var searchExpressions = new List<Expression<Func<OutgoingRequest, bool>>>();
+        var searchExpressions = new List<Expression<Func<Request, bool>>>();
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
         {
@@ -43,7 +43,7 @@ public class OutgoingRequestModel : SearchableModelWithPagination
                 || request.EducationOrganization.Name
                     .ToLower()
                     .Contains(SearchBy.ToLower())
-                || request.Student.ToLower().Contains(SearchBy.ToLower())
+                || request.Student.ToString().ToLower().Contains(SearchBy.ToLower())
             );
         }
 
@@ -64,7 +64,7 @@ public class OutgoingRequestModel : SearchableModelWithPagination
 
         if (!string.IsNullOrWhiteSpace(Student))
         {
-            searchExpressions.Add(request => request.Student
+            searchExpressions.Add(request => request.Student.ToString()
                 .ToLower()
                 .Contains(Student.ToLower()));
         }

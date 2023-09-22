@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Web.Models;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
@@ -20,14 +19,14 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
-    private readonly IRepository<IncomingRequest> _incomingRequestRepository;
-    private readonly IRepository<OutgoingRequest> _outgoingRequestRepository;
+    private readonly IRepository<Request> _incomingRequestRepository;
+    private readonly IRepository<Request> _outgoingRequestRepository;
 
     public HomeController(
         IRepository<User> userRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IRepository<IncomingRequest> incomingRequestRepository,
-        IRepository<OutgoingRequest> outgoingRequestRepository,
+        IRepository<Request> incomingRequestRepository,
+        IRepository<Request> outgoingRequestRepository,
         ILogger<HomeController> logger)
     {
         _userRepository = userRepository;
