@@ -17,15 +17,17 @@
     @if (Model.EducationOrganizations?.Count() > 0)
     {
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl p-4">
-        <form asp-action="Create" asp-route-UserId="@Model.UserId" class="grid gap-4 grid-cols-3">
-          <div class="whitespace-nowrap text-sm font-medium text-gray-900">
-            <select asp-for="EducationOrganizationId" asp-items="Model.EducationOrganizations" class="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"></select>
+        <form asp-action="Create" asp-route-UserId="@Model.UserId" class="grid gap-4 grid-cols-3 items-end">
+          <div class="grid gap-2 text-sm font-medium">
+            <label asp-for="EducationOrganizationId" class="leading-6">Organization</label>
+            <select asp-for="EducationOrganizationId" asp-items="Model.EducationOrganizations" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"></select>
           </div>
-          <div class="whitespace-nowrap text-sm text-gray-600">
-            <select asp-for="Role" asp-items="Html.GetEnumSelectList<Role>()" class="block w-full rounded-md border-0 px-2.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"></select>
+          <div class="grid gap-2 text-sm font-medium">
+            <label asp-for="Role" class="leading-6">Role</label>
+            <select asp-for="Role" asp-items="Html.GetEnumSelectList<Role>()" class="block w-full rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"></select>
           </div>
           <div class="relative whitespace-nowrap text-right text-sm font-medium">
-            <button type="submit" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Add</button>
+            <button type="submit" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Add role</button>
           </div>
         </form>
       </div>
@@ -58,7 +60,7 @@
                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                     <form method="post" asp-action="Delete" asp-route-id="@userRole.UserRole?.Id">
                       <input type="hidden" name="_METHOD" value="DELETE" />
-                      <button type="submit" class="inline-flex justify-center rounded-md bg-critical-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-critical-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Delete</button>
+                      <button type="submit" class="inline-flex justify-center rounded-md bg-critical-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-critical-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Delete role</button>
                     </form>
                   </td>
                 </tr>
