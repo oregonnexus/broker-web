@@ -10,8 +10,8 @@
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-md">
     <img class="mx-auto h-48 w-auto" src="~/images/Final-Education-Nexus-ICON-png.png" alt="Education Nexus Oregon">
-    <h2 class="mt-2 text-center text-4xl font-bold tracking-tight text-gray-900">NEXUS</h2>
-    <h4 class="text-center text-xl tracking-tight text-gray-600">Student Records Transfer</h4>
+    <h2 class="font-title mt-2 text-center text-4xl">NEXUS</h2>
+    <h4 class="font-title text-center text-xl text-gray-600">Student Records Transfer</h4>
   </div>
 
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -19,7 +19,7 @@
         <form id="external-account" asp-action="ExternalLogin" method="post">
             @foreach (var provider in Model)
             {
-                <button type="submit" class="my-3 w-full justify-center rounded-md bg-white px-4 py-2 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
+                <button type="submit" class="my-3 w-full justify-center rounded-md bg-white px-4 py-2 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">
                 Sign in with @provider.DisplayName
                 </button>
             }

@@ -13,7 +13,7 @@
 >
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-base font-semibold leading-6 text-gray-900">Incoming Requests</h1>
+            <h1 class="font-title text-base font-semibold leading-6 text-gray-900">Incoming Requests</h1>
             <p class="mt-2 text-sm text-gray-700">Incoming records transfer requests.</p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -22,7 +22,7 @@
                 asp-action="Create"
                 asp-authorize
                 asp-policy="TransferRecords"
-                class="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
             >
                 Make Incoming Request
             </a>
@@ -40,7 +40,7 @@
                     <label for="searchBy" class="sr-only">Search</label>
                     <div class="flex rounded-md shadow-sm">
                         <div class="flex-grow focus-within:z-10">
-                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:block" placeholder="Search by district, school and student">
+                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:block" placeholder="Search by district, school and student">
                         </div>
                         <button type="submit" class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -53,14 +53,14 @@
                 <div class="mx-auto flex max-w-7xl space-x-6 divide-x divide-gray-200 px-4 text-sm sm:px-6 lg:px-8">
                     <div>
                         <button type="button" class="group flex items-center font-medium text-gray-700" @@click="toggleFiltersSection">
-                            <svg class="mr-2 h-5 w-5 flex-none text-gray-400 group-hover:text-gray-500" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="mr-2 h-5 w-5 flex-none text-gray-400 group-hover:text-gray-600" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.591L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" />
                             </svg>
-                            <span x-text="filtersCount" class="mr-2"></span> Filters
+                            <span x-text="filtersCount" class="mr-2">0</span> Filters
                         </button>
                     </div>
                     <div class="pl-6">
-                        <a :href="clearAllHref" class="text-gray-500">Clear all</a>
+                        <a :href="clearAllHref" class="text-gray-600">Clear all</a>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                             <fieldset>
                                 <legend class="block font-medium">Status</legend>
                                 <div class="pt-6 sm:pt-4">
-                                    <select x-model="status" name="status" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    <select x-model="status" name="status" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
                                         <option value="">Select a Request Status</option>
                                         @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
                                         {
@@ -84,19 +84,20 @@
                             <fieldset>
                                 <legend class="block font-medium">Start Date</legend>
                                 <div class="pt-6 sm:pt-4">
-                                    <input x-model="startDate" type="date" name="startDate" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"/>
+                                    <input x-model="startDate" type="date" name="startDate" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"/>
                                 </div>
                             </fieldset>
                             <fieldset>
                                 <legend class="block font-medium">End Date</legend>
                                 <div class="pt-6 sm:pt-4">
-                                    <input x-model="endDate" type="date" name="endDate" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"/>
+                                    <input x-model="endDate" type="date" name="endDate" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6"/>
                                 </div>
                             </fieldset>
                         </div>
                     </div>
                 </div>
             </section>
+            <input type="hidden" x-model="filtersSection" name="filtersSection">
         </form>
         <div class="flow-root overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -175,16 +176,16 @@
                             {
                                 <tr class="@(even ? "bg-gray-50": "")">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">@incomingRequest.District</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@incomingRequest.School</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@incomingRequest.Student</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@incomingRequest.Date</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.School</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Student</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Date</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                                             @incomingRequest.Status
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                        <a href="#" class="text-tertiary-700 hover:text-tertiary-900">Edit</a>
                                     </td>
                                 </tr>
                                 even = !even;
