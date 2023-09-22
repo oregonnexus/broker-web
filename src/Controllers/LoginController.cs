@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
+using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -98,9 +99,11 @@ public class LoginController : Controller
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            _session?.SetObjectAsJson("User.Current", currentUser);
+            _session?.SetObjectAsJson(UserCurrent, currentUser);
             
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
+
+            _session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
             return LocalRedirect(returnUrl);
         }
         if (result.IsLockedOut)
@@ -131,6 +134,8 @@ public class LoginController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
+
+                _session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
                 return LocalRedirect(returnUrl);
             }
             return RedirectToAction("Login");
@@ -142,6 +147,7 @@ public class LoginController : Controller
     public async Task<IActionResult> Logout()
     {
          await _signInManager.SignOutAsync();
+        HttpContext.Session.Clear();
         _logger.LogInformation("User logged out.");
         return RedirectToAction("Index", "Home");
     }

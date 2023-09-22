@@ -16,8 +16,8 @@ using OregonNexus.Broker.Domain;
 using Microsoft.AspNetCore.Authentication;
 using OregonNexus.Broker.Web.Extensions.Routes;
 using OregonNexus.Broker.Web.Services.PayloadContents;
-using OregonNexus.Broker.Web.Helpers;
-using Autofac.Core;
+using OregonNexus.Broker.Web.Middleware;
+using OregonNexus.Broker.Web.Services.Sessions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +52,7 @@ builder.Services.AddDbContext<BrokerDbContext>(options => {
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
+
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 foreach (var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
@@ -65,7 +66,9 @@ builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<BrokerDbContext>()
 .AddTokenProvider<DataProtectorTokenProvider<IdentityUser<Guid>>>(TokenOptions.DefaultProvider);
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPayloadContentService, PayloadContentService>();
+builder.Services.AddSingleton<ISessionRefresherService, SessionRefresherService>();
 
 builder.Services.ConfigureApplicationCookie(options => 
 {
@@ -149,6 +152,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+app.UseWhen(
+    context => context?.User?.Identity?.IsAuthenticated ?? false,
+    appBuilder =>
+    {
+        appBuilder.UseMiddleware<SessionRefreshMiddleware>();
+    }
+);
 
 //app.UseMiddleware<ScopedHttpContextMiddleware>();
 

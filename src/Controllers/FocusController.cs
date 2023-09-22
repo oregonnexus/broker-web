@@ -1,44 +1,38 @@
 // Copyright: 2023 Education Nexus Oregon
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Web.Models;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
-using InertiaAdapter;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
-
+using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
 public class FocusController : Controller
 {
-    private readonly ILogger<FocusController> _logger;
-    private readonly IRepository<User> _repository;
     private readonly ISession _session;
 
-    public FocusController(ILogger<FocusController> logger, IRepository<User> repository, IHttpContextAccessor httpContextAccessor)
+    public FocusController(
+        ISession session
+    )
     {
-        _logger = logger;
-        _repository = repository;
-        _session = httpContextAccessor.HttpContext?.Session;
+        _session = session;
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult SetFocus(FocusViewModel model)
     {
-        if (model.FocusEducationOrganizationId != null && !String.IsNullOrEmpty(model.FocusEducationOrganizationId))
+        if (!string.IsNullOrWhiteSpace(model.FocusEducationOrganizationId))
         {
-            _session.SetString("Focus.EducationOrganization.Current", model.FocusEducationOrganizationId);
+            _session.SetString(FocusOrganizationCurrentKey, model.FocusEducationOrganizationId);
         }
         else
         {
-            TempData[VoiceTone.Critical] = $"Unable to set focus.";
+            TempData[VoiceTone.Critical] = "Unable to set focus.";
         }
-        
+
         return Redirect(model.ReturnUrl);
     }
 }
