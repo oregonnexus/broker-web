@@ -23,7 +23,7 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "EdFi ID")]
     public string? Id { get; set; }
 
-    [Display(Name = "Student Unique ID")]
+    [Display(Name = "Student ID")]
     public string? StudentUniqueId { get; set; }
 
     [Display(Name = "First Name")]
@@ -35,22 +35,22 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Last Name")]
     public string? LastSurname { get; set; }
 
-    [Display(Name = "From District")]
+    [Display(Name = "Sending District")]
     public string? FromDistrict { get; set; }
 
-    [Display(Name = "From School")]
+    [Display(Name = "Sending School")]
     public string? FromSchool { get; set; }
 
-    [Display(Name = "From Email")]
+    [Display(Name = "Sending Clerk's Email")]
     public string? FromEmail { get; set; }
 
-    [Display(Name = "To District")]
+    [Display(Name = "Receiving District")]
     public string? ToDistrict { get; set; }
 
-    [Display(Name = "To School")]
+    [Display(Name = "Receiving School")]
     public string? ToSchool { get; set; }
 
-    [Display(Name = "To Email")]
+    [Display(Name = "Receiving Clerk's Email")]
     public string? ToEmail { get; set; }
 
     [Display(Name = "Note")]
