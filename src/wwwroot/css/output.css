@@ -902,6 +902,10 @@ select {
   margin-top: 1rem;
 }
 
+.mt-5 {
+  margin-top: 1.25rem;
+}
+
 .mt-6 {
   margin-top: 1.5rem;
 }
@@ -974,6 +978,10 @@ select {
   height: 1.25rem;
 }
 
+.h-6 {
+  height: 1.5rem;
+}
+
 .h-full {
   height: 100%;
 }
@@ -1036,6 +1044,10 @@ select {
 
 .max-w-7xl {
   max-width: 80rem;
+}
+
+.max-w-xl {
+  max-width: 36rem;
 }
 
 .max-w-xs {
@@ -1137,6 +1149,10 @@ select {
   align-items: flex-start;
 }
 
+.items-end {
+  align-items: flex-end;
+}
+
 .items-center {
   align-items: center;
 }
@@ -1157,6 +1173,10 @@ select {
   justify-content: space-between;
 }
 
+.gap-2 {
+  gap: 0.5rem;
+}
+
 .gap-3 {
   gap: 0.75rem;
 }
@@ -1167,6 +1187,10 @@ select {
 
 .gap-6 {
   gap: 1.5rem;
+}
+
+.gap-8 {
+  gap: 2rem;
 }
 
 .gap-x-1 {
@@ -1591,6 +1615,10 @@ select {
   padding-bottom: 1rem;
 }
 
+.pb-8 {
+  padding-bottom: 2rem;
+}
+
 .pl-2 {
   padding-left: 0.5rem;
 }
@@ -1717,6 +1745,11 @@ select {
   letter-spacing: -0.025em;
 }
 
+.text-critical-500 {
+  --tw-text-opacity: 1;
+  color: rgb(253 48 42 / var(--tw-text-opacity));
+}
+
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(197 199 201 / var(--tw-text-opacity));
@@ -1755,6 +1788,11 @@ select {
 .text-green-800 {
   --tw-text-opacity: 1;
   color: rgb(22 101 52 / var(--tw-text-opacity));
+}
+
+.text-indigo-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity));
 }
 
 .text-red-400 {
@@ -1953,6 +1991,11 @@ select {
   background-color: rgb(72 161 215 / var(--tw-bg-opacity));
 }
 
+.hover\:text-critical-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(239 34 42 / var(--tw-text-opacity));
+}
+
 .hover\:text-gray-600:hover {
   --tw-text-opacity: 1;
   color: rgb(125 127 129 / var(--tw-text-opacity));
@@ -2000,6 +2043,11 @@ select {
 .focus\:ring-green-600:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(22 163 74 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-indigo-600:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(79 70 229 / var(--tw-ring-opacity));
 }
 
 .focus\:ring-tertiary-700:focus {
@@ -2081,6 +2129,10 @@ select {
 
   .sm\:col-span-4 {
     grid-column: span 4 / span 4;
+  }
+
+  .sm\:col-span-6 {
+    grid-column: span 6 / span 6;
   }
 
   .sm\:col-start-2 {
@@ -2254,6 +2306,10 @@ select {
   .sm\:border-gray-200 {
     --tw-border-opacity: 1;
     border-color: rgb(240 242 244 / var(--tw-border-opacity));
+  }
+
+  .sm\:p-6 {
+    padding: 1.5rem;
   }
 
   .sm\:p-8 {
