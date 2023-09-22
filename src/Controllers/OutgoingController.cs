@@ -136,17 +136,17 @@ public class OutgoingController : Controller
 
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
 
-        var edfiStudent = outgoingRequest.Student?.DeserializeFromJsonDocument<EdfiStudentJsonModel>();
+        var edfiStudent = outgoingRequest.Student?.DeserializeFromJsonDocument<EdfiJsonModel>();
 
         var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         var viewModel = new CreateOutgoingRequestViewModel
         {
-            Id = outgoingRequest.Id.ToString(),
+            Id = responseManifest?.Student?.Id,
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = outgoingRequest.EducationOrganizationId,
             RequestId = outgoingRequest.Id,
-            EdfiId = edfiStudent?.Id,
+            EdfiId = edfiStudent?.Student?.Id,
             EdfiStudentUniqueId = responseManifest?.Student?.StudentUniqueId,
             StudentUniqueId = responseManifest?.Student?.StudentUniqueId,
             FirstName = responseManifest?.Student?.FirstName,

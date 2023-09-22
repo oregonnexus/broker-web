@@ -135,17 +135,17 @@ public class IncomingController : Controller
 
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
 
-        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyStudentJsonModel>();
+        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
 
         var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
 
         var viewModel = new CreateIncomingRequestViewModel
         {
-            Id = incomingRequest.Id.ToString(),
+            RequestId = incomingRequest.Id,
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = incomingRequest.EducationOrganizationId,
-            RequestId = incomingRequest.Id,
-            SisNumber = synergyStudentModel?.SisNumber,
+            SisNumber = synergyStudentModel?.Student?.SisNumber,
+            Id = requestManifest?.Student?.Id,
             StudentUniqueId = requestManifest?.Student?.StudentUniqueId,
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
