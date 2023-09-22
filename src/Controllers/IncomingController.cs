@@ -107,6 +107,7 @@ public class IncomingController : Controller
 
             var requestManifest = new RequestManifestJsonModel()
             {
+                RequestId = Guid.NewGuid(),
                 RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
                 Student = new StudentJsonModel()
                 {
@@ -148,17 +149,23 @@ public class IncomingController : Controller
             await _incomingRequestRepository.AddAsync(incomingRequest);
             await _incomingRequestRepository.SaveChangesAsync();
 
-            var payloadContent = new PayloadContent
-            {
-                RequestId = incomingRequest.Id,
-                Request = incomingRequest,
-                RequestResponse = RequestResponse.Request,
-                ContentType = "application/json",
-                BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
-                XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
-            };
+            var payloadContents = new List<PayloadContent>();
 
-            await _payloadContentRepository.AddAsync(payloadContent);
+            foreach (var file in viewModel.Files)
+            {
+                var payloadContent = new PayloadContent
+                {
+                    RequestId = Guid.NewGuid(),
+                    RequestResponse = RequestResponse.Response,
+                    ContentType = "application/json",
+                    BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
+                    XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
+                };
+
+                payloadContents.Add(payloadContent);
+            }
+
+            await _payloadContentRepository.AddRangeAsync(payloadContents);
             await _payloadContentRepository.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

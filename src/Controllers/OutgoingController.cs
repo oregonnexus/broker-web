@@ -14,6 +14,7 @@ using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
+using OregonNexus.Broker.Web.Models.JsonDocuments;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -95,30 +96,77 @@ public class OutgoingController : Controller
         {
             var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
 
+            var edfiStudentModel = new EdfiJsonModel()
+            {
+                Student = new EdfiStudentJsonModel()
+                {
+                    Id = viewModel.EdfiId,
+                    StudentUniqueId = viewModel.EdfiStudentUniqueId
+                }
+            }.ToJsonDocument();
+
+            var responseManifest = new ResponseManifestJsonModel()
+            {
+                RequestId = Guid.NewGuid(),
+                ResponseType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
+                Student = new StudentJsonModel()
+                {
+                    Id = viewModel.Id,
+                    StudentUniqueId = viewModel.StudentUniqueId,
+                    FirstName = viewModel.FirstName,
+                    MiddleName = viewModel.MiddleName,
+                    LastSurname = viewModel.LastSurname
+                },
+                From = new SchoolJsonModel()
+                {
+                    District = viewModel.FromDistrict,
+                    School = viewModel.FromSchool,
+                    Email = viewModel.FromEmail
+                },
+                To = new SchoolJsonModel()
+                {
+                    District = viewModel.ToDistrict,
+                    School = viewModel.ToSchool,
+                    Email = viewModel.ToEmail
+                },
+                Note = viewModel.Note,
+                Contents = viewModel.Contents
+            }.ToJsonDocument();
+
+            var today = DateTime.UtcNow;
             var outgoingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                Student = null,//todo: create json document.
+                Student = edfiStudentModel,
+                ResponseManifest = responseManifest,
+                InitialRequestSentDate = today,
+                ResponseProcessUserId = Guid.Parse(userId),
                 RequestStatus = viewModel.RequestStatus,
-                CreatedBy = Guid.Parse(userId),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = today,
+                CreatedBy = Guid.Parse(userId)
             };
 
-            var payloadContent = new PayloadContent
-            {
-                RequestId = Guid.NewGuid(),
-                Request = outgoingRequest,
-                RequestResponse = RequestResponse.Response,
-                ContentType = "application/json",
-                BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
-                JsonContent = JsonDocument.Parse(JsonSerializer.Serialize(new { Name = "John Doe", Age = 30, Address = new { Street = "123 Main St", City = "Anytown", State = "CA" } })),
-                XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
-            };
-
-            await _payloadContentRepository.AddAsync(payloadContent);
-            await _payloadContentRepository.SaveChangesAsync();
             await _outgoingRequestRepository.AddAsync(outgoingRequest);
             await _outgoingRequestRepository.SaveChangesAsync();
+
+            var payloadContents = new List<PayloadContent>();
+
+            foreach (var file in viewModel.Files)
+            {
+                var payloadContent = new PayloadContent
+                {
+                    RequestId = Guid.NewGuid(),
+                    RequestResponse = RequestResponse.Response,
+                    ContentType = "application/json",
+                    BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
+                    XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
+                };
+
+                payloadContents.Add(payloadContent);
+            }
+
+            await _payloadContentRepository.AddRangeAsync(payloadContents);
+            await _payloadContentRepository.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

@@ -3,6 +3,7 @@ namespace OregonNexus.Broker.Web.Models.JsonDocuments;
 
 public class RequestManifestJsonModel
 {
+    public Guid RequestId { get; set; }
     public string RequestType { get; set; }
     public StudentJsonModel Student { get; set; }
     public SchoolJsonModel From { get; set; }

@@ -2,7 +2,7 @@
 #nullable disable
 public class ResponseManifestJsonModel
 {
-    public string RequestId { get; set; }
+    public Guid RequestId { get; set; }
     public string ResponseType { get; set; }
     public StudentJsonModel Student { get; set; }
     public SchoolJsonModel From { get; set; }
