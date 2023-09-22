@@ -185,7 +185,16 @@
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a href="#" class="text-tertiary-700 hover:text-tertiary-900">Edit</a>
+                                        <a
+                                            asp-controller="Incoming"
+                                            asp-action="Update"
+                                            asp-route-requestId="@incomingRequest.Id"
+                                            asp-authorize
+                                            asp-policy="TransferRecords"
+                                            class="text-tertiary-700 hover:text-tertiary-900"
+                                        >
+                                            Edit
+                                        </a>
                                     </td>
                                 </tr>
                                 even = !even;

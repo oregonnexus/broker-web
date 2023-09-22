@@ -1,0 +1,14 @@
+@model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@{
+    // Copyright: 2023 Education Nexus Oregon
+    // Author: Makoa Jacobsen, makoa@makoajacobsen.com
+    ViewData["Title"] = "Edit Incoming Request";
+    Layout = "_AuthenticatedLayout";
+}
+
+<div class="grid gap-6">
+  <form method="post" asp-action="Update">
+    <input type="hidden" name="_METHOD" value="PUT" />
+    <partial name="_form" for="@Model" />
+  </form>
+</div>
