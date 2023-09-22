@@ -82,7 +82,7 @@ public class UsersController : Controller
     public async Task<IActionResult> Create(CreateUserRequestViewModel data)
     {
         if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "User not created."; return View("Add"); }
-        
+
         var identityUser = new IdentityUser<Guid> { UserName = data.Email, Email = data.Email }; 
         var result = await _userManager.CreateAsync(identityUser);
         if (!result.Succeeded)

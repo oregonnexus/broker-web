@@ -11,6 +11,9 @@ using OregonNexus.Broker.Web.Specifications.Paginations;
 using System.Security.Claims;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using System.Text;
+using System.Text.Json;
+using System.Xml.Linq;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -18,13 +21,16 @@ namespace OregonNexus.Broker.Web.Controllers;
 public class OutgoingController : Controller
 {
     private readonly IRepository<Request> _outgoingRequestRepository;
+    private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
 
     public OutgoingController(
         IRepository<Request> outgoingRequestRepository,
+        IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
+        _payloadContentRepository = payloadContentRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
     }
 
@@ -98,6 +104,19 @@ public class OutgoingController : Controller
                 CreatedAt = DateTime.UtcNow
             };
 
+            var payloadContent = new PayloadContent
+            {
+                RequestId = Guid.NewGuid(),
+                Request = outgoingRequest,
+                RequestResponse = RequestResponse.Response,
+                ContentType = "application/json",
+                BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
+                JsonContent = JsonDocument.Parse(JsonSerializer.Serialize(new { Name = "John Doe", Age = 30, Address = new { Street = "123 Main St", City = "Anytown", State = "CA" } })),
+                XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
+            };
+
+            await _payloadContentRepository.AddAsync(payloadContent);
+            await _payloadContentRepository.SaveChangesAsync();
             await _outgoingRequestRepository.AddAsync(outgoingRequest);
             await _outgoingRequestRepository.SaveChangesAsync();
 

@@ -38,7 +38,7 @@ public class OutgoingRequestViewModel
         Id = outgoingRequest.Id;
         District = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         School = outgoingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = outgoingRequest.Student.ToString();
+        Student = outgoingRequest.Student?.ToString();
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus.ToFriendlyString();
     }

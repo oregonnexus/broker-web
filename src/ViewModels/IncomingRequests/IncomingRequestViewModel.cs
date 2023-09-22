@@ -39,7 +39,7 @@ public class IncomingRequestViewModel
         District = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         School = incomingRequest.EducationOrganization?.Name ?? string.Empty;
         //todo: serialize the json document to the student name and other properties.
-        Student = incomingRequest.Student.ToString();
+        Student = incomingRequest.Student?.ToString();
         Date = incomingRequest.CreatedAt;
         Status = incomingRequest.RequestStatus.ToFriendlyString();
     }

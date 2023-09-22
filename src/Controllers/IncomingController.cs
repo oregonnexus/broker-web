@@ -11,6 +11,11 @@ using Ardalis.Specification;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using OregonNexus.Broker.Web.Models.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
+using System.Text;
+using System.Text.Json;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using OregonNexus.Broker.Web.Models.JsonDocuments;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -18,14 +23,17 @@ namespace OregonNexus.Broker.Web.Controllers;
 public class IncomingController : Controller
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
+    private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
 
     public IncomingController(
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IRepository<Request> incomingRequestRepository)
+        IRepository<Request> incomingRequestRepository,
+        IRepository<PayloadContent> payloadContentRepository)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _incomingRequestRepository = incomingRequestRepository;
+        _payloadContentRepository = payloadContentRepository;
     }
 
     public async Task<IActionResult> Index(
@@ -89,17 +97,69 @@ public class IncomingController : Controller
         {
             var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
 
+            var synergyStudentModel = new SynergyJsonModel()
+            {
+                Student = new SynergyStudentJsonModel()
+                {
+                    SisNumber = viewModel.SisNumber
+                }
+            }.ToJsonDocument();
+
+            var requestManifest = new RequestManifestJsonModel()
+            {
+                RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
+                Student = new StudentJsonModel()
+                {
+                    Id = viewModel.Id,
+                    StudentUniqueId = viewModel.StudentUniqueId,
+                    FirstName = viewModel.FirstName,
+                    MiddleName = viewModel.MiddleName,
+                    LastSurname = viewModel.LastSurname
+                },
+                From = new SchoolJsonModel()
+                {
+                    District = viewModel.FromDistrict,
+                    School = viewModel.FromSchool,
+                    Email = viewModel.FromEmail
+                },
+                To = new SchoolJsonModel()
+                {
+                    District = viewModel.ToDistrict,
+                    School = viewModel.ToSchool,
+                    Email = viewModel.ToEmail
+                },
+                Note = viewModel.Note,
+                Contents = viewModel.Contents
+            }.ToJsonDocument();
+
+            var today = DateTime.UtcNow;
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                Student = null, //todo: create json doc
+                Student = synergyStudentModel, 
+                RequestManifest = requestManifest,  
+                InitialRequestSentDate = today,
+                RequestProcessUserId = Guid.Parse(userId),
                 RequestStatus = viewModel.RequestStatus,
-                CreatedBy = Guid.Parse(userId),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = today,
+                CreatedBy = Guid.Parse(userId)
             };
 
-           await _incomingRequestRepository.AddAsync(incomingRequest);
-           await _incomingRequestRepository.SaveChangesAsync();
+            await _incomingRequestRepository.AddAsync(incomingRequest);
+            await _incomingRequestRepository.SaveChangesAsync();
+
+            var payloadContent = new PayloadContent
+            {
+                RequestId = incomingRequest.Id,
+                Request = incomingRequest,
+                RequestResponse = RequestResponse.Request,
+                ContentType = "application/json",
+                BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
+                XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
+            };
+
+            await _payloadContentRepository.AddAsync(payloadContent);
+            await _payloadContentRepository.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

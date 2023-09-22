@@ -46,9 +46,11 @@
 
   <ItemGroup>
     <None Remove="Extensions\Routes\" />
+    <None Remove="Models\JsonDocuments\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\Routes\" />
+    <Folder Include="Models\JsonDocuments\" />
   </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
     <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
