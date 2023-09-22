@@ -5,6 +5,8 @@ namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
 public class CreateIncomingRequestViewModel
 {
+    public Guid RequestId { get; set; }
+
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
     [Display(Name = "Education organization")]

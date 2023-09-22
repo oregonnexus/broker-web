@@ -32,7 +32,10 @@ public class OutgoingRequestModel : SearchableModelWithPagination
 
     public List<Expression<Func<Request, bool>>> BuildSearchExpressions()
     {
-        var searchExpressions = new List<Expression<Func<Request, bool>>>();
+        var searchExpressions = new List<Expression<Func<Request, bool>>>
+        {
+            //request => request.ResponseProcessUserId.HasValue
+        };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
         {

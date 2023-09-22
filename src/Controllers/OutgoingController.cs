@@ -11,10 +11,10 @@ using OregonNexus.Broker.Web.Specifications.Paginations;
 using System.Security.Claims;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
-using System.Text;
-using System.Text.Json;
-using System.Xml.Linq;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
+using OregonNexus.Broker.Web.Services.PayloadContents;
+using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
+using OregonNexus.Broker.Web.Helpers;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -24,15 +24,19 @@ public class OutgoingController : Controller
     private readonly IRepository<Request> _outgoingRequestRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
+    private readonly IPayloadContentService _payloadContentService;
+
 
     public OutgoingController(
         IRepository<Request> outgoingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
-        IRepository<EducationOrganization> educationOrganizationRepository)
+        IRepository<EducationOrganization> educationOrganizationRepository,
+        IPayloadContentService payloadContentService)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
+        _payloadContentService = payloadContentService;
     }
 
     public async Task<IActionResult> Index(
@@ -94,44 +98,10 @@ public class OutgoingController : Controller
     {
         if (ModelState.IsValid)
         {
-            var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
+            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
-            var edfiStudentModel = new EdfiJsonModel()
-            {
-                Student = new EdfiStudentJsonModel()
-                {
-                    Id = viewModel.EdfiId,
-                    StudentUniqueId = viewModel.EdfiStudentUniqueId
-                }
-            }.ToJsonDocument();
-
-            var responseManifest = new ResponseManifestJsonModel()
-            {
-                RequestId = Guid.NewGuid(),
-                ResponseType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
-                Student = new StudentJsonModel()
-                {
-                    Id = viewModel.Id,
-                    StudentUniqueId = viewModel.StudentUniqueId,
-                    FirstName = viewModel.FirstName,
-                    MiddleName = viewModel.MiddleName,
-                    LastSurname = viewModel.LastSurname
-                },
-                From = new SchoolJsonModel()
-                {
-                    District = viewModel.FromDistrict,
-                    School = viewModel.FromSchool,
-                    Email = viewModel.FromEmail
-                },
-                To = new SchoolJsonModel()
-                {
-                    District = viewModel.ToDistrict,
-                    School = viewModel.ToSchool,
-                    Email = viewModel.ToEmail
-                },
-                Note = viewModel.Note,
-                Contents = viewModel.Contents
-            }.ToJsonDocument();
+            var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
+            var responseManifest = viewModel.MapToResponseManifestJsonModel();
 
             var today = DateTime.UtcNow;
             var outgoingRequest = new Request
@@ -140,33 +110,16 @@ public class OutgoingController : Controller
                 Student = edfiStudentModel,
                 ResponseManifest = responseManifest,
                 InitialRequestSentDate = today,
-                ResponseProcessUserId = Guid.Parse(userId),
+                ResponseProcessUserId = userId,
                 RequestStatus = viewModel.RequestStatus,
                 CreatedAt = today,
-                CreatedBy = Guid.Parse(userId)
+                CreatedBy = userId
             };
 
             await _outgoingRequestRepository.AddAsync(outgoingRequest);
             await _outgoingRequestRepository.SaveChangesAsync();
 
-            var payloadContents = new List<PayloadContent>();
-
-            foreach (var file in viewModel.Files)
-            {
-                var payloadContent = new PayloadContent
-                {
-                    RequestId = Guid.NewGuid(),
-                    RequestResponse = RequestResponse.Response,
-                    ContentType = "application/json",
-                    BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
-                    XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
-                };
-
-                payloadContents.Add(payloadContent);
-            }
-
-            await _payloadContentRepository.AddRangeAsync(payloadContents);
-            await _payloadContentRepository.SaveChangesAsync();
+            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
             return RedirectToAction(nameof(Index));
         }
@@ -176,4 +129,78 @@ public class OutgoingController : Controller
         return View(viewModel);
     }
 
+    public async Task<IActionResult> Update(Guid requestId)
+    {
+        var outgoingRequest = await _outgoingRequestRepository.GetByIdAsync(requestId);
+        if (outgoingRequest is null) return NotFound();
+
+        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+
+        var edfiStudent = outgoingRequest.Student?.DeserializeFromJsonDocument<EdfiStudentJsonModel>();
+
+        var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+
+        var viewModel = new CreateOutgoingRequestViewModel
+        {
+            Id = outgoingRequest.Id.ToString(),
+            EducationOrganizations = educationOrganizations,
+            EducationOrganizationId = outgoingRequest.EducationOrganizationId,
+            RequestId = outgoingRequest.Id,
+            EdfiId = edfiStudent?.Id,
+            EdfiStudentUniqueId = responseManifest?.Student?.StudentUniqueId,
+            StudentUniqueId = responseManifest?.Student?.StudentUniqueId,
+            FirstName = responseManifest?.Student?.FirstName,
+            MiddleName = responseManifest?.Student?.MiddleName,
+            LastSurname = responseManifest?.Student?.LastSurname,
+            FromDistrict = responseManifest?.From?.District,
+            FromSchool = responseManifest?.From?.School,
+            FromEmail = responseManifest?.From?.Email,
+            ToDistrict = responseManifest?.To?.District,
+            ToSchool = responseManifest?.To?.School,
+            ToEmail = responseManifest?.To?.Email,
+            Note = responseManifest?.Note,
+            Contents = responseManifest?.Contents,
+            RequestStatus = outgoingRequest.RequestStatus
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(CreateOutgoingRequestViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
+
+            var outgoingRequest = await _outgoingRequestRepository.GetByIdAsync(viewModel.RequestId);
+
+            if (outgoingRequest is null) return BadRequest();
+
+            var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
+            var responseManifest = viewModel.MapToResponseManifestJsonModel();
+
+            var today = DateTime.UtcNow;
+
+            outgoingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
+            outgoingRequest.Student = edfiStudentModel;
+            outgoingRequest.ResponseManifest = responseManifest;
+            outgoingRequest.RequestStatus = viewModel.RequestStatus;
+            outgoingRequest.UpdatedAt = today;
+            outgoingRequest.UpdatedBy = userId;
+
+            await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
+            await _outgoingRequestRepository.SaveChangesAsync();
+
+            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        viewModel.EducationOrganizations = educationOrganizations;
+        return View(viewModel);
+    }
 }

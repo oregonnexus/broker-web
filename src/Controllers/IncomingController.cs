@@ -11,11 +11,10 @@ using Ardalis.Specification;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using OregonNexus.Broker.Web.Models.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
-using System.Text;
-using System.Text.Json;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
+using Microsoft.EntityFrameworkCore;
+using OregonNexus.Broker.Web.Services.PayloadContents;
+using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
+using OregonNexus.Broker.Web.Helpers;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -25,15 +24,18 @@ public class IncomingController : Controller
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
+    private readonly IPayloadContentService _payloadContentService;
 
     public IncomingController(
         IRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<Request> incomingRequestRepository,
-        IRepository<PayloadContent> payloadContentRepository)
+        IRepository<PayloadContent> payloadContentRepository,
+        IPayloadContentService payloadContentService)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _incomingRequestRepository = incomingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
+        _payloadContentService = payloadContentService;
     }
 
     public async Task<IActionResult> Index(
@@ -95,43 +97,10 @@ public class IncomingController : Controller
     {
         if (ModelState.IsValid)
         {
-            var userId = User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!;
+            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
-            var synergyStudentModel = new SynergyJsonModel()
-            {
-                Student = new SynergyStudentJsonModel()
-                {
-                    SisNumber = viewModel.SisNumber
-                }
-            }.ToJsonDocument();
-
-            var requestManifest = new RequestManifestJsonModel()
-            {
-                RequestId = Guid.NewGuid(),
-                RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
-                Student = new StudentJsonModel()
-                {
-                    Id = viewModel.Id,
-                    StudentUniqueId = viewModel.StudentUniqueId,
-                    FirstName = viewModel.FirstName,
-                    MiddleName = viewModel.MiddleName,
-                    LastSurname = viewModel.LastSurname
-                },
-                From = new SchoolJsonModel()
-                {
-                    District = viewModel.FromDistrict,
-                    School = viewModel.FromSchool,
-                    Email = viewModel.FromEmail
-                },
-                To = new SchoolJsonModel()
-                {
-                    District = viewModel.ToDistrict,
-                    School = viewModel.ToSchool,
-                    Email = viewModel.ToEmail
-                },
-                Note = viewModel.Note,
-                Contents = viewModel.Contents
-            }.ToJsonDocument();
+            var synergyStudentModel = viewModel.MapToSynergyJsonModel();
+            var requestManifest = viewModel.MapToRequestManifestJsonModel();
 
             var today = DateTime.UtcNow;
             var incomingRequest = new Request
@@ -140,33 +109,68 @@ public class IncomingController : Controller
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,  
                 InitialRequestSentDate = today,
-                RequestProcessUserId = Guid.Parse(userId),
+                RequestProcessUserId = userId,
                 RequestStatus = viewModel.RequestStatus,
                 CreatedAt = today,
-                CreatedBy = Guid.Parse(userId)
+                CreatedBy = userId
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
             await _incomingRequestRepository.SaveChangesAsync();
 
-            var payloadContents = new List<PayloadContent>();
+            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
-            foreach (var file in viewModel.Files)
-            {
-                var payloadContent = new PayloadContent
-                {
-                    RequestId = Guid.NewGuid(),
-                    RequestResponse = RequestResponse.Response,
-                    ContentType = "application/json",
-                    BlobContent = Encoding.UTF8.GetBytes("YourBlobContentHere"),
-                    XmlContent = XElement.Parse("<Student><Id>000000</Id><StudentUniqueId>0000000</StudentUniqueId><FirstName>John</FirstName><MiddleName>T</MiddleName><LastSurname>Doe</LastSurname></Student>")
-                };
+            return RedirectToAction(nameof(Index));
+        }
 
-                payloadContents.Add(payloadContent);
-            }
+        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        viewModel.EducationOrganizations = educationOrganizations;
+        return View(viewModel);
+    }
 
-            await _payloadContentRepository.AddRangeAsync(payloadContents);
-            await _payloadContentRepository.SaveChangesAsync();
+    public async Task<IActionResult> Update(Guid requestId)
+    {
+        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
+        if (incomingRequest is null) return NotFound();
+
+        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        var viewModel = new CreateIncomingRequestViewModel
+        {
+            EducationOrganizations = educationOrganizations
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(CreateIncomingRequestViewModel viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
+
+            var incomingRequest = await _incomingRequestRepository.GetByIdAsync(viewModel.RequestId);
+
+            if (incomingRequest is null) return BadRequest();
+
+            var synergyStudentModel = viewModel.MapToSynergyJsonModel();
+            var requestManifest = viewModel.MapToRequestManifestJsonModel();
+
+            var today = DateTime.UtcNow;
+
+            incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
+            incomingRequest.Student = synergyStudentModel;
+            incomingRequest.RequestManifest = requestManifest;
+            incomingRequest.RequestStatus = viewModel.RequestStatus;
+            incomingRequest.UpdatedAt = today;
+            incomingRequest.UpdatedBy = userId;
+
+            await _incomingRequestRepository.UpdateAsync(incomingRequest);
+            await _incomingRequestRepository.SaveChangesAsync();
+
+            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
             return RedirectToAction(nameof(Index));
         }

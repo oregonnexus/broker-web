@@ -10,4 +10,26 @@ public static class JsonDocumentExtensions
 
         return JsonDocument.Parse(jsonString);
     }
+
+    public static T? DeserializeFromJsonDocument<T>(this JsonDocument jsonDocument) where T : class
+    {
+        if (jsonDocument is null)
+        {
+            throw new ArgumentNullException(nameof(jsonDocument));
+        }
+
+        var jsonString = jsonDocument.RootElement.GetRawText();
+
+        try
+        {
+            return JsonSerializer.Deserialize<T>(jsonString, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true 
+            });
+        }
+        catch 
+        {
+            return null;
+        }
+    }
 }

@@ -26,10 +26,12 @@ namespace OregonNexus.Broker.Web.Specifications.Paginations
             SortExpression = sortExpression;
             SearchExpressions = searchExpressions;
 
-            int skip = (pageNumber - 1) * pageSize;
-
-            Query.Skip(skip);
-            Query.Take(pageSize);
+            if(pageSize > 0)
+            {
+                int skip = (pageNumber - 1) * pageSize;
+                Query.Skip(skip);
+                Query.Take(pageSize);
+            }
 
             if (sortExpression != null)
             {
