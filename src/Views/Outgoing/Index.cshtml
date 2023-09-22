@@ -166,7 +166,7 @@
                                     </a>
                                 </th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                    <span class="sr-only">Edit</span>
+                                    <span class="sr-only">View</span>
                                 </th>
                             </tr>
                         </thead>
@@ -185,7 +185,16 @@
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a href="#" class="text-tertiary-700 hover:text-tertiary-900">Edit</a>
+                                        <a
+                                            asp-controller="Outgoing"
+                                            asp-action="Update"
+                                            asp-route-requestId="@outgoingRequest.Id"
+                                            asp-authorize
+                                            asp-policy="TransferRecords"
+                                            class="text-tertiary-700 hover:text-tertiary-900"
+                                        >
+                                            View
+                                        </a>
                                     </td>
                                 </tr>
                                 even = !even;

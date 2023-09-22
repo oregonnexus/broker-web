@@ -36,12 +36,12 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
-        var requestManifest = outgoingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+        var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = outgoingRequest.Id;
-        District = requestManifest?.To?.District ?? string.Empty;
-        School = requestManifest?.To?.School ?? string.Empty;
-        Student = $"{requestManifest?.Student?.FirstName} {requestManifest?.Student?.LastSurname}";
+        District = responseManifest?.To?.District ?? string.Empty;
+        School = responseManifest?.To?.School ?? string.Empty;
+        Student = $"{responseManifest?.Student?.FirstName} {responseManifest?.Student?.LastSurname}";
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus.ToFriendlyString();
     }

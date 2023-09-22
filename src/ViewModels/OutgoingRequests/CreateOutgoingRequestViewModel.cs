@@ -9,7 +9,7 @@ public class CreateOutgoingRequestViewModel
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
     [Display(Name = "Education organization")]
-    [Required(ErrorMessage = "Education Organization is required")]
+    // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
 
     [Display(Name = "Student")]
@@ -62,7 +62,7 @@ public class CreateOutgoingRequestViewModel
     public List<string>? Contents { get; set; }
 
     [Display(Name = "Request Status")]
-    [Required(ErrorMessage = "Request Status is required")]
+    // [Required(ErrorMessage = "Request Status is required")]
     public RequestStatus RequestStatus { get; set; } = RequestStatus.Draft;
 
     [Display(Name = "Files")]

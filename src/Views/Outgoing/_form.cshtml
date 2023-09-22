@@ -1,4 +1,4 @@
-@model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@model OregonNexus.Broker.Web.ViewModels.OutgoingRequests.CreateOutgoingRequestViewModel
 
 <div class="space-y-10 divide-y divide-gray-900/10">
   <div class="px-4 sm:px-0">
@@ -7,7 +7,7 @@
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Student information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Provide basic information about the student being enrolled.</p>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Basic information about the student being released.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
@@ -18,18 +18,25 @@
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="StudentUniqueId">@Html.ValidationMessageFor(m => m.StudentUniqueId)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.SisNumber, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-                <div class="mt-2">
-                  <input asp-for="SisNumber" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="SisNumber">@Html.ValidationMessageFor(m => m.SisNumber)</p>
-              </div>
-              <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.Id, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <input asp-for="Id" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="Id">@Html.ValidationMessageFor(m => m.Id)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.EdfiId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="EdfiId" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="EdfiId">@Html.ValidationMessageFor(m => m.EdfiId)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.EdfiStudentUniqueId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="EdfiStudentUniqueId" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="EdfiStudentUniqueId">@Html.ValidationMessageFor(m => m.EdfiStudentUniqueId)</p>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
@@ -59,7 +66,7 @@
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Sending school information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Provide information about the student's releasing school.</p>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Information about the student's releasing school.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
@@ -88,7 +95,7 @@
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Receiving school information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Provide information about the student's enrolling school.</p>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Information about the student's enrolling school.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
@@ -117,7 +124,7 @@
           <div class="grid gap-6 pb-8">
             <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Additional information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Provide any additional information about the student's request.</p>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Additional information about the student's request.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-6">
