@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Extensions.RequestStatuses;
+using OregonNexus.Broker.Web.Models.JsonDocuments;
 
 namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 
@@ -35,10 +36,12 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
+        var student = outgoingRequest.Student?.DeserializeFromJsonDocument<StudentJsonModel>();
+
         Id = outgoingRequest.Id;
         District = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         School = outgoingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = outgoingRequest.Student?.ToString();
+        Student = $"{student?.FirstName} {student?.LastSurname}";
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus.ToFriendlyString();
     }

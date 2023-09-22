@@ -14,7 +14,7 @@ using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
-using OregonNexus.Broker.Web.Helpers;
+using OregonNexus.Broker.Web.Models.JsonDocuments;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -134,9 +134,31 @@ public class IncomingController : Controller
         if (incomingRequest is null) return NotFound();
 
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+
+        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyStudentJsonModel>();
+
+        var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
+            Id = incomingRequest.Id.ToString(),
+            EducationOrganizations = educationOrganizations,
+            EducationOrganizationId = incomingRequest.EducationOrganizationId,
+            RequestId = incomingRequest.Id,
+            SisNumber = synergyStudentModel?.SisNumber,
+            StudentUniqueId = requestManifest?.Student?.StudentUniqueId,
+            FirstName = requestManifest?.Student?.FirstName,
+            MiddleName = requestManifest?.Student?.MiddleName,
+            LastSurname = requestManifest?.Student?.LastSurname,
+            FromDistrict = requestManifest?.From?.District,
+            FromSchool = requestManifest?.From?.School,
+            FromEmail = requestManifest?.From?.Email,
+            ToDistrict = requestManifest?.To?.District,
+            ToSchool = requestManifest?.To?.School,
+            ToEmail = requestManifest?.To?.Email,
+            Note = requestManifest?.Note,
+            Contents = requestManifest?.Contents,
+            RequestStatus = incomingRequest.RequestStatus
         };
 
         return View(viewModel);
