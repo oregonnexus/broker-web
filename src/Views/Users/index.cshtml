@@ -193,13 +193,21 @@
             <nav class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6" aria-label="Pagination">
                 <div class="hidden sm:block">
                     <p class="text-sm text-gray-700">
-                        Showing
-                        <span class="font-medium">@Model.Showing</span>
-                        to
-                        <span class="font-medium">@Model.ShowingTo</span>
-                        of
-                        <span class="font-medium">@Model.TotalItems</span>
-                        results
+                        @if(!Model.Items.Any()) {
+                            <span>No results found.</span>
+                        }
+                        else
+                        {
+                            <span>
+                                Showing
+                                <span class="font-medium">@Model.Showing</span>
+                                to
+                                <span class="font-medium">@Model.ShowingTo</span>
+                                of
+                                <span class="font-medium">@Model.TotalItems</span>
+                                results
+                            </span>
+                        }
                     </p>
                 </div>
                 <div class="flex flex-1 justify-between sm:justify-end">
