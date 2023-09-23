@@ -9,6 +9,7 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
+using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -18,21 +19,18 @@ public class HomeController : AuthenticatedController
     private readonly ILogger<HomeController> _logger;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
-    private readonly IRepository<Request> _incomingRequestRepository;
-    private readonly IRepository<Request> _outgoingRequestRepository;
+    private readonly IRepository<Request> _requestRepository;
 
     public HomeController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<User> userRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IRepository<Request> incomingRequestRepository,
-        IRepository<Request> outgoingRequestRepository,
+        IRepository<Request> requestRepository,
         ILogger<HomeController> logger) : base(httpContextAccessor)
     {
         _userRepository = userRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
-        _incomingRequestRepository = incomingRequestRepository;
-        _outgoingRequestRepository = outgoingRequestRepository;
+        _requestRepository = requestRepository;
         _logger = logger;
     }
 
@@ -48,21 +46,25 @@ public class HomeController : AuthenticatedController
         // To support All-time, the end date should be nullable.
         // For example, Outgoing Processor does not need to see incoming transfer request data.
 
-        // Only take 5, displaying latest incoming requests
-        // Need the total count as well
-        var incomingRequests = (await _incomingRequestRepository.ListAsync(cancellationToken))
+        var requests = (await _requestRepository.ListAsync(cancellationToken))
             .OrderByDescending(incomingRequest => incomingRequest.CreatedAt)
             .ToList();
 
+        // Only take 5, displaying latest incoming requests
+        // Need the total count as well
+        var incomingRequests = requests
+            .Where(incomingRequest => incomingRequest.RequestProcessUserId.HasValue);
+
         // Only take 5, displaying latest outgoing requests
         // Need the total count as well
-        var outgoingRequests = (await _outgoingRequestRepository.ListAsync(cancellationToken))
-            .OrderByDescending(outgoingRequest => outgoingRequest.CreatedAt)
-            .ToList();
+        var outgoingRequests = requests
+            .Where(incomingRequest => incomingRequest.ResponseProcessUserId.HasValue);
 
         var usersCount = await _userRepository.CountAsync(cancellationToken);
 
-        var organizations = (await _educationOrganizationRepository.ListAsync(cancellationToken))
+        var educationOrganizations = (await _educationOrganizationRepository.ListAsync(cancellationToken))
+            .OrderByDescending(organization => organization.CreatedAt)
+            .Select(educationOrganization => new EducationOrganizationRequestViewModel(educationOrganization))
             .ToList();
 
         // Temporary, taking 5 here
@@ -79,9 +81,10 @@ public class HomeController : AuthenticatedController
 
         var tempData = new DashboardViewModel()
         {
-            InitialRequestsCount = incomingRequests.Count,
-            OutgoingRequestsCount = outgoingRequests.Count,
-            OrganizationsCount = organizations.Count,
+            InitialRequestsCount = incomingRequests.Count(),
+            OutgoingRequestsCount = outgoingRequests.Count(),
+            EducationOrganizationsCount = educationOrganizations.Count,
+            EducationOrganizations = educationOrganizations,
             UsersCount = usersCount,
             LatestIncomingRequests = incomingRequestViewModels,
             LatestOutgoingRequests = outgoingRequestViewModels,

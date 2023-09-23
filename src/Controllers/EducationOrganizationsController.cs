@@ -160,7 +160,7 @@ public class EducationOrganizationsController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Updated organization {organization.Name} ({organization.Id}).";
 
-        return RedirectToAction("Edit", new { Id = organization.Id });
+        return RedirectToAction(nameof(Index));
     }
 
     [ValidateAntiForgeryToken]
