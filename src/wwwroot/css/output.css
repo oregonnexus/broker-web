@@ -1765,11 +1765,6 @@ select {
   color: rgb(22 101 52 / var(--tw-text-opacity));
 }
 
-.text-indigo-600 {
-  --tw-text-opacity: 1;
-  color: rgb(79 70 229 / var(--tw-text-opacity));
-}
-
 .text-red-400 {
   --tw-text-opacity: 1;
   color: rgb(248 113 113 / var(--tw-text-opacity));
@@ -1788,6 +1783,11 @@ select {
 .text-tertiary-300 {
   --tw-text-opacity: 1;
   color: rgb(103 188 227 / var(--tw-text-opacity));
+}
+
+.text-tertiary-600 {
+  --tw-text-opacity: 1;
+  color: rgb(66 148 201 / var(--tw-text-opacity));
 }
 
 .text-tertiary-700 {
@@ -2011,9 +2011,9 @@ select {
   --tw-ring-color: rgb(22 163 74 / var(--tw-ring-opacity));
 }
 
-.focus\:ring-indigo-600:focus {
+.focus\:ring-tertiary-600:focus {
   --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(79 70 229 / var(--tw-ring-opacity));
+  --tw-ring-color: rgb(66 148 201 / var(--tw-ring-opacity));
 }
 
 .focus\:ring-tertiary-700:focus {

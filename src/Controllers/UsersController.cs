@@ -105,7 +105,7 @@ public class UsersController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Created user {data.Email} ({user.Id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Update(Guid Id)
@@ -169,7 +169,7 @@ public class UsersController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Updated user {data.Email} ({user.Id}).";
 
-        return RedirectToAction("Edit", new { Id = data.UserId });
+        return RedirectToAction(nameof(Index));
     }
 
     [ValidateAntiForgeryToken]
@@ -189,7 +189,7 @@ public class UsersController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Deleted user {identityUser.Email} ({id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
 }

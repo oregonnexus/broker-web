@@ -63,7 +63,7 @@ public class LoginController : AuthenticatedController
         _db.Add(user);
         await _db.SaveChangesAsync();
         
-        return RedirectToAction("index");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]

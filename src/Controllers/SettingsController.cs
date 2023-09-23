@@ -156,7 +156,7 @@ public class SettingsController : AuthenticatedController
         if (!_focusedDistrictEdOrg.HasValue)
         {
             TempData[VoiceTone.Critical] = $"Must be focused to a district.";
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         return null;

@@ -99,7 +99,7 @@ public class EducationOrganizationsController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Created organization {organization.Name} ({organization.Id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Update(Guid Id)
@@ -172,7 +172,7 @@ public class EducationOrganizationsController : AuthenticatedController
 
         TempData[VoiceTone.Positive] = $"Deleted organization {organization.Name} ({organization.Id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
 }
