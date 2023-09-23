@@ -10,8 +10,6 @@ using OregonNexus.Broker.Web.Models.Paginations;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
-using Microsoft.AspNetCore.Http;
-using System.Linq.Expressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -35,8 +33,6 @@ public class EducationOrganizationsController : AuthenticatedController
       CancellationToken cancellationToken)
     {
         RefreshSession();
-        Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
-            request.Id == GetFocusOrganizationId();
 
         var searchExpressions = model.BuildSearchExpressions();
 
@@ -46,7 +42,6 @@ public class EducationOrganizationsController : AuthenticatedController
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
-            .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
             .Build();
