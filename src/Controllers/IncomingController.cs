@@ -15,11 +15,12 @@ using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
+using System.Linq.Expressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "TransferRecords")]
-public class IncomingController : Controller
+public class IncomingController : AuthenticatedController
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
@@ -27,14 +28,15 @@ public class IncomingController : Controller
     private readonly IPayloadContentService _payloadContentService;
 
     public IncomingController(
+        IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IRepository<Request> incomingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
-        IPayloadContentService payloadContentService)
+        IRepository<Request> incomingRequestRepository,
+        IPayloadContentService payloadContentService) : base(httpContextAccessor)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
-        _incomingRequestRepository = incomingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
+        _incomingRequestRepository = incomingRequestRepository;
         _payloadContentService = payloadContentService;
     }
 
@@ -42,14 +44,21 @@ public class IncomingController : Controller
         IncomingRequestModel model,
         CancellationToken cancellationToken)
     {
+        RefreshSession();
+
         var searchExpressions = model.BuildSearchExpressions();
 
         var sortExpression = model.BuildSortExpression();
+
+        var organizationId = GetFocusOrganizationId();
+        Expression<Func<Request, bool>> focusOrganizationExpression = request =>
+            request.EducationOrganizationId == organizationId;
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
+            .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(incomingRequest => incomingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -84,7 +93,8 @@ public class IncomingController : Controller
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
+            EducationOrganizations = educationOrganizations,
+            EducationOrganizationId = GetFocusOrganizationId()
         };
 
         return View(viewModel);
@@ -101,6 +111,9 @@ public class IncomingController : Controller
 
             var synergyStudentModel = viewModel.MapToSynergyJsonModel();
             var requestManifest = viewModel.MapToRequestManifestJsonModel();
+
+            //todo: figure out if this can be changed.
+            viewModel.EducationOrganizationId = GetFocusOrganizationId();
 
             var today = DateTime.UtcNow;
             var incomingRequest = new Request

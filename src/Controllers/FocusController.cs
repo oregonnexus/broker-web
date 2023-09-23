@@ -9,15 +9,12 @@ using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class FocusController : Controller
+public class FocusController : AuthenticatedController
 {
-    private readonly ISession _session;
-
     public FocusController(
-        ISession session
-    )
+        IHttpContextAccessor httpContextAccessor
+    ) : base(httpContextAccessor)
     {
-        _session = session;
     }
 
     [HttpPost]
@@ -26,7 +23,7 @@ public class FocusController : Controller
     {
         if (!string.IsNullOrWhiteSpace(model.FocusEducationOrganizationId))
         {
-            _session.SetString(FocusOrganizationCurrentKey, model.FocusEducationOrganizationId);
+            _httpContextAccessor.HttpContext?.Session.SetString(FocusOrganizationCurrentKey, model.FocusEducationOrganizationId);
         }
         else
         {

@@ -16,16 +16,17 @@ using OregonNexus.Broker.Web.ViewModels.Users;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UsersController : Controller
+public class UsersController : AuthenticatedController
 {
     private readonly IRepository<User> _userRepository;
     private readonly BrokerDbContext _brokerDbContext;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
     public UsersController(
+        IHttpContextAccessor httpContextAccessor,
         IRepository<User> userRepository,
         BrokerDbContext brokerDbContext,
-        UserManager<IdentityUser<Guid>> userManager)
+        UserManager<IdentityUser<Guid>> userManager) : base(httpContextAccessor)
     {
         _userRepository = userRepository;
         _brokerDbContext = brokerDbContext;
@@ -36,6 +37,8 @@ public class UsersController : Controller
       UserRequestModel model,
       CancellationToken cancellationToken)
     {
+        RefreshSession();
+
         var searchExpressions = model.BuildSearchExpressions();
 
         var sortExpression = model.BuildSortExpression();

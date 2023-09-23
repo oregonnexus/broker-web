@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
@@ -11,7 +12,7 @@ using OregonNexus.Broker.Web.Models;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UserRolesController : Controller
+public class UserRolesController : AuthenticatedController
 {
     private readonly IRepository<UserRole> _userRoleRepo;
 
@@ -19,7 +20,9 @@ public class UserRolesController : Controller
 
     private readonly EducationOrganizationHelper _edOrgHelper;
     
-    public UserRolesController(IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper)
+    public UserRolesController(
+        IHttpContextAccessor httpContextAccessor,
+        IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper) : base(httpContextAccessor)
     {
         _userRoleRepo = userRoleRepo;
         _userRepo = userRepo;

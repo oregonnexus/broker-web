@@ -14,11 +14,12 @@ using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
+using System.Linq.Expressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "TransferRecords")]
-public class OutgoingController : Controller
+public class OutgoingController : AuthenticatedController
 {
     private readonly IRepository<Request> _outgoingRequestRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
@@ -27,10 +28,11 @@ public class OutgoingController : Controller
 
 
     public OutgoingController(
+        IHttpContextAccessor httpContextAccessor,
         IRepository<Request> outgoingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IPayloadContentService payloadContentService)
+        IPayloadContentService payloadContentService) : base(httpContextAccessor)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
@@ -42,6 +44,12 @@ public class OutgoingController : Controller
       OutgoingRequestModel model,
       CancellationToken cancellationToken)
     {
+        RefreshSession();
+
+        var organizationId = GetFocusOrganizationId();
+        Expression<Func<Request, bool>> focusOrganizationExpression = request =>
+    request.EducationOrganizationId == organizationId;
+
         var searchExpressions = model.BuildSearchExpressions();
 
         var sortExpression = model.BuildSortExpression();
@@ -50,6 +58,7 @@ public class OutgoingController : Controller
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
+            .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(outgoingRequest => outgoingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -84,7 +93,8 @@ public class OutgoingController : Controller
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
         var viewModel = new CreateOutgoingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
+            EducationOrganizations = educationOrganizations,
+            EducationOrganizationId = GetFocusOrganizationId()
         };
 
         return View(viewModel);
@@ -102,10 +112,13 @@ public class OutgoingController : Controller
             var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
             var responseManifest = viewModel.MapToResponseManifestJsonModel();
 
+            //todo: figure out if this can be changed.
+            viewModel.EducationOrganizationId = GetFocusOrganizationId();
+
             var today = DateTime.UtcNow;
             var outgoingRequest = new Request
             {
-                EducationOrganizationId = viewModel.EducationOrganizationId,
+                EducationOrganizationId = GetFocusOrganizationId(),
                 Student = edfiStudentModel,
                 ResponseManifest = responseManifest,
                 InitialRequestSentDate = today,

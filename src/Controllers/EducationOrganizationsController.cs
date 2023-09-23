@@ -10,18 +10,21 @@ using OregonNexus.Broker.Web.Models.Paginations;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
+using Microsoft.AspNetCore.Http;
+using System.Linq.Expressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class EducationOrganizationsController : Controller
+public class EducationOrganizationsController : AuthenticatedController
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly EducationOrganizationHelper _educationOrganizationHelper;
 
     public EducationOrganizationsController(
+        IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        EducationOrganizationHelper educationOrganizationHelper)
+        EducationOrganizationHelper educationOrganizationHelper) : base(httpContextAccessor)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _educationOrganizationHelper = educationOrganizationHelper;
@@ -31,6 +34,10 @@ public class EducationOrganizationsController : Controller
       EducationOrganizationRequestModel model,
       CancellationToken cancellationToken)
     {
+        RefreshSession();
+        Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
+            request.Id == GetFocusOrganizationId();
+
         var searchExpressions = model.BuildSearchExpressions();
 
         var sortExpression = model.BuildSortExpression();
@@ -39,6 +46,7 @@ public class EducationOrganizationsController : Controller
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
+            .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
             .Build();

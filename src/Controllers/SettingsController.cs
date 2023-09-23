@@ -23,7 +23,7 @@ using OregonNexus.Broker.Web.Models;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class SettingsController : Controller
+public class SettingsController : AuthenticatedController
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;
@@ -33,7 +33,9 @@ public class SettingsController : Controller
 
     private Guid? _focusedDistrictEdOrg { get; set; }
 
-    public SettingsController(ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer)
+    public SettingsController(
+        IHttpContextAccessor httpContextAccessor,
+        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
         

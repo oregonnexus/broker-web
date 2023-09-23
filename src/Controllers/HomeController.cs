@@ -2,7 +2,6 @@
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
 using System.Diagnostics;
-using InertiaAdapter;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Web.Models;
@@ -14,7 +13,7 @@ using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class HomeController : Controller
+public class HomeController : AuthenticatedController
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IRepository<User> _userRepository;
@@ -23,11 +22,12 @@ public class HomeController : Controller
     private readonly IRepository<Request> _outgoingRequestRepository;
 
     public HomeController(
+        IHttpContextAccessor httpContextAccessor,
         IRepository<User> userRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<Request> incomingRequestRepository,
         IRepository<Request> outgoingRequestRepository,
-        ILogger<HomeController> logger)
+        ILogger<HomeController> logger) : base(httpContextAccessor)
     {
         _userRepository = userRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
