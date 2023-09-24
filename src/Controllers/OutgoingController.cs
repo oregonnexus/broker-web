@@ -16,11 +16,11 @@ namespace OregonNexus.Broker.Web.Controllers;
 [Authorize(Policy = "TransferRecords")]
 public class OutgoingController : Controller
 {
-    private readonly IRepository<OutgoingRequest> _repo;
+    private readonly IRepository<Request> _repo;
 
     private readonly FocusHelper _focusHelper;
     
-    public OutgoingController(IRepository<OutgoingRequest> repo, FocusHelper focusHelper)
+    public OutgoingController(IRepository<Request> repo, FocusHelper focusHelper)
     {
         _repo = repo;
         _focusHelper = focusHelper;
@@ -39,7 +39,7 @@ public class OutgoingController : Controller
         var details = new Dictionary<string, object>
         {
             {
-                typeof(Student).FullName,
+                typeof(Student).FullName!,
                 new Student
                 {
                     LastName = "Doe",
@@ -52,19 +52,21 @@ public class OutgoingController : Controller
             }
         };
         
-        var request = new OutgoingRequest()
-        {
-            RequestDate = DateTime.UtcNow,
-            RequestStatus = RequestStatus.Sent,
-            EducationOrganizationId = await _focusHelper.CurrentDistrictEdOrgFocus(),
-            RequestDetails = new RequestDetails()
-            {
-                CreateDate = DateTime.UtcNow.AddHours(-1),
-                PayloadType = typeof(StudentCumulativeRecord).FullName,
-                Details = details
-            }
-        };
-        await _repo.AddAsync(request);
+        // var request = new OutgoingRequest()
+        // {
+        //     RequestDate = DateTime.UtcNow,
+        //     RequestStatus = RequestStatus.Sent,
+        //     EducationOrganizationId = await _focusHelper.CurrentDistrictEdOrgFocus(),
+        //     /*
+        //     RequestDetails = new RequestDetails()
+        //     {
+        //         CreateDate = DateTime.UtcNow.AddHours(-1),
+        //         PayloadType = typeof(StudentCumulativeRecord).FullName,
+        //         Details = details
+        //     }
+        //     */
+        // };
+        // await _repo.AddAsync(request);
         
         return RedirectToAction("Index");
     }
