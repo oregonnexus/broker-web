@@ -27,41 +27,36 @@ builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<ScopedHttpContext>();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
-var msSqlConnectionString = builder.Configuration.GetConnectionString("MsSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'MsSqlBrokerDatabase' not found.");
-var pgSqlConnectionString = builder.Configuration.GetConnectionString("PgSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'PgSqlBrokerDatabase' not found.");
+builder.Services.AddBrokerDataContext(builder.Configuration);
 
-builder.Services.AddDbContext<BrokerDbContext>(options => {
-    if (msSqlConnectionString is not null && msSqlConnectionString != "")
-    {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("MsSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.SqlServer")
-        );
-    }
-    if (pgSqlConnectionString is not null && pgSqlConnectionString != "")
-    {
-        options.UseNpgsql(
-            builder.Configuration.GetConnectionString("PgSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.PostgreSQL")
-        );
-    }
-}
-);
+// var msSqlConnectionString = builder.Configuration.GetConnectionString("MsSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'MsSqlBrokerDatabase' not found.");
+// var pgSqlConnectionString = builder.Configuration.GetConnectionString("PgSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'PgSqlBrokerDatabase' not found.");
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
+// builder.Services.AddDbContext<BrokerDbContext>(options => {
+//     if (msSqlConnectionString is not null && msSqlConnectionString != "")
+//     {
+//         options.UseSqlServer(
+//             builder.Configuration.GetConnectionString("MsSqlBrokerDatabase")!,
+//             x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.SqlServer")
+//         );
+//     }
+//     if (pgSqlConnectionString is not null && pgSqlConnectionString != "")
+//     {
+//         options.UseNpgsql(
+//             builder.Configuration.GetConnectionString("PgSqlBrokerDatabase")!,
+//             x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.PostgreSQL")
+//         );
+//     }
+// }
+// );
+
+// builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+// builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
 foreach(var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
     builder.Services.AddScoped(assembly, assembly);
 }
-
-builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
-{
-    options.User.RequireUniqueEmail = false;
-})
-.AddEntityFrameworkStores<BrokerDbContext>()
-.AddTokenProvider<DataProtectorTokenProvider<IdentityUser<Guid>>>(TokenOptions.DefaultProvider);
 
 builder.Services.ConfigureApplicationCookie(options => 
 {
