@@ -1,4 +1,5 @@
-﻿@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>
+﻿@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -21,7 +22,7 @@
                 asp-controller="Incoming"
                 asp-action="Create"
                 asp-authorize
-                asp-policy="TransferRecords"
+                asp-policy="@TransferIncomingRecords"
                 class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
             >
                 Make Incoming Request
@@ -197,7 +198,7 @@
                                             asp-action="Update"
                                             asp-route-requestId="@incomingRequest.Id"
                                             asp-authorize
-                                            asp-policy="TransferRecords"
+                                            asp-policy="@TransferIncomingRecords"
                                             class="text-tertiary-700 hover:text-tertiary-900"
                                         >
                                             Edit

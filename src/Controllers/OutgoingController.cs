@@ -14,12 +14,10 @@ using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
-using System.Linq.Expressions;
-using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
-
+using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 namespace OregonNexus.Broker.Web.Controllers;
 
-[Authorize(Policy = "TransferRecords")]
+[Authorize(Policy = TransferOutGoingRecords)]
 public class OutgoingController : AuthenticatedController
 {
     private readonly IRepository<Request> _outgoingRequestRepository;

@@ -16,6 +16,7 @@ using OregonNexus.Broker.Domain;
 using Microsoft.AspNetCore.Authentication;
 using OregonNexus.Broker.Web.Extensions.Routes;
 using OregonNexus.Broker.Web.Services.PayloadContents;
+using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,7 +115,15 @@ builder.Services.AddAuthorization(options => {
     options.AddPolicy("TransferRecords",
       policy => policy.RequireClaim("TransferRecords", "true")
     );
+
+    options.AddPolicy(TransferIncomingRecords,
+      policy => policy.RequireClaim(TransferIncomingRecords, "true")
+    );
+        options.AddPolicy(TransferOutGoingRecords,
+      policy => policy.RequireClaim(TransferOutGoingRecords, "true")
+    );
 });
+
 builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>();
 
 builder.Services.AddControllersWithViews();

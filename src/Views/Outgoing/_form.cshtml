@@ -1,4 +1,5 @@
 @model OregonNexus.Broker.Web.ViewModels.OutgoingRequests.CreateOutgoingRequestViewModel
+@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
   <header class="relative isolate">
@@ -23,7 +24,7 @@
             asp-controller="Outgoing"
             asp-action="Index"
             asp-authorize
-            asp-policy="TransferRecords"
+            asp-policy="@TransferOutGoingRecords"
             class="text-sm font-semibold leading-6 text-gray-900"
           >
             Back to list

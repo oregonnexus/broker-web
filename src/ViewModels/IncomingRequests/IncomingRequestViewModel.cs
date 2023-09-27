@@ -43,7 +43,8 @@ public class IncomingRequestViewModel
         School = requestManifest?.From?.School ?? string.Empty;
         Student = $"{requestManifest?.Student?.FirstName} {requestManifest?.Student?.LastSurname}";
         Date = incomingRequest.CreatedAt;
-        Status = incomingRequest.RequestStatus.ToFriendlyString();
+        Status = incomingRequest.RequestStatus == RequestStatus.Approved
+                ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
     }
 
     public IncomingRequestViewModel(

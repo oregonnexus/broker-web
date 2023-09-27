@@ -1,4 +1,5 @@
-﻿@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.OutgoingRequests.OutgoingRequestViewModel>
+﻿@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.OutgoingRequests.OutgoingRequestViewModel>
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -186,7 +187,7 @@
                                             asp-action="Update"
                                             asp-route-requestId="@outgoingRequest.Id"
                                             asp-authorize
-                                            asp-policy="TransferRecords"
+                                            asp-policy="@TransferOutGoingRecords"
                                             class="text-tertiary-700 hover:text-tertiary-900"
                                         >
                                             View

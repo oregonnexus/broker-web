@@ -49,6 +49,7 @@
     <None Remove="Services\PayloadContents\" />
     <None Remove="Models\Results\" />
     <None Remove="Constants\Sessions\" />
+    <None Remove="Constants\Claims\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\Routes\" />
@@ -59,6 +60,7 @@
     <Folder Include="Services\PayloadContents\" />
     <Folder Include="Models\Results\" />
     <Folder Include="Constants\Sessions\" />
+    <Folder Include="Constants\Claims\" />
   </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
     <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models.Searchables;
 #nullable disable
@@ -12,7 +13,20 @@ public class OutgoingRequestModel : SearchableModelWithPagination
     public string Student { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public string Status { get; set; }
+    private string _status = string.Empty;
+
+    [Display(Name = "Status")]
+    public string Status
+    {
+        get
+        {
+            return _status;
+        }
+        set
+        {
+            _status = value == "Sent" ? "WaitingApproval" : value;
+        }
+    }
 
     public Expression<Func<Request, object>> BuildSortExpression()
     {

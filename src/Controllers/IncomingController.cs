@@ -16,10 +16,11 @@ using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using System.Linq.Expressions;
+using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
-[Authorize(Policy = "TransferRecords")]
+[Authorize(Policy = TransferIncomingRecords)]
 public class IncomingController : AuthenticatedController
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
@@ -45,7 +46,6 @@ public class IncomingController : AuthenticatedController
         CancellationToken cancellationToken)
     {
         RefreshSession();
-
         var searchExpressions = model.BuildSearchExpressions();
 
         var sortExpression = model.BuildSortExpression();

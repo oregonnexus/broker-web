@@ -43,7 +43,8 @@ public class OutgoingRequestViewModel
         School = responseManifest?.To?.School ?? string.Empty;
         Student = $"{responseManifest?.Student?.FirstName} {responseManifest?.Student?.LastSurname}";
         Date = outgoingRequest.CreatedAt;
-        Status = outgoingRequest.RequestStatus.ToFriendlyString();
+        Status = outgoingRequest.RequestStatus == RequestStatus.Sent
+                ? RequestStatus.WaitingApproval.ToFriendlyString() : outgoingRequest.RequestStatus.ToFriendlyString();
     }
 
     public OutgoingRequestViewModel(

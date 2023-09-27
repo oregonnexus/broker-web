@@ -1,4 +1,5 @@
 @model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 <div class="space-y-10 divide-y divide-gray-900/10">
   <div class="px-4 sm:px-0">
@@ -109,7 +110,7 @@
           asp-controller="Incoming"
           asp-action="Index"
           asp-authorize
-          asp-policy="TransferRecords"
+          asp-policy="@TransferIncomingRecords"
           class="text-sm font-semibold leading-6 text-gray-900"
         >
           Cancel
