@@ -99,6 +99,7 @@ public class OutgoingController : AuthenticatedController
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = outgoingRequest.EducationOrganizationId,
             RequestId = outgoingRequest.Id,
+            Date = outgoingRequest.CreatedAt,
             EdfiId = edfiStudent?.Student?.Id,
             EdfiStudentUniqueId = responseManifest?.Student?.StudentUniqueId,
             StudentUniqueId = responseManifest?.Student?.StudentUniqueId,

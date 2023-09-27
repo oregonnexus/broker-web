@@ -8,7 +8,6 @@ public class CreateOutgoingRequestViewModel
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
-
     [Display(Name = "School")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
@@ -16,6 +15,9 @@ public class CreateOutgoingRequestViewModel
     [Display(Name = "Student")]
     [Obsolete]
     public string? Student { get; set; } = string.Empty;
+
+    [Display(Name = "Date")]
+    public DateTimeOffset Date { get; set; }
 
     [Display(Name = "EdFi Student Id")]
     public string? EdfiId { get; set; }
@@ -56,7 +58,7 @@ public class CreateOutgoingRequestViewModel
     [Display(Name = "Clerk's Email")]
     public string? ToEmail { get; set; }
 
-    [Display(Name = "Note")]
+    [Display(Name = "Notes")]
     public string? Note { get; set; }
 
     [Display(Name = "Contents")]

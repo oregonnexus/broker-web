@@ -7,8 +7,84 @@
 }
 
 <div class="grid gap-6">
-  <form method="post" asp-action="Update" autocomplete="off">
+  <form x-data="outgoingForm" method="post" asp-action="Update" autocomplete="off">
     <input type="hidden" name="_METHOD" value="PUT" />
     <partial name="_form" for="@Model" />
   </form>
 </div>
+
+
+@section scripts
+{
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('outgoingForm', () => {
+        return {
+          studentSsidNumber: null,
+          students: [
+            {
+              studentUsi: '635897',
+              ssidNumber: '8000000000001',
+              lastName: 'Deshawn',
+              firstName: 'Dave',
+              middleName: 'Den',
+              suffix: 'Jr',
+              gender: 'M',
+              birthDate: '2010-05-04',
+              get fullName() {
+                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
+              },
+            },
+            {
+              studentUsi: '47845',
+              ssidNumber: '8000000000002',
+              lastName: 'Kiril',
+              firstName: 'Karl',
+              middleName: 'K',
+              suffix: '',
+              gender: 'M',
+              birthDate: '2009-08-10',
+              get fullName() {
+                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
+              },
+            },
+            {
+              studentUsi: '36989852',
+              ssidNumber: '8000000000003',
+              lastName: 'Je\'even',
+              firstName: 'James',
+              middleName: 'Jack',
+              suffix: 'III',
+              gender: 'M',
+              birthDate: '2010-07-06',
+              get fullName() {
+                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
+              },
+            },
+            {
+              studentUsi: '745214',
+              ssidNumber: '8000000000004',
+              lastName: 'Maris',
+              firstName: 'Meme',
+              middleName: 'Marie',
+              suffix: '',
+              gender: 'F',
+              birthDate: '2014-12-24',
+              get fullName() {
+                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
+              },
+            },
+          ],
+
+          get selectedStudent() {
+            return this.students.find(it => it.ssidNumber === this.studentSsidNumber)
+          },
+
+          get isMatchingStudent() {
+            return this.selectedStudent?.ssidNumber === @Html.Raw(Json.Serialize(@Model.StudentUniqueId))
+          },
+        }
+    })
+  })
+</script>
+}
