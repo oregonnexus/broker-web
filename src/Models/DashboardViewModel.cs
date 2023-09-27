@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;

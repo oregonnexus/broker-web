@@ -34,7 +34,7 @@ public class OutgoingRequestModel : SearchableModelWithPagination
     {
         var searchExpressions = new List<Expression<Func<Request, bool>>>()
         {
-            request => request.EducationOrganizationId == educationOrganizationId
+            request => (request.EducationOrganizationId == educationOrganizationId)
                 && request.RequestStatus != RequestStatus.Draft
         };
 

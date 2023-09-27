@@ -31,6 +31,9 @@ public class FocusHelper
 
         if (currentUser?.Id == null) return selectListItems;
 
+        var organizations = await _edOrgRepo.ListAsync();
+        organizations = organizations.OrderBy(x => x.ParentOrganization?.Name).ThenBy(x => x.Name).ToList();
+
         if (allEdOrgs == PermissionType.Read || allEdOrgs == PermissionType.Write)
         { 
             selectListItems.Add(new SelectListItem() {
@@ -39,8 +42,7 @@ public class FocusHelper
                     Selected = (_session.GetString(FocusOrganizationCurrentKey) == "ALL")
                 });
             
-            var organizations = await _edOrgRepo.ListAsync();
-            organizations = organizations.OrderBy(x => x.ParentOrganization?.Name).ThenBy(x => x.Name).ToList();
+        
 
             foreach(var organization in organizations)
             {
@@ -58,10 +60,10 @@ public class FocusHelper
             var userRoleSpec = new UserRolesByUserSpec(currentUser.Id);
             var userRoles = await _userRoleRepo.ListAsync(userRoleSpec);
 
-            foreach(var userRole in userRoles)
+            foreach(var userRole in userRoles.Where(role => role.EducationOrganization?.ParentOrganizationId is not null))
             {
                 selectListItems.Add(new SelectListItem() {
-                    Text = $"{userRole.EducationOrganization.ParentOrganization?.Name} / {userRole.EducationOrganization.Name}",
+                    Text = $"{userRole.EducationOrganization?.ParentOrganization?.Name} / {userRole.EducationOrganization?.Name}",
                     Value = userRole.EducationOrganizationId.ToString(),
                     Selected = (_session.GetString(FocusOrganizationCurrentKey) == userRole.EducationOrganizationId.ToString())
                 });

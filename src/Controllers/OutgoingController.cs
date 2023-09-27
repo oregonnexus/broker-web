@@ -47,7 +47,6 @@ public class OutgoingController : AuthenticatedController
         RefreshSession();
 
         var searchExpressions = model.BuildSearchExpressions(GetFocusOrganizationId());
-
         var sortExpression = model.BuildSortExpression();
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
@@ -81,58 +80,6 @@ public class OutgoingController : AuthenticatedController
             model.SearchBy);
 
         return View(result);
-    }
-
-    public async Task<IActionResult> Create()
-    {
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
-        var viewModel = new CreateOutgoingRequestViewModel
-        {
-            EducationOrganizations = educationOrganizations,
-            EducationOrganizationId = GetFocusOrganizationId()
-        };
-
-        return View(viewModel);
-    }
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateOutgoingRequestViewModel viewModel)
-    {
-        if (ModelState.IsValid)
-        {
-            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
-
-            var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
-            var responseManifest = viewModel.MapToResponseManifestJsonModel();
-
-            viewModel.EducationOrganizationId = GetFocusOrganizationId();
-
-            var today = DateTime.UtcNow;
-            var outgoingRequest = new Request
-            {
-                EducationOrganizationId = viewModel.EducationOrganizationId,
-                Student = edfiStudentModel,
-                ResponseManifest = responseManifest,
-                InitialRequestSentDate = today,
-                ResponseProcessUserId = userId,
-                RequestStatus = viewModel.RequestStatus,
-                CreatedAt = today,
-                CreatedBy = userId
-            };
-
-            await _outgoingRequestRepository.AddAsync(outgoingRequest);
-            await _outgoingRequestRepository.SaveChangesAsync();
-
-            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
-        viewModel.EducationOrganizations = educationOrganizations;
-        return View(viewModel);
     }
 
     public async Task<IActionResult> Update(Guid requestId)
