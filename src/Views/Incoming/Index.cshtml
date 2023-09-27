@@ -40,7 +40,7 @@
                     <label for="searchBy" class="sr-only">Search</label>
                     <div class="flex rounded-md shadow-sm">
                         <div class="flex-grow focus-within:z-10">
-                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:block" placeholder="Search by district, school, and student">
+                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:block" placeholder="Search by district, school, or student">
                         </div>
                         <button type="submit" class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -109,7 +109,7 @@
                                     <a asp-route-sortBy="district"
                                     asp-route-sortDir="@(Model.SortBy == "district" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        District
+                                        Sending District
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "district" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "district" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -121,7 +121,7 @@
                                     <a asp-route-sortBy="school"
                                     asp-route-sortDir="@(Model.SortBy == "school" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        School
+                                        Sending School
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "school" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "school" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -180,7 +180,14 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Student</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Date</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
+                                        <span
+                                            :class="{
+                                                'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Waiting Approval")),
+                                                'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Approved")),
+                                                'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
+                                            }"
+                                            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                        >
                                             @incomingRequest.Status
                                         </span>
                                     </td>
