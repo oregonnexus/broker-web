@@ -13,11 +13,26 @@ public class DashboardViewModel
     [Display(Name = "Outgoing Requests Count")]
     public int OutgoingRequestsCount { get; set; }
 
+    [Display(Name = "Draft Requests Count")]
+    public int DraftCount { get; set; }
+
+    [Display(Name = "Waiting Approval Requests Count")]
+    public int WaitingApprovalCount { get; set; }
+
+    [Display(Name = "Approved Requests Count")]
+    public int ApprovedCount { get; set; }
+
+    [Display(Name = "Declined Requests Count")]
+    public int DeclinedCount { get; set; }
+
     [Display(Name = "Organizations Count")]
     public int EducationOrganizationsCount { get; set; }
 
     [Display(Name = "Users Count")]
     public int UsersCount { get; set; }
+
+    [Display(Name = "Start date")]
+    public DateTime? StartDate { get; set; }
 
     [Display(Name = "Latest Incoming Requests")]
     public IEnumerable<IncomingRequestViewModel> LatestIncomingRequests { get; set; } = Enumerable.Empty<IncomingRequestViewModel>();
