@@ -118,7 +118,7 @@
         <input asp-for="RequestId" type="hidden" />
         <input asp-for="FromDistrict" :value="selectedEducationOrganization?.parentOrganization.name" type="hidden" />
         <input asp-for="FromSchool" :value="selectedEducationOrganization?.name" type="hidden" />
-        @if (@Model.RequestStatus == @OregonNexus.Broker.Domain.RequestStatus.Imported)
+        @if (@Model.RequestStatus == @OregonNexus.Broker.Domain.RequestStatus.Approved)
         {
           <div
             x-data="{
