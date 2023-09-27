@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models.Searchables;
 #nullable disable
@@ -39,15 +40,22 @@ public class IncomingRequestModel : SearchableModelWithPagination
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
         {
-            searchExpressions.Add(
-                request => request.EducationOrganization.ParentOrganization.Name
-                    .ToLower()
-                    .Contains(SearchBy.ToLower())
-                || request.EducationOrganization.Name
-                    .ToLower()
-                    .Contains(SearchBy.ToLower())
-                || request.Student.ToString().ToLower().Contains(SearchBy.ToLower())
-            );
+            var searchByLower = SearchBy.ToLower();
+            //todo: include student here..remove from controller.
+            //searchExpressions.Add(
+            //    request => request.EducationOrganization.ParentOrganization.Name
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.EducationOrganization.Name
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.Student.FirstName
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.Student.LastName
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //);
         }
 
         if (!string.IsNullOrWhiteSpace(District))

@@ -76,6 +76,14 @@ public class IncomingController : AuthenticatedController
         var incomingRequestViewModels = incomingRequests
             .Select(incomingRequest => new IncomingRequestViewModel(incomingRequest));
 
+        //todo: remove this, need to add student FK to request.
+        if (!string.IsNullOrWhiteSpace(model.SearchBy))
+        {
+            incomingRequestViewModels = incomingRequestViewModels
+                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.District.ToLower().Contains(model.SearchBy)
+                 || request.School.ToLower().Contains(model.SearchBy));
+            totalItems = incomingRequestViewModels.Count();
+        }
         var result = new PaginatedViewModel<IncomingRequestViewModel>(
             incomingRequestViewModels,
             totalItems,

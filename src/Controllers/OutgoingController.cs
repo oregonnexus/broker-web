@@ -15,6 +15,7 @@ using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using System.Linq.Expressions;
+using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -69,6 +70,15 @@ public class OutgoingController : AuthenticatedController
 
         var outgoingRequestViewModels = outgoingRequests
             .Select(outgoingRequest => new OutgoingRequestViewModel(outgoingRequest));
+
+        //todo: remove this, need to add student FK to request.
+        if (!string.IsNullOrWhiteSpace(model.SearchBy))
+        {
+            outgoingRequestViewModels = outgoingRequestViewModels
+                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.District.ToLower().Contains(model.SearchBy)
+                 || request.School.ToLower().Contains(model.SearchBy));
+            totalItems = outgoingRequestViewModels.Count();
+        }
 
         var result = new PaginatedViewModel<OutgoingRequestViewModel>(
             outgoingRequestViewModels,

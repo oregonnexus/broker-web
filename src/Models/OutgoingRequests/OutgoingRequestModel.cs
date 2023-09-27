@@ -36,19 +36,26 @@ public class OutgoingRequestModel : SearchableModelWithPagination
         {
             request => (request.EducationOrganizationId == educationOrganizationId)
                 && request.RequestStatus != RequestStatus.Draft
+                && request.RequestStatus != RequestStatus.WaitingToSend
         };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
         {
-            searchExpressions.Add(
-                request => request.EducationOrganization.ParentOrganization.Name
-                    .ToLower()
-                    .Contains(SearchBy.ToLower())
-                || request.EducationOrganization.Name
-                    .ToLower()
-                    .Contains(SearchBy.ToLower())
-                || request.Student.ToString().ToLower().Contains(SearchBy.ToLower())
-            );
+            //todo: include student here..remove from controller.
+            //searchExpressions.Add(
+            //    request => request.EducationOrganization.ParentOrganization.Name
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.EducationOrganization.Name
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.Student.FirstName
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //    || request.Student.LastName
+            //        .ToLower()
+            //        .Contains(searchByLower)
+            //);
         }
 
         if (!string.IsNullOrWhiteSpace(District))
