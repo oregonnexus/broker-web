@@ -128,18 +128,20 @@
                                             <div class="flex-auto">
                                                 <div class="flex items-start gap-x-3">
                                                     <div class="text-sm font-medium leading-6 text-gray-900">@incomingRequest.Student</div>
-                                                    <div :class="{
-                            'text-neutral-700 bg-neutral-50 ring-neutral-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Draft")),
-                            'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Sent")),
-                            'text-promote-700 bg-promote-50 ring-promote-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Imported")),
-                            'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Received")),
-                            'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
-                          }"
-                                                         class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset">
-                                                        @incomingRequest.Status
-                                                    </div>
-                                                </div>
-                                                <div class="mt-1 text-xs leading-5 text-gray-600">@incomingRequest.Date</div>
+                                                        <div
+                                                            :class="{
+                                                                'text-neutral-700 bg-neutral-50 ring-neutral-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Draft")),
+                                                                'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Sent")),
+                                                                'text-promote-700 bg-promote-50 ring-promote-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Imported")),
+                                                                'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Received")),
+                                                                'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
+                                                            }"
+                                                            class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
+                                                        >
+                                                          @incomingRequest.Status
+                                                      </div>
+                                                  </div>
+                                                  <div class="mt-1 text-xs leading-5 text-gray-600">@incomingRequest.Date</div>
                                             </div>
                                             <div class="absolute bottom-0 right-full h-px w-screen bg-gray-100"></div>
                                             <div class="absolute bottom-0 left-0 h-px w-screen bg-gray-100"></div>
@@ -186,12 +188,14 @@
                                             <div class="flex-auto">
                                                 <div class="flex items-start gap-x-3">
                                                     <div class="text-sm font-medium leading-6 text-gray-900">@outgoingRequest.Student</div>
-                                                    <div :class="{
-                            'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Waiting Approval")),
-                            'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Approved")),
-                            'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Denied")),
-                          }"
-                                                         class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset">
+                                                    <div
+                                                        :class="{
+                                                            'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Waiting Approval")),
+                                                            'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Approved")),
+                                                            'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Denied")),
+                                                        }"
+                                                          class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
+                                                      >
                                                         @outgoingRequest.Status
                                                     </div>
                                                 </div>
