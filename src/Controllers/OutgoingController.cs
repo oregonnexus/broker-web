@@ -46,11 +46,7 @@ public class OutgoingController : AuthenticatedController
     {
         RefreshSession();
 
-        var organizationId = GetFocusOrganizationId();
-        Expression<Func<Request, bool>> focusOrganizationExpression = request =>
-    request.EducationOrganizationId == organizationId;
-
-        var searchExpressions = model.BuildSearchExpressions();
+        var searchExpressions = model.BuildSearchExpressions(GetFocusOrganizationId());
 
         var sortExpression = model.BuildSortExpression();
 
@@ -58,7 +54,6 @@ public class OutgoingController : AuthenticatedController
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
-            .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(outgoingRequest => outgoingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -112,13 +107,12 @@ public class OutgoingController : AuthenticatedController
             var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
             var responseManifest = viewModel.MapToResponseManifestJsonModel();
 
-            //todo: figure out if this can be changed.
             viewModel.EducationOrganizationId = GetFocusOrganizationId();
 
             var today = DateTime.UtcNow;
             var outgoingRequest = new Request
             {
-                EducationOrganizationId = GetFocusOrganizationId(),
+                EducationOrganizationId = viewModel.EducationOrganizationId,
                 Student = edfiStudentModel,
                 ResponseManifest = responseManifest,
                 InitialRequestSentDate = today,

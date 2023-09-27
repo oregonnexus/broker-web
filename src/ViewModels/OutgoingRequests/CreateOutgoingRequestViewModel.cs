@@ -8,6 +8,7 @@ public class CreateOutgoingRequestViewModel
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
+
     [Display(Name = "Education organization")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }

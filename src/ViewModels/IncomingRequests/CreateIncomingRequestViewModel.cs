@@ -61,7 +61,7 @@ public class CreateIncomingRequestViewModel
 
     [Display(Name = "Request Status")]
     // [Required(ErrorMessage = "Request Status is required")]
-    public RequestStatus RequestStatus { get; set; } = RequestStatus.Draft;
+    public RequestStatus RequestStatus { get; set; } = RequestStatus.WaitingApproval;
 
     [Display(Name = "Files")]
     public IFormFileCollection Files { get; set; } = new FormFileCollection();

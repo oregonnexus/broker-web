@@ -52,7 +52,7 @@ public class IncomingController : AuthenticatedController
 
         var organizationId = GetFocusOrganizationId();
         Expression<Func<Request, bool>> focusOrganizationExpression = request =>
-            request.EducationOrganizationId == organizationId;
+            request.ToEducationOrganizationId == organizationId;
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
@@ -90,11 +90,15 @@ public class IncomingController : AuthenticatedController
 
     public async Task<IActionResult> Create()
     {
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizations = educationOrganizationList
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+            .ToList();
+
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations,
-            EducationOrganizationId = GetFocusOrganizationId()
+            EducationOrganizations = educationOrganizations
+                
         };
 
         return View(viewModel);
@@ -109,18 +113,34 @@ public class IncomingController : AuthenticatedController
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
+            var organizationId = GetFocusOrganizationId();
+
+            Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
+                request.Id == organizationId;
+
+            var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, 1)
+            .WithSearchExpression(focusOrganizationExpression)
+            .WithIncludeEntities(builder => builder
+                .Include(educationOrganization => educationOrganization.ParentOrganization))
+            .Build();
+
+            var educationOrganization = (await _educationOrganizationRepository.ListAsync(specification)).SingleOrDefault();
+
+            viewModel.ToDistrict = educationOrganization?.ParentOrganization?.Name;
+            viewModel.ToSchool = educationOrganization?.Name;
+            viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+
             var synergyStudentModel = viewModel.MapToSynergyJsonModel();
             var requestManifest = viewModel.MapToRequestManifestJsonModel();
-
-            //todo: figure out if this can be changed.
-            viewModel.EducationOrganizationId = GetFocusOrganizationId();
 
             var today = DateTime.UtcNow;
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
+                ToEducationOrganizationId = GetFocusOrganizationId(),
                 Student = synergyStudentModel, 
-                RequestManifest = requestManifest,  
+                RequestManifest = requestManifest,
+                ResponseManifest = requestManifest,
                 InitialRequestSentDate = today,
                 RequestProcessUserId = userId,
                 RequestStatus = viewModel.RequestStatus,
@@ -136,7 +156,9 @@ public class IncomingController : AuthenticatedController
             return RedirectToAction(nameof(Index));
         }
 
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+                .ToList();
         viewModel.EducationOrganizations = educationOrganizations;
         return View(viewModel);
     }
@@ -146,7 +168,9 @@ public class IncomingController : AuthenticatedController
         var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
         if (incomingRequest is null) return NotFound();
 
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+                .ToList();
 
         var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
 
@@ -198,6 +222,7 @@ public class IncomingController : AuthenticatedController
             incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
             incomingRequest.Student = synergyStudentModel;
             incomingRequest.RequestManifest = requestManifest;
+            incomingRequest.ResponseManifest = requestManifest;
             incomingRequest.RequestStatus = viewModel.RequestStatus;
             incomingRequest.UpdatedAt = today;
             incomingRequest.UpdatedBy = userId;
@@ -210,7 +235,9 @@ public class IncomingController : AuthenticatedController
             return RedirectToAction(nameof(Index));
         }
 
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+                .ToList();
         viewModel.EducationOrganizations = educationOrganizations;
         return View(viewModel);
     }

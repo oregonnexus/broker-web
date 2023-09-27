@@ -30,11 +30,12 @@ public class OutgoingRequestModel : SearchableModelWithPagination
         return sortExpression;
     }
 
-    public List<Expression<Func<Request, bool>>> BuildSearchExpressions()
+    public List<Expression<Func<Request, bool>>> BuildSearchExpressions(Guid educationOrganizationId)
     {
-        var searchExpressions = new List<Expression<Func<Request, bool>>>
+        var searchExpressions = new List<Expression<Func<Request, bool>>>()
         {
-            request => request.ResponseProcessUserId.HasValue
+            request => request.EducationOrganizationId == educationOrganizationId
+                && request.RequestStatus != RequestStatus.Draft
         };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))
