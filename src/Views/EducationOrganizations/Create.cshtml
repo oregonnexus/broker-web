@@ -5,6 +5,6 @@
     ViewData["Title"] = "Add Organization";
     Layout = "_AuthenticatedLayout";
 }
-<form id="organization-form" method="post" asp-action="Create">
+<form id="organization-form" method="post" asp-action="Create" autocomplete="off">
     <partial name="_form" for="@Model" />
 </form>

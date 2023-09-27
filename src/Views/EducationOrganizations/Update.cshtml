@@ -7,7 +7,7 @@
 }
 
 <div class="grid gap-6">
-    <form id="user-form" method="post" asp-action="Update">
+    <form id="user-form" method="post" asp-action="Update" autocomplete="off">
         <input type="hidden" name="_METHOD" value="PATCH" />
         <partial name="_form" for="@Model" />
     </form>

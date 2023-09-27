@@ -93,7 +93,7 @@ public class IncomingController : AuthenticatedController
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
         var educationOrganizations = educationOrganizationList
             .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId()
-                && educationOrganization.ParentOrganizationId is null
+                && educationOrganization.ParentOrganizationId is not null
             )
             .ToList();
 

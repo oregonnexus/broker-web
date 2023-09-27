@@ -4,6 +4,24 @@
     Layout = "_AuthenticatedLayout";
 }
 
-<form method="post" asp-action="Create">
+<form x-data="incomingForm" method="post" asp-action="Create" autocomplete="off">
   <partial name="_form" for="@Model" />
 </form>
+
+@section scripts
+{
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('incomingForm', () => {
+        return {
+          educationOrganizationId: @Html.Raw(Json.Serialize(@Model.EducationOrganizationId)),
+          educationOrganizations: @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
+
+          get selectedEducationOrganization() {
+            return this.educationOrganizations.find(it => it.id == this.educationOrganizationId)
+          },
+        }
+    })
+  })
+</script>
+}

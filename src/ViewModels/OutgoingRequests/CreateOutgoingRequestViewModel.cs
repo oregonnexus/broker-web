@@ -9,7 +9,7 @@ public class CreateOutgoingRequestViewModel
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
 
-    [Display(Name = "Education organization")]
+    [Display(Name = "School")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
 
@@ -53,7 +53,7 @@ public class CreateOutgoingRequestViewModel
     [Display(Name = "To School")]
     public string? ToSchool { get; set; }
 
-    [Display(Name = "To Email")]
+    [Display(Name = "Clerk's Email")]
     public string? ToEmail { get; set; }
 
     [Display(Name = "Note")]
