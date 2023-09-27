@@ -133,7 +133,7 @@
                           :class="{
                             'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Waiting Approval")),
                             'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Approved")),
-                            'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
+                            'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
                           }"
                           class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
                         >
@@ -195,7 +195,7 @@
                           :class="{
                             'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Waiting Approval")),
                             'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Approved")),
-                            'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Declined")),
+                            'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Declined")),
                           }"
                           class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
                         >
@@ -254,7 +254,13 @@
           <li class="overflow-hidden rounded-xl bg-white border border-gray-200">
             <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
               <img src="~/images/Final-Education-Nexus-ICON-png.png" alt="@educationOrganization.Name" class="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10">
-              <div class="text-sm font-medium leading-6 text-gray-900">@educationOrganization.Name</div>
+              <div>
+                <div class="text-sm font-medium leading-6 text-gray-900">@educationOrganization.Name</div>
+                @if (@educationOrganization.ParentOrganization is not null)
+                {
+                  <div class="mt-1 text-xs leading-5 text-gray-600">@educationOrganization.ParentOrganization.Name</div>
+                }
+              </div>
               <div class="ml-auto">
                 <a
                   asp-controller="EducationOrganizations"

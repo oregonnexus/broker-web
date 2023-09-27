@@ -1491,6 +1491,11 @@ select {
   background-color: rgb(255 251 235 / var(--tw-bg-opacity));
 }
 
+.bg-critical-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 234 238 / var(--tw-bg-opacity));
+}
+
 .bg-critical-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(239 34 42 / var(--tw-bg-opacity));
@@ -1868,6 +1873,11 @@ select {
   color: rgb(253 48 42 / var(--tw-text-opacity));
 }
 
+.text-critical-700 {
+  --tw-text-opacity: 1;
+  color: rgb(221 18 36 / var(--tw-text-opacity));
+}
+
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(197 199 201 / var(--tw-text-opacity));
@@ -2014,6 +2024,10 @@ select {
 
 .ring-caution-600\/20 {
   --tw-ring-color: rgb(217 119 6 / 0.2);
+}
+
+.ring-critical-600\/20 {
+  --tw-ring-color: rgb(239 34 42 / 0.2);
 }
 
 .ring-gray-200 {
