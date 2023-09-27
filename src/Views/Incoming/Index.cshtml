@@ -183,9 +183,11 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
                                         <span
                                             :class="{
-                                                'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Waiting Approval")),
-                                                'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Approved")),
-                                                'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
+                                                'text-neutral-700 bg-neutral-50 ring-neutral-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Draft")),
+                                                'text-info-700 bg-info-50 ring-info-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Sent")),
+                                                'text-promote-700 bg-promote-50 ring-promote-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Imported")),
+                                                'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Received")),
+                                                'text-critical-700 bg-critical-50 ring-critical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
                                             }"
                                             class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                         >
