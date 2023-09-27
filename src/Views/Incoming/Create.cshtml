@@ -18,7 +18,7 @@
           educationOrganizations: @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
 
           get selectedEducationOrganization() {
-            return this.educationOrganizations.find(it => it.id == this.educationOrganizationId)
+            return this.educationOrganizations.find(it => it.id === this.educationOrganizationId)
           },
         }
     })

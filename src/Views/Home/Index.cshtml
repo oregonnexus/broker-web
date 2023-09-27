@@ -129,7 +129,14 @@
                     <div class="flex-auto">
                       <div class="flex items-start gap-x-3">
                         <div class="text-sm font-medium leading-6 text-gray-900">@incomingRequest.Student</div>
-                        <div class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">
+                        <div
+                          :class="{
+                            'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Waiting Approval")),
+                            'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Approved")),
+                            'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@incomingRequest.Status.ToString() == "Declined")),
+                          }"
+                          class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
+                        >
                           @incomingRequest.Status
                         </div>
                       </div>
@@ -184,7 +191,14 @@
                     <div class="flex-auto">
                       <div class="flex items-start gap-x-3">
                         <div class="text-sm font-medium leading-6 text-gray-900">@outgoingRequest.Student</div>
-                        <div class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">
+                        <div
+                          :class="{
+                            'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Waiting Approval")),
+                            'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Approved")),
+                            'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Declined")),
+                          }"
+                          class="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset"
+                        >
                           @outgoingRequest.Status
                         </div>
                       </div>

@@ -53,7 +53,7 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Receiving Clerk's Email")]
     public string? ToEmail { get; set; }
 
-    [Display(Name = "Note")]
+    [Display(Name = "Notes")]
     public string? Note { get; set; }
 
     [Display(Name = "Contents")]

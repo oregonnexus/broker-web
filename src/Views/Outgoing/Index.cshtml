@@ -98,7 +98,7 @@
                                     <a asp-route-sortBy="district"
                                     asp-route-sortDir="@(Model.SortBy == "district" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        District
+                                        Receiving District
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "district" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "district" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -110,7 +110,7 @@
                                     <a asp-route-sortBy="school"
                                     asp-route-sortDir="@(Model.SortBy == "school" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        School
+                                        Receiving School
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "school" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "school" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -169,7 +169,14 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@outgoingRequest.Student</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@outgoingRequest.Date</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
+                                        <span
+                                            :class="{
+                                                'text-caution-700 bg-caution-50 ring-caution-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Waiting Approval")),
+                                                'text-positive-700 bg-positive-50 ring-positive-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Approved")),
+                                                'text-crtiical-700 bg-crtiical-50 ring-crtiical-600/20': @Html.Raw(Json.Serialize(@outgoingRequest.Status.ToString() == "Declined")),
+                                            }"
+                                            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                        >
                                             @outgoingRequest.Status
                                         </span>
                                     </td>
