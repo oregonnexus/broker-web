@@ -57,7 +57,8 @@ public class LoginController : Controller
             FirstName = "Makoa",
             LastName = "Jacobsen",
             IsSuperAdmin = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            AllEducationOrganizations = PermissionType.Write
         };
         _db.Add(user);
         await _db.SaveChangesAsync();
@@ -143,7 +144,7 @@ public class LoginController : Controller
     [Route("login/logout")]
     public async Task<IActionResult> Logout()
     {
-         await _signInManager.SignOutAsync();
+        await _signInManager.SignOutAsync();
         _logger.LogInformation("User logged out.");
         return RedirectToAction("Index", "Home");
     }

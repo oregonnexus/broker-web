@@ -61,11 +61,11 @@ foreach(var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => St
 builder.Services.ConfigureApplicationCookie(options => 
 {
     options.AccessDeniedPath = "/AccessDenied";
-    options.Cookie.Name = "OregonNexus.Broker";
+    options.Cookie.Name = "OregonNexus.Broker.Identity";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.LoginPath = "/Login";
     // ReturnUrlParameter requires 
     //using Microsoft.AspNetCore.Authentication.Cookies;
@@ -73,10 +73,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = ".OregonNexus.Broker.Session";
-    options.IdleTimeout = TimeSpan.FromSeconds(60);
+    options.Cookie.Name = "OregonNexus.Broker.Session";
+    options.IdleTimeout = TimeSpan.FromHours(4);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.IsEssential = true;
 });
 
@@ -90,8 +94,7 @@ builder.Services.AddAuthentication()
     {
         microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
         microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
-    }
-);
+    });
 
 builder.Services.AddAuthorization(options => {
     options.AddPolicy("SuperAdmin",
