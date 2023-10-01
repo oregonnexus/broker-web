@@ -84,7 +84,7 @@ public class FocusHelper
     public Guid? CurrentEdOrgFocus()
     {
         var currentEdOrgFocus = _session.GetString("Focus.EducationOrganization.Current");
-        if (currentEdOrgFocus != "ALL")
+        if (currentEdOrgFocus != "ALL" && currentEdOrgFocus is not null)
         {
             return Guid.Parse(currentEdOrgFocus);
         }
