@@ -35,7 +35,7 @@ public class FocusHelper
             selectListItems.Add(new SelectListItem() {
                     Text = "All",
                     Value = "ALL",
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == "ALL")
+                    Selected = _session.GetString("Focus.EducationOrganization.Current") == "ALL"
                 });
             
             var organizations = await _edOrgRepo.ListAsync();
@@ -48,7 +48,7 @@ public class FocusHelper
                         ? organization.Name 
                         : $"{organization.ParentOrganization?.Name} / {organization.Name}",
                     Value = organization.Id.ToString(),
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == organization.Id.ToString())
+                    Selected = _session.GetString("Focus.EducationOrganization.Current") == organization.Id.ToString()
                 });
             }
         }
@@ -62,7 +62,7 @@ public class FocusHelper
                 selectListItems.Add(new SelectListItem() {
                     Text = $"{userRole.EducationOrganization.ParentOrganization?.Name} / {userRole.EducationOrganization.Name}",
                     Value = userRole.Id.ToString(),
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == userRole.EducationOrganizationId.ToString())
+                    Selected = _session.GetString("Focus.EducationOrganization.Current") == userRole.EducationOrganizationId.ToString()
                 });
             }
         }
