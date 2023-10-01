@@ -14,7 +14,7 @@ using OregonNexus.Broker.Connector.Payload;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "TransferRecords")]
-public class OutgoingController : Controller
+public class OutgoingController : AuthenticatedController
 {
     private readonly IRepository<Request> _repo;
 

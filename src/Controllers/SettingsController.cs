@@ -22,7 +22,7 @@ using OregonNexus.Broker.Web.Models;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class SettingsController : Controller
+public class SettingsController : AuthenticatedController
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;

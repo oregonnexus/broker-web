@@ -12,7 +12,7 @@ using InertiaAdapter;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class FocusController : Controller
+public class FocusController : AuthenticatedController
 {
     private readonly ILogger<FocusController> _logger;
     private readonly IRepository<User> _repository;

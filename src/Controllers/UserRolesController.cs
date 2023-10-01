@@ -10,7 +10,7 @@ using OregonNexus.Broker.Web.Models;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UserRolesController : Controller
+public class UserRolesController : AuthenticatedController
 {
     private readonly IRepository<UserRole> _userRoleRepo;
 

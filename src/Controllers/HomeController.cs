@@ -12,7 +12,7 @@ using InertiaAdapter;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class HomeController : Controller
+public class HomeController : AuthenticatedController
 {
     private readonly ILogger<HomeController> _logger;
 

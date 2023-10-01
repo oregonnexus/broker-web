@@ -11,7 +11,7 @@ using OregonNexus.Broker.Web.Helpers;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class EducationOrganizationsController : Controller
+public class EducationOrganizationsController : AuthenticatedController
 {
     private readonly IRepository<EducationOrganization> _repo;
     private readonly EducationOrganizationHelper _edOrgHelper;
