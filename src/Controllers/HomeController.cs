@@ -50,7 +50,7 @@ public class HomeController : AuthenticatedController
         // We will need to support a date range (start and end dates) to filter out the data.
         // Currently displaying last 7 days, last 30 days, and All-time.
         // To support All-time, the end date should be nullable.
-        // For example, Outgoing Processor does not need to see incoming transfer request data.
+        // For example, Outgoing Processor does not need to see incoming record request data.
         var educationOrganizationId = GetFocusOrganizationId();
 
         if (educationOrganizationId == Guid.Empty)

@@ -35,13 +35,13 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Last Name")]
     public string? LastSurname { get; set; }
 
-    [Display(Name = "Sending District")]
+    [Display(Name = "Releasing District")]
     public string? FromDistrict { get; set; }
 
-    [Display(Name = "Sending School")]
+    [Display(Name = "Releasing School")]
     public string? FromSchool { get; set; }
 
-    [Display(Name = "Clerk's Email")]
+    [Display(Name = "Releasing Clerk's Email")]
     public string? FromEmail { get; set; }
 
     [Display(Name = "Receiving District")]
