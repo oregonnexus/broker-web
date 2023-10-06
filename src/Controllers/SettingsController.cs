@@ -16,6 +16,7 @@ using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
 
@@ -32,7 +33,9 @@ public class SettingsController : AuthenticatedController
 
     private Guid? _focusedDistrictEdOrg { get; set; }
 
-    public SettingsController(ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer)
+    public SettingsController(
+        IHttpContextAccessor httpContextAccessor,
+        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
         
@@ -170,7 +173,7 @@ public class SettingsController : AuthenticatedController
 
         await _configurationSerializer.SerializeAndSaveAsync(iconfigModel, _focusedDistrictEdOrg.Value);
 
-        TempData["Success"] = $"Updated Settings.";
+        TempData[VoiceTone.Positive] = $"Updated Settings.";
 
         return RedirectToAction("Configuration", new { assembly = connectorConfigType.Assembly.GetName().Name });
     }
@@ -184,8 +187,8 @@ public class SettingsController : AuthenticatedController
         
         if (!_focusedDistrictEdOrg.HasValue)
         {
-            TempData["Error"] = $"Must be focused to a district.";
-            return RedirectToAction("Index");
+            TempData[VoiceTone.Critical] = $"Must be focused to a district.";
+            return RedirectToAction(nameof(Index));
         }
 
         return null;

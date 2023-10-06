@@ -1,9 +1,11 @@
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
 
@@ -18,7 +20,9 @@ public class UserRolesController : AuthenticatedController
 
     private readonly EducationOrganizationHelper _edOrgHelper;
     
-    public UserRolesController(IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper)
+    public UserRolesController(
+        IHttpContextAccessor httpContextAccessor,
+        IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper) : base(httpContextAccessor)
     {
         _userRoleRepo = userRoleRepo;
         _userRepo = userRepo;
@@ -68,7 +72,7 @@ public class UserRolesController : AuthenticatedController
     {
         if (!ModelState.IsValid)
         {
-            TempData["Error"] = "Missing organization, role, or user."; return View("Index", model);
+            TempData[VoiceTone.Critical] = "Missing organization, role, or user."; return View("Index", model);
         }
         
         var userRole = new UserRole()
@@ -81,7 +85,7 @@ public class UserRolesController : AuthenticatedController
 
         await _userRoleRepo.AddAsync(userRole);
 
-        TempData["Success"] = $"Added user role. ({userRole.Id}).";
+        TempData[VoiceTone.Positive] = $"Added user role. ({userRole.Id}).";
 
         return RedirectToAction("Index", new { Id = model.UserId });
     }
@@ -96,7 +100,7 @@ public class UserRolesController : AuthenticatedController
 
         await _userRoleRepo.DeleteAsync(organizationRole);
 
-        TempData["Success"] = $"Deleted organization role ({organizationRole.Id}).";
+        TempData[VoiceTone.Positive] = $"Deleted organization role ({organizationRole.Id}).";
 
         return RedirectToAction("Index", new { Id = organizationRole.UserId });
     }
