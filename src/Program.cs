@@ -71,11 +71,11 @@ builder.Services.AddScoped<IPayloadContentService, PayloadContentService>();
 builder.Services.ConfigureApplicationCookie(options => 
 {
     options.AccessDeniedPath = "/AccessDenied";
-    options.Cookie.Name = "OregonNexus.Broker";
+    options.Cookie.Name = "OregonNexus.Broker.Identity";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.LoginPath = "/Login";
     // ReturnUrlParameter requires 
     //using Microsoft.AspNetCore.Authentication.Cookies;
@@ -83,10 +83,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = ".OregonNexus.Broker.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.Name = "OregonNexus.Broker.Session";
+    options.IdleTimeout = TimeSpan.FromHours(4);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.IsEssential = true;
 });
 

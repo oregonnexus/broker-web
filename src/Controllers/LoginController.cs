@@ -58,7 +58,8 @@ public class LoginController : AuthenticatedController
             FirstName = "Makoa",
             LastName = "Jacobsen",
             IsSuperAdmin = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            AllEducationOrganizations = PermissionType.Write
         };
         _db.Add(user);
         await _db.SaveChangesAsync();
