@@ -7,6 +7,8 @@
     <UserSecretsId>a41a6d6b-c504-4749-96e2-d8b4a84529c4</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="INERTIAJS.ASPNETCORE.ADAPTER" Version="0.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.*" />
@@ -17,7 +19,7 @@
     <PackageReference Include="Microsoft.Identity.Web" Version="1.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.*" />
     <PackageReference Include="MediatR" Version="11.1.0" />
@@ -31,6 +33,7 @@
     <ProjectReference Include="..\..\broker-data\src\OregonNexus.Broker.Data\OregonNexus.Broker.Data.csproj" />
     <ProjectReference Include="..\..\broker-core\src\OregonNexus.Broker.Connector\OregonNexus.Broker.Connector.csproj" />
     <ProjectReference Include="..\..\broker-data\src\OregonNexus.Broker.Data.Migrations.PostgreSQL\OregonNexus.Broker.Data.Migrations.PostgreSQL.csproj" />
+    <ProjectReference Include="..\..\broker-core\src\OregonNexus.Broker.SharedKernel\OregonNexus.Broker.SharedKernel.csproj" />
   </ItemGroup>
 
   <Target Name="Tailwind" BeforeTargets="Build">
@@ -38,22 +41,29 @@
   </Target>
 
   <ItemGroup>
-    <Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" />
-    <Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
+    <None Remove="Extensions\Routes\" />
+    <None Remove="Models\JsonDocuments\" />
+    <None Remove="Specifications\" />
+    <None Remove="MapperExtensions\" />
+    <None Remove="MapperExtensions\JsonDocuments\" />
+    <None Remove="Services\PayloadContents\" />
+    <None Remove="Models\Results\" />
+    <None Remove="Constants\Sessions\" />
+    <None Remove="Constants\Claims\" />
   </ItemGroup>
-
-  <Target Name="BuildCopyConnectorsSynergy" BeforeTargets="Build">
-    <MSBuild Projects="..\..\broker-connector-edupointsynergy\src\OregonNexus.Broker.Connector.Edupoint.Synergy.csproj" Properties="Configuration=$(Configuration)">
-    </MSBuild>
-    <Message Text="Executing BuildCopyConnectors Synergy task" Importance="High" />
-
-    <Copy SourceFiles="@(Files)" DestinationFolder="$(TargetDir)\connectors" />
-
-    <Message Text="Copied Synergy build files" Importance="High" />
-  </Target>
-
+  <ItemGroup>
+    <Folder Include="Extensions\Routes\" />
+    <Folder Include="Models\JsonDocuments\" />
+    <Folder Include="Specifications\" />
+    <Folder Include="MapperExtensions\" />
+    <Folder Include="MapperExtensions\JsonDocuments\" />
+    <Folder Include="Services\PayloadContents\" />
+    <Folder Include="Models\Results\" />
+    <Folder Include="Constants\Sessions\" />
+    <Folder Include="Constants\Claims\" />
+  </ItemGroup>
   <Target Name="BuildCopyConnectorsEdFi" BeforeTargets="Build">
-    <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
+    <MSBuild Projects="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.csproj" Properties="Configuration=$(Configuration)">
     </MSBuild>
     <Message Text="Executing BuildCopyConnectors EdFi task" Importance="High" />
 

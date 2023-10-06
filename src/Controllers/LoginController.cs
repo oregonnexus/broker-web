@@ -8,33 +8,34 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
-using System.Text.Json;
 using OregonNexus.Broker.SharedKernel;
-using System.Security.Claims;
+using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [AllowAnonymous]
-public class LoginController : Controller
+public class LoginController : AuthenticatedController
 {
     private readonly ILogger<LoginController> _logger;
     //private readonly OregonNexus.Broker.Connector.Edupoint.Synergy.Authentication.ThirdPartyApplication _auth;
-    private readonly ISession? _session;
     //private readonly AuthenticationProvidersLocator? _authProvidersLocator;
     public readonly BrokerDbContext _db;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly IRepository<User> _userRepo;
 
-    public LoginController(ILogger<LoginController> logger, UserManager<IdentityUser<Guid>> userManager,
-        IHttpContextAccessor httpContextAccessor, BrokerDbContext BrokerDbContext, SignInManager<IdentityUser<Guid>> signinManager,
-        IRepository<User> userRepo)
+    public LoginController(
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<LoginController> logger,
+        BrokerDbContext db,
+        UserManager<IdentityUser<Guid>> userManager,
+        SignInManager<IdentityUser<Guid>> signInManager,
+        IRepository<User> userRepo) : base(httpContextAccessor)
     {
         _logger = logger;
-        _session = httpContextAccessor.HttpContext?.Session;
-        _db = BrokerDbContext;
+        _db = db;
         _userManager = userManager;
-        _signInManager = signinManager;
+        _signInManager = signInManager;
         _userRepo = userRepo;
     }
 
@@ -63,7 +64,7 @@ public class LoginController : Controller
         _db.Add(user);
         await _db.SaveChangesAsync();
         
-        return RedirectToAction("index");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
@@ -101,9 +102,11 @@ public class LoginController : Controller
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            _session?.SetObjectAsJson("User.Current", currentUser);
+            _httpContextAccessor.HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
             
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
+
+            _httpContextAccessor.HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
             return LocalRedirect(returnUrl);
         }
         if (result.IsLockedOut)
@@ -117,7 +120,7 @@ public class LoginController : Controller
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            _session?.SetObjectAsJson("User.Current", currentUser);
+            _httpContextAccessor.HttpContext?.Session?.SetObjectAsJson("User.Current", currentUser);
 
             if (user is null)
             {
@@ -134,6 +137,8 @@ public class LoginController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
+
+                _httpContextAccessor.HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
                 return LocalRedirect(returnUrl);
             }
             return RedirectToAction("Login");
@@ -144,7 +149,8 @@ public class LoginController : Controller
     [Route("login/logout")]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+         await _signInManager.SignOutAsync();
+        _httpContextAccessor.HttpContext?.Session.Clear();
         _logger.LogInformation("User logged out.");
         return RedirectToAction("Index", "Home");
     }
