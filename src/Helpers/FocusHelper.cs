@@ -97,7 +97,12 @@ public class FocusHelper
         var currentEdOrgFocus = _session.GetString(FocusOrganizationCurrentKey);
         if (currentEdOrgFocus != "ALL")
         {
-            return Guid.Parse(currentEdOrgFocus);
+            Guid currentEdOrgFocusGuid;
+            
+            if (Guid.TryParse(currentEdOrgFocus, out currentEdOrgFocusGuid))
+            {
+                return currentEdOrgFocusGuid;
+            }
         }
         return null;
     }
