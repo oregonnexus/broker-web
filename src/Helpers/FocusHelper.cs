@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 
 namespace OregonNexus.Broker.Web.Helpers;
 
@@ -30,16 +31,18 @@ public class FocusHelper
 
         if (currentUser?.Id == null) return selectListItems;
 
+        var organizations = await _edOrgRepo.ListAsync();
+        organizations = organizations.OrderBy(x => x.ParentOrganization?.Name).ThenBy(x => x.Name).ToList();
+
         if (allEdOrgs == PermissionType.Read || allEdOrgs == PermissionType.Write)
         { 
             selectListItems.Add(new SelectListItem() {
                     Text = "All",
                     Value = "ALL",
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == "ALL")
+                    Selected = (_session.GetString(FocusOrganizationCurrentKey) == "ALL")
                 });
             
-            var organizations = await _edOrgRepo.ListAsync();
-            organizations = organizations.OrderBy(x => x.ParentOrganization?.Name).ThenBy(x => x.Name).ToList();
+        
 
             foreach(var organization in organizations)
             {
@@ -48,7 +51,7 @@ public class FocusHelper
                         ? organization.Name 
                         : $"{organization.ParentOrganization?.Name} / {organization.Name}",
                     Value = organization.Id.ToString(),
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == organization.Id.ToString())
+                    Selected = (_session.GetString(FocusOrganizationCurrentKey) == organization.Id.ToString())
                 });
             }
         }
@@ -57,36 +60,49 @@ public class FocusHelper
             var userRoleSpec = new UserRolesByUserSpec(currentUser.Id);
             var userRoles = await _userRoleRepo.ListAsync(userRoleSpec);
 
-            foreach(var userRole in userRoles)
+            foreach(var userRole in userRoles.Where(role => role.EducationOrganization?.ParentOrganizationId is not null))
             {
                 selectListItems.Add(new SelectListItem() {
-                    Text = $"{userRole.EducationOrganization.ParentOrganization?.Name} / {userRole.EducationOrganization.Name}",
-                    Value = userRole.Id.ToString(),
-                    Selected = (_session.GetString("Focus.EducationOrganization.Current") == userRole.EducationOrganizationId.ToString())
+                    Text = $"{userRole.EducationOrganization?.ParentOrganization?.Name} / {userRole.EducationOrganization?.Name}",
+                    Value = userRole.EducationOrganizationId.ToString(),
+                    Selected = (_session.GetString(FocusOrganizationCurrentKey) == userRole.EducationOrganizationId.ToString())
                 });
             }
         }
 
         selectListItems = selectListItems.OrderBy(x => x.Text).ToList();
 
-        if (_session.GetString("Focus.EducationOrganization.Current") == null)
+        if (_session.GetString(FocusOrganizationCurrentKey) == null)
         {
             if (selectListItems.FirstOrDefault() is not null)
             {
-                _session.SetString("Focus.EducationOrganization.Current", selectListItems.FirstOrDefault()!.Value);
+                _session.SetString(FocusOrganizationCurrentKey, selectListItems.FirstOrDefault()!.Value);
             }
-            
         }
 
-        return selectListItems;
+        var selectedValue = _session.GetString(FocusOrganizationCurrentKey);
+
+        var selectedSelectList = new SelectList(
+                selectListItems,
+                "Value",
+                "Text",
+                selectedValue
+            );
+
+        return selectedSelectList;
     }
 
     public Guid? CurrentEdOrgFocus()
     {
-        var currentEdOrgFocus = _session.GetString("Focus.EducationOrganization.Current");
+        var currentEdOrgFocus = _session.GetString(FocusOrganizationCurrentKey);
         if (currentEdOrgFocus != "ALL")
         {
-            return Guid.Parse(currentEdOrgFocus);
+            Guid currentEdOrgFocusGuid;
+            
+            if (Guid.TryParse(currentEdOrgFocus, out currentEdOrgFocusGuid))
+            {
+                return currentEdOrgFocusGuid;
+            }
         }
         return null;
     }
@@ -109,7 +125,7 @@ public class FocusHelper
 
     public bool IsEdOrgAllFocus()
     {
-        var currentEdOrgFocus = _session.GetString("Focus.EducationOrganization.Current");
+        var currentEdOrgFocus = _session.GetString(FocusOrganizationCurrentKey);
         if (currentEdOrgFocus == "ALL")
         {
             return true;

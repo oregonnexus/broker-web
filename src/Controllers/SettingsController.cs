@@ -16,13 +16,14 @@ using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class SettingsController : Controller
+public class SettingsController : AuthenticatedController
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;
@@ -32,7 +33,9 @@ public class SettingsController : Controller
 
     private Guid? _focusedDistrictEdOrg { get; set; }
 
-    public SettingsController(ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer)
+    public SettingsController(
+        IHttpContextAccessor httpContextAccessor,
+        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
         
@@ -86,8 +89,40 @@ public class SettingsController : Controller
         return View(forms);
     }
 
-    [HttpGet("/Settings/Payload/{payload}")]
-    public async Task<IActionResult> Payload(string payload)
+    [HttpGet("/Settings/IncomingPayload/{payload}")]
+    public async Task<IActionResult> IncomingPayload(string payload)
+    {
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+        /*
+        var connectorDictionary = _connectorLoader.Assemblies.Where(x => x.Key == assembly).FirstOrDefault();
+        ArgumentException.ThrowIfNullOrEmpty(assembly);
+        var connector = connectorDictionary.Value;
+
+        // Get configurations for connector - TO FIX!
+        var configurations = _connectorLoader.GetConfigurations(connector);
+
+        var forms = new List<dynamic>();
+
+        foreach(var configType in configurations)
+        {
+            var configModel = await _configurationSerializer.DeseralizeAsync(configType, _focusedDistrictEdOrg.Value);
+            var displayName = (DisplayNameAttribute)configType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
+
+            forms.Add(
+                new { 
+                    displayName = displayName.DisplayName, 
+                    html = ModelFormBuilderHelper.HtmlForModel(configModel) 
+                }
+            );
+        }
+
+        return View(forms);
+        */
+        return View(new { Payload = payload });
+    }
+
+    [HttpGet("/Settings/OutgoingPayload/{payload}")]
+    public async Task<IActionResult> OutgoingPayload(string payload)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
         /*
@@ -138,7 +173,7 @@ public class SettingsController : Controller
 
         await _configurationSerializer.SerializeAndSaveAsync(iconfigModel, _focusedDistrictEdOrg.Value);
 
-        TempData["Success"] = $"Updated Settings.";
+        TempData[VoiceTone.Positive] = $"Updated Settings.";
 
         return RedirectToAction("Configuration", new { assembly = connectorConfigType.Assembly.GetName().Name });
     }
@@ -152,8 +187,8 @@ public class SettingsController : Controller
         
         if (!_focusedDistrictEdOrg.HasValue)
         {
-            TempData["Error"] = $"Must be focused to a district.";
-            return RedirectToAction("Index");
+            TempData[VoiceTone.Critical] = $"Must be focused to a district.";
+            return RedirectToAction(nameof(Index));
         }
 
         return null;

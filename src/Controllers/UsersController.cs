@@ -1,75 +1,97 @@
-using System.Text;
+using Ardalis.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Models;
+using OregonNexus.Broker.Web.Models.Paginations;
+using OregonNexus.Broker.Web.Models.Users;
+using OregonNexus.Broker.Web.Specifications.Paginations;
+using OregonNexus.Broker.Web.ViewModels.Users;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UsersController : Controller
+public class UsersController : AuthenticatedController
 {
-    private readonly IRepository<User> _repo;
-    private readonly BrokerDbContext _db;
+    private readonly IRepository<User> _userRepository;
+    private readonly BrokerDbContext _brokerDbContext;
     private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-    public UsersController(IRepository<User> repo, BrokerDbContext db, UserManager<IdentityUser<Guid>> userManager)
+    public UsersController(
+        IHttpContextAccessor httpContextAccessor,
+        IRepository<User> userRepository,
+        BrokerDbContext brokerDbContext,
+        UserManager<IdentityUser<Guid>> userManager) : base(httpContextAccessor)
     {
-        _repo = repo;
-        _db = db;
+        _userRepository = userRepository;
+        _brokerDbContext = brokerDbContext;
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(
+      UserRequestModel model,
+      CancellationToken cancellationToken)
     {
-        var combinedUsers = new List<UserViewModel>();
-        
-        var identityUsers = await _db.Users.OrderBy(x => x.NormalizedEmail).ToListAsync();
-        var users = await _repo.ListAsync();
+        RefreshSession();
 
-        foreach(var identityUser in identityUsers)
-        {
-            var appUser = users.Where(x => x.Id == identityUser.Id).FirstOrDefault();
+        var searchExpressions = model.BuildSearchExpressions();
 
-            if (appUser is null) { throw new NullReferenceException("Missing matching user in users table."); }
+        var sortExpression = model.BuildSortExpression();
+        var identityUsers = await _brokerDbContext.Users.ToListAsync(cancellationToken);
 
-            var combinedUser = new UserViewModel()
-            {
-                UserId = identityUser.Id,
-                FirstName = appUser.FirstName,
-                LastName = appUser.LastName,
-                IsSuperAdmin = appUser.IsSuperAdmin,
-                AllEducationOrganizations = appUser.AllEducationOrganizations,
-                Email = identityUser.Email!
-            };
+        var specification = new SearchableWithPaginationSpecification<User>.Builder(model.Page, model.Size)
+            .WithAscending(model.IsAscending)
+            .WithSortExpression(sortExpression)
+            .WithSearchExpressions(searchExpressions)
+            .Build();
 
-            combinedUsers.Add(combinedUser);
-        }
+        var totalItems = await _userRepository.CountAsync(
+            specification,
+            cancellationToken);
 
-        combinedUsers.OrderBy(x => x.LastName).OrderBy(x => x.FirstName);
+        var users = await _userRepository.ListAsync(
+            specification,
+            cancellationToken);
 
-        return View(combinedUsers);
+        var userViewModels = users
+            .Select(user => new UserRequestViewModel(
+                user,
+                identityUsers.FirstOrDefault(identityUser => identityUser.Id == user.Id)));
+
+        var result = new PaginatedViewModel<UserRequestViewModel>(
+            userViewModels,
+            totalItems,
+            model.Page,
+            model.Size,
+            model.SortBy,
+            model.SortDir,
+            model.SearchBy);
+
+        return View(result);
     }
 
-    public IActionResult Add()
+    public IActionResult Create()
     {
         return View();
     }
 
     [ValidateAntiForgeryToken]
     [HttpPost]
-    public async Task<IActionResult> Create(UserViewModel data)
+    public async Task<IActionResult> Create(CreateUserRequestViewModel data)
     {
-        if (!ModelState.IsValid) { TempData["Error"] = "User not created."; return View("Add"); }
-        
+        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "User not created."; return View("Add"); }
+
         var identityUser = new IdentityUser<Guid> { UserName = data.Email, Email = data.Email }; 
         var result = await _userManager.CreateAsync(identityUser);
-
+        if (!result.Succeeded)
+        {
+            return BadRequest("There was an error creating the user.");
+        }
         var user = new User()
         {
             Id = identityUser.Id,
@@ -79,23 +101,23 @@ public class UsersController : Controller
             AllEducationOrganizations = data.AllEducationOrganizations
         };
 
-        await _repo.AddAsync(user);
+        await _userRepository.AddAsync(user);
 
-        TempData["Success"] = $"Created user {data.Email} ({user.Id}).";
+        TempData[VoiceTone.Positive] = $"Created user {data.Email} ({user.Id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Edit(Guid Id)
+    public async Task<IActionResult> Update(Guid Id)
     {
-        var identityUser = await _db.Users.Where(x => x.Id == Id).FirstOrDefaultAsync();
-        var applicationUser = await _repo.GetByIdAsync(Id);
+        var identityUser = await _brokerDbContext.Users.Where(x => x.Id == Id).FirstOrDefaultAsync();
+        var applicationUser = await _userRepository.GetByIdAsync(Id);
 
-        var userViewModel = new UserViewModel();
+        var createUserViewModel = new CreateUserRequestViewModel();
 
         if (applicationUser is not null && identityUser is not null)
         {
-            userViewModel = new UserViewModel()
+            createUserViewModel = new CreateUserRequestViewModel()
             {
                 UserId = applicationUser.Id,
                 IdentityUser = identityUser,
@@ -107,7 +129,7 @@ public class UsersController : Controller
             };
         }
 
-        return View(userViewModel);
+        return View(createUserViewModel);
     }
 
     [ValidateAntiForgeryToken]
@@ -121,7 +143,7 @@ public class UsersController : Controller
 
         if (user is null) { throw new ArgumentException("Not a valid user."); }
 
-        if (!ModelState.IsValid) { TempData["Error"] = "User not updated."; return View("Edit"); }
+        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "User not updated."; return View("Edit"); }
 
         if (data.Email != user.Email)
         {
@@ -143,11 +165,11 @@ public class UsersController : Controller
             AllEducationOrganizations = data.AllEducationOrganizations
         };
 
-        await _repo.UpdateAsync(appUser);
+        await _userRepository.UpdateAsync(appUser);
 
-        TempData["Success"] = $"Updated user {data.Email} ({user.Id}).";
+        TempData[VoiceTone.Positive] = $"Updated user {data.Email} ({user.Id}).";
 
-        return RedirectToAction("Edit", new { Id = data.UserId });
+        return RedirectToAction(nameof(Index));
     }
 
     [ValidateAntiForgeryToken]
@@ -158,16 +180,16 @@ public class UsersController : Controller
 
         if (identityUser is null) { throw new ArgumentNullException("Could not find user for id." ); }
 
-        var applicationUser = await _repo.GetByIdAsync(id);
+        var applicationUser = await _userRepository.GetByIdAsync(id);
 
         if (applicationUser is null) { throw new ArgumentNullException("Could not find app user for id." ); }
 
-        await _repo.DeleteAsync(applicationUser);
+        await _userRepository.DeleteAsync(applicationUser);
         await _userManager.DeleteAsync(identityUser);
 
-        TempData["Success"] = $"Deleted user {identityUser.Email} ({id}).";
+        TempData[VoiceTone.Positive] = $"Deleted user {identityUser.Email} ({id}).";
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
     }
 
 }

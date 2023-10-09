@@ -6,7 +6,6 @@ using OregonNexus.Broker.Data;
 using MediatR;
 using Autofac;
 using OregonNexus.Broker.SharedKernel;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using InertiaAdapter.Extensions;
@@ -15,7 +14,9 @@ using OregonNexus.Broker.Web.Services;
 using System.Reflection;
 using OregonNexus.Broker.Domain;
 using Microsoft.AspNetCore.Authentication;
-using OregonNexus.Broker.Connector;
+using OregonNexus.Broker.Web.Extensions.Routes;
+using OregonNexus.Broker.Web.Services.PayloadContents;
+using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +52,8 @@ builder.Services.AddDbContext<BrokerDbContext>(options => {
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
-foreach(var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+foreach (var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
     builder.Services.AddScoped(assembly, assembly);
 }
@@ -63,14 +65,17 @@ builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<BrokerDbContext>()
 .AddTokenProvider<DataProtectorTokenProvider<IdentityUser<Guid>>>(TokenOptions.DefaultProvider);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPayloadContentService, PayloadContentService>();
+
 builder.Services.ConfigureApplicationCookie(options => 
 {
     options.AccessDeniedPath = "/AccessDenied";
-    options.Cookie.Name = "OregonNexus.Broker";
+    options.Cookie.Name = "OregonNexus.Broker.Identity";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.LoginPath = "/Login";
     // ReturnUrlParameter requires 
     //using Microsoft.AspNetCore.Authentication.Cookies;
@@ -78,10 +83,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = ".OregonNexus.Broker.Session";
-    options.IdleTimeout = TimeSpan.FromSeconds(60);
+    options.Cookie.Name = "OregonNexus.Broker.Session";
+    options.IdleTimeout = TimeSpan.FromHours(4);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.IsEssential = true;
 });
 
@@ -90,13 +99,13 @@ builder.Services.AddAuthentication()
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    })
-    .AddMicrosoftAccount(microsoftOptions =>
-    {
-        microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
-        microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
-    }
-);
+    });
+//     .AddMicrosoftAccount(microsoftOptions =>
+//     {
+//         microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+//         microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+//     }
+// );
 
 builder.Services.AddAuthorization(options => {
     options.AddPolicy("SuperAdmin",
@@ -110,7 +119,15 @@ builder.Services.AddAuthorization(options => {
     options.AddPolicy("TransferRecords",
       policy => policy.RequireClaim("TransferRecords", "true")
     );
+
+    options.AddPolicy(TransferIncomingRecords,
+      policy => policy.RequireClaim(TransferIncomingRecords, "true")
+    );
+        options.AddPolicy(TransferOutgoingRecords,
+      policy => policy.RequireClaim(TransferOutgoingRecords, "true")
+    );
 });
+
 builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>();
 
 builder.Services.AddControllersWithViews();
@@ -148,8 +165,19 @@ app.UseSession();
 
 //app.UseMiddleware<ScopedHttpContextMiddleware>();
 
+app.MapControllerRoutes("organizations", "EducationOrganizations");
+app.MapControllerRoutes("incoming-requests", "Incoming");
+app.MapControllerRoutes("outgoing-requests", "Outgoing");
+app.MapControllerRoutes("users", "Users");
+app.MapControllerRoutes("roles", "UserRoles");
+app.MapControllerRoutes("settings", "Settings");
+app.MapControllerRoutes("login", "Login");
+app.MapControllerRoutes("focus", "Focus");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();
