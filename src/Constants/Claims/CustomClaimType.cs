@@ -3,6 +3,7 @@
 public class CustomClaimType
 {
     public const string TransferIncomingRecords = "TransferIncomingRecords";
-    public const string TransferOutGoingRecords = "TransferOutGoingRecords";
+    public const string TransferOutgoingRecords = "TransferOutgoingRecords";
+    public const string SuperAdmin = "SuperAdmin";
 }
 

@@ -123,8 +123,8 @@ builder.Services.AddAuthorization(options => {
     options.AddPolicy(TransferIncomingRecords,
       policy => policy.RequireClaim(TransferIncomingRecords, "true")
     );
-        options.AddPolicy(TransferOutGoingRecords,
-      policy => policy.RequireClaim(TransferOutGoingRecords, "true")
+        options.AddPolicy(TransferOutgoingRecords,
+      policy => policy.RequireClaim(TransferOutgoingRecords, "true")
     );
 });
 

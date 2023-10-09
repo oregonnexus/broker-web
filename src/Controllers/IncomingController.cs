@@ -51,14 +51,14 @@ public class IncomingController : AuthenticatedController
         var sortExpression = model.BuildSortExpression();
 
         var organizationId = GetFocusOrganizationId();
-        Expression<Func<Request, bool>> focusOrganizationExpression = request =>
-            request.ToEducationOrganizationId == organizationId;
+        // Expression<Func<Request, bool>> focusOrganizationExpression = request =>
+        //     request.ToEducationOrganizationId == organizationId;
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
-            .WithSearchExpression(focusOrganizationExpression)
+         //   .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(incomingRequest => incomingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -147,7 +147,7 @@ public class IncomingController : AuthenticatedController
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                ToEducationOrganizationId = GetFocusOrganizationId(),
+                //ToEducationOrganizationId = GetFocusOrganizationId(),
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,
                 ResponseManifest = requestManifest,

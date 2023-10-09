@@ -68,8 +68,8 @@ public class HomeController : AuthenticatedController
 
         // Only take 5, displaying latest incoming requests
         // Need the total count as well
-        var incomingRequests = requests
-            .Where(request => request.ToEducationOrganizationId == educationOrganizationId);
+        var incomingRequests = requests;
+            //.Where(request => request.ToEducationOrganizationId == educationOrganizationId);
 
         // Only take 5, displaying latest outgoing requests
         // Need the total count as well

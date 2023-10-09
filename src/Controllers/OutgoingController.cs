@@ -17,7 +17,7 @@ using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 namespace OregonNexus.Broker.Web.Controllers;
 
-[Authorize(Policy = TransferOutGoingRecords)]
+[Authorize(Policy = TransferOutgoingRecords)]
 public class OutgoingController : AuthenticatedController
 {
     private readonly IRepository<Request> _outgoingRequestRepository;

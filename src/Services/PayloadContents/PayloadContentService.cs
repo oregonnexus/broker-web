@@ -42,8 +42,8 @@ public class PayloadContentService : IPayloadContentService
             var fileBytes = memoryStream.ToArray();
             return new PayloadContent
             {
-                RequestId = requestId,
-                RequestResponse = RequestResponse.Request,
+                // RequestId = requestId,
+                // RequestResponse = RequestResponse.Request,
                 ContentType = file.ContentType,
                 BlobContent = fileBytes,
             };

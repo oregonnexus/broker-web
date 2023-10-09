@@ -172,7 +172,7 @@
                                             <a asp-controller="Outgoing"
                                                asp-action="Index"
                                                asp-authorize
-                                               asp-policy="@TransferOutGoingRecords"
+                                               asp-policy="@TransferOutgoingRecords"
                                                class="ml-auto text-sm font-semibold leading-6 text-tertiary-700 hover:text-tertiary-500">
                                                 View all<span class="sr-only">, outgoing record requests</span>
                                             </a>
@@ -214,7 +214,7 @@
                                                    asp-action="Update"
                                                    asp-route-requestId="@outgoingRequest.Id"
                                                    asp-authorize
-                                                   asp-policy="@TransferOutGoingRecords"
+                                                   asp-policy="@TransferOutgoingRecords"
                                                    class="text-sm font-medium leading-6 text-tertiary-700 hover:text-tertiary-500">
                                                     View<span class="hidden sm:inline"> request</span>
                                                 </a>

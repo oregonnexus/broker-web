@@ -42,7 +42,9 @@ public class BrokerClaimsTransformation : IClaimsTransformation
         {
             if (currentUser.IsSuperAdmin == true)
             {
-                claims.Add(new Claim(claimType, "true"));
+                claims.Add(new Claim(SuperAdmin, "true"));
+                claims.Add(new Claim(TransferIncomingRecords, "true"));
+                claims.Add(new Claim(TransferOutgoingRecords, "true"));
             }
         }
 
@@ -69,7 +71,7 @@ public class BrokerClaimsTransformation : IClaimsTransformation
             || role.Role.ToString() == "Processor")
         )
         {
-            claims.Add(new Claim(TransferOutGoingRecords, "true"));
+            claims.Add(new Claim(TransferOutgoingRecords, "true"));
         }
 
         claimType = "TransferRecords";
