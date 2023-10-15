@@ -14,6 +14,9 @@ public class IncomingRequestViewModel
     [Display(Name = "District")]
     public string District { get; set; } = string.Empty;
 
+    [Display(Name = "Receiving District")]
+    public string ReceivingDistrict { get; set; } = string.Empty;
+
     [Display(Name = "School")]
     public string School { get; set; } = string.Empty;
 
@@ -40,6 +43,7 @@ public class IncomingRequestViewModel
 
         Id = incomingRequest.Id;
         District = requestManifest?.From?.District ?? string.Empty;
+        ReceivingDistrict = requestManifest?.To?.District ?? string.Empty;
         School = requestManifest?.From?.School ?? string.Empty;
         Student = $"{requestManifest?.Student?.FirstName} {requestManifest?.Student?.LastSurname}";
         Date = incomingRequest.CreatedAt;

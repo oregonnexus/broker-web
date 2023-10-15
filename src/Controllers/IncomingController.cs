@@ -50,15 +50,12 @@ public class IncomingController : AuthenticatedController
 
         var sortExpression = model.BuildSortExpression();
 
-        var organizationId = GetFocusOrganizationId();
-        // Expression<Func<Request, bool>> focusOrganizationExpression = request =>
-        //     request.ToEducationOrganizationId == organizationId;
+        var organizationName = GetFocusOrganizationDistrict();
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
-         //   .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(incomingRequest => incomingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -76,7 +73,9 @@ public class IncomingController : AuthenticatedController
         var incomingRequestViewModels = incomingRequests
             .Select(incomingRequest => new IncomingRequestViewModel(incomingRequest));
 
-        //todo: remove this, need to add student FK to request.
+        incomingRequestViewModels = incomingRequestViewModels.Where(request => request.ReceivingDistrict == organizationName);
+        totalItems = incomingRequestViewModels.Count();
+        
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
             incomingRequestViewModels = incomingRequestViewModels
@@ -84,6 +83,7 @@ public class IncomingController : AuthenticatedController
                  || request.School.ToLower().Contains(model.SearchBy));
             totalItems = incomingRequestViewModels.Count();
         }
+
         var result = new PaginatedViewModel<IncomingRequestViewModel>(
             incomingRequestViewModels,
             totalItems,
@@ -124,21 +124,13 @@ public class IncomingController : AuthenticatedController
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
             var organizationId = GetFocusOrganizationId();
-
-            Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
-                request.Id == organizationId;
-
-            var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, 1)
-            .WithSearchExpression(focusOrganizationExpression)
-            .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.ParentOrganization))
-            .Build();
-
-            var educationOrganization = (await _educationOrganizationRepository.ListAsync(specification)).SingleOrDefault();
-
-            viewModel.ToDistrict = educationOrganization?.ParentOrganization?.Name;
-            viewModel.ToSchool = educationOrganization?.Name;
+            viewModel.ToDistrict = GetFocusOrganizationDistrict();
+            viewModel.ToSchool = GetFocusOrganizationSchool();
             viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+
+            viewModel.FromDistrict = viewModel.FromDistrict;
+            viewModel.FromSchool = viewModel.FromSchool;
+            viewModel.FromEmail = viewModel.FromEmail;
 
             var synergyStudentModel = viewModel.MapToSynergyJsonModel();
             var requestManifest = viewModel.MapToRequestManifestJsonModel();
@@ -147,7 +139,6 @@ public class IncomingController : AuthenticatedController
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                //ToEducationOrganizationId = GetFocusOrganizationId(),
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,
                 ResponseManifest = requestManifest,
@@ -219,7 +210,9 @@ public class IncomingController : AuthenticatedController
         if (ModelState.IsValid)
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
-
+            viewModel.ToDistrict = GetFocusOrganizationDistrict();
+            viewModel.ToSchool = GetFocusOrganizationSchool();
+            viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var incomingRequest = await _incomingRequestRepository.GetByIdAsync(viewModel.RequestId);
 
             if (incomingRequest is null) return BadRequest();

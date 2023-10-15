@@ -47,6 +47,7 @@ public class OutgoingController : AuthenticatedController
 
         var searchExpressions = model.BuildSearchExpressions(GetFocusOrganizationId());
         var sortExpression = model.BuildSortExpression();
+        var organizationName = GetFocusOrganizationDistrict();
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
@@ -69,7 +70,9 @@ public class OutgoingController : AuthenticatedController
         var outgoingRequestViewModels = outgoingRequests
             .Select(outgoingRequest => new OutgoingRequestViewModel(outgoingRequest));
 
-        //todo: remove this, need to add student FK to request.
+        outgoingRequestViewModels = outgoingRequestViewModels.Where(request => request.ReleasingDistrict == organizationName);
+        totalItems = outgoingRequestViewModels.Count();
+
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
             outgoingRequestViewModels = outgoingRequestViewModels

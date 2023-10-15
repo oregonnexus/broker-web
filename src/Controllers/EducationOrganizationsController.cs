@@ -18,7 +18,6 @@ public class EducationOrganizationsController : AuthenticatedController
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly EducationOrganizationHelper _educationOrganizationHelper;
-
     public EducationOrganizationsController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
@@ -70,50 +69,6 @@ public class EducationOrganizationsController : AuthenticatedController
         return View(result);
     }
 
-    [HttpGet("search")]
-    public async Task<IActionResult> Search(
-      EducationOrganizationRequestModel model,
-      CancellationToken cancellationToken)
-    {
-        RefreshSession();
-
-        var searchExpressions = model.BuildSearchExpressions();
-
-        var sortExpression = model.BuildSortExpression();
-
-        var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
-            .WithAscending(model.IsAscending)
-            .WithSortExpression(sortExpression)
-            .WithSearchExpressions(searchExpressions)
-            .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.Address)
-                .Include(educationOrganization => educationOrganization.ParentOrganization)
-            )
-            .Build();
-
-        var totalItems = await _educationOrganizationRepository.CountAsync(
-            specification,
-            cancellationToken);
-
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync(
-            specification,
-            cancellationToken);
-
-        var educationOrganizationViewModels = educationOrganizations
-            .Select(educationOrganization => new EducationOrganizationRequestViewModel(educationOrganization));
-
-        var result = new PaginatedViewModel<EducationOrganizationRequestViewModel>(
-            educationOrganizationViewModels,
-            totalItems,
-            model.Page,
-            model.Size,
-            model.SortBy,
-            model.SortDir,
-            model.SearchBy);
-
-        return Ok(result);
-    }
-
     public async Task<IActionResult> Create()
     {
         var educationOrganizations = await _educationOrganizationHelper.GetDistrictsOrganizationsSelectList();
@@ -129,8 +84,8 @@ public class EducationOrganizationsController : AuthenticatedController
     [HttpPost]
     public async Task<IActionResult> Create(CreateEducationOrganizationRequestViewModel data)
     {
-        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "Organization not created."; return View("Add"); }
-
+        if (!ModelState.IsValid) { TempData[VoiceTone.Critical] = "Organization not created."; return RedirectToAction(nameof(Create)); }
+        
         var organization = new EducationOrganization()
         {
             Id = Guid.NewGuid(),
