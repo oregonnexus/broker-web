@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.SharedKernel;
@@ -10,6 +9,7 @@ using OregonNexus.Broker.Web.Models.Paginations;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
+using System.Linq.Expressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -43,6 +43,7 @@ public class EducationOrganizationsController : AuthenticatedController
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
+                .Include(educationOrganization => educationOrganization.Address)
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
             .Build();
 
@@ -69,6 +70,50 @@ public class EducationOrganizationsController : AuthenticatedController
         return View(result);
     }
 
+    [HttpGet("search")]
+    public async Task<IActionResult> Search(
+      EducationOrganizationRequestModel model,
+      CancellationToken cancellationToken)
+    {
+        RefreshSession();
+
+        var searchExpressions = model.BuildSearchExpressions();
+
+        var sortExpression = model.BuildSortExpression();
+
+        var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
+            .WithAscending(model.IsAscending)
+            .WithSortExpression(sortExpression)
+            .WithSearchExpressions(searchExpressions)
+            .WithIncludeEntities(builder => builder
+                .Include(educationOrganization => educationOrganization.Address)
+                .Include(educationOrganization => educationOrganization.ParentOrganization)
+            )
+            .Build();
+
+        var totalItems = await _educationOrganizationRepository.CountAsync(
+            specification,
+            cancellationToken);
+
+        var educationOrganizations = await _educationOrganizationRepository.ListAsync(
+            specification,
+            cancellationToken);
+
+        var educationOrganizationViewModels = educationOrganizations
+            .Select(educationOrganization => new EducationOrganizationRequestViewModel(educationOrganization));
+
+        var result = new PaginatedViewModel<EducationOrganizationRequestViewModel>(
+            educationOrganizationViewModels,
+            totalItems,
+            model.Page,
+            model.Size,
+            model.SortBy,
+            model.SortDir,
+            model.SearchBy);
+
+        return Ok(result);
+    }
+
     public async Task<IActionResult> Create()
     {
         var educationOrganizations = await _educationOrganizationHelper.GetDistrictsOrganizationsSelectList();
@@ -92,7 +137,8 @@ public class EducationOrganizationsController : AuthenticatedController
             ParentOrganizationId = data.EducationOrganizationType == EducationOrganizationType.School ? data.ParentOrganizationId : null,
             Name = data.Name,
             Number = data.Number,
-            EducationOrganizationType = data.EducationOrganizationType
+            EducationOrganizationType = data.EducationOrganizationType,
+            Address = data.Address
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -104,8 +150,19 @@ public class EducationOrganizationsController : AuthenticatedController
 
     public async Task<IActionResult> Update(Guid Id)
     {
-        var organization = await _educationOrganizationRepository.GetByIdAsync(Id);
+       Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
+            request.Id == Id;
 
+        var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, -1)
+            .WithSearchExpression(focusOrganizationExpression)
+            .WithIncludeEntities(builder => builder
+                .Include(educationOrganization => educationOrganization.Address)
+            )
+            .Build();
+
+        var organizations = await _educationOrganizationRepository.ListAsync(specification,CancellationToken.None);
+
+        var organization = organizations.FirstOrDefault();
         var organizationViewModel = new CreateEducationOrganizationRequestViewModel();
 
         if (organization is not null)
@@ -116,7 +173,8 @@ public class EducationOrganizationsController : AuthenticatedController
                 ParentOrganizationId = organization.ParentOrganizationId,
                 Name = organization.Name!,
                 EducationOrganizationType = organization.EducationOrganizationType,
-                Number = organization.Number!
+                Number = organization.Number!,
+                Address = organization.Address!
             };
         }
 
@@ -132,7 +190,19 @@ public class EducationOrganizationsController : AuthenticatedController
         if (!data.EducationOrganizationId.HasValue) { throw new ArgumentNullException("EducationOrganizationId required."); }
         
         // Get existing organization
-        var organization = await _educationOrganizationRepository.GetByIdAsync(data.EducationOrganizationId.Value);
+       Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
+            request.Id == data.EducationOrganizationId;
+
+        var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, -1)
+            .WithSearchExpression(focusOrganizationExpression)
+            .WithIncludeEntities(builder => builder
+                .Include(educationOrganization => educationOrganization.Address)
+            )
+            .Build();
+
+        var organizations = await _educationOrganizationRepository.ListAsync(specification,CancellationToken.None);
+
+        var organization = organizations.FirstOrDefault();
 
         if (organization is null) { throw new ArgumentException("Not a valid organization."); }
 
@@ -150,6 +220,7 @@ public class EducationOrganizationsController : AuthenticatedController
         }
         organization.Number = data.Number;
         organization.EducationOrganizationType = data.EducationOrganizationType;
+        organization.Address = data.Address;
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 
@@ -174,5 +245,4 @@ public class EducationOrganizationsController : AuthenticatedController
 
         return RedirectToAction(nameof(Index));
     }
-
 }

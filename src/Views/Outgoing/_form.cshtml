@@ -50,7 +50,7 @@
               </template>
               </dt>
               <dd class="mt-1 text-base text-gray-900">
-                <select x-model="studentSsidNumber" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
+                <select x-model="studentSsidNumber" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                   <option value="">Select a Student</option>
                     <template x-for="student in students">
                       <option :value="student.ssidNumber" x-text="student.fullName"></option>
@@ -104,7 +104,7 @@
           <div class="border-t border-gray-900/5 px-6 py-6 flex gap-x-2 items-end">
             <div class="flex-1">
               @Html.LabelFor(it => it.RequestStatus, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-              <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
+              <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 <option value="">Select a Status</option>
                 <option value="Approved">Approved</option>
                 <option value="Denied">Denied</option>
