@@ -21,70 +21,93 @@
     Alpine.data('outgoingForm', () => {
         return {
           studentSsidNumber: null,
-          students: [
-            {
-              studentUsi: '635897',
-              ssidNumber: '8000000000001',
-              lastName: 'Deshawn',
-              firstName: 'Dave',
-              middleName: 'Den',
-              suffix: 'Jr',
-              gender: 'M',
-              birthDate: '2010-05-04',
-              get fullName() {
-                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
-              },
-            },
-            {
-              studentUsi: '47845',
-              ssidNumber: '8000000000002',
-              lastName: 'Kiril',
-              firstName: 'Karl',
-              middleName: 'K',
-              suffix: '',
-              gender: 'M',
-              birthDate: '2009-08-10',
-              get fullName() {
-                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
-              },
-            },
-            {
-              studentUsi: '36989852',
-              ssidNumber: '8000000000003',
-              lastName: 'Je\'even',
-              firstName: 'James',
-              middleName: 'Jack',
-              suffix: 'III',
-              gender: 'M',
-              birthDate: '2010-07-06',
-              get fullName() {
-                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
-              },
-            },
-            {
-              studentUsi: '745214',
-              ssidNumber: '8000000000004',
-              lastName: 'Maris',
-              firstName: 'Meme',
-              middleName: 'Marie',
-              suffix: '',
-              gender: 'F',
-              birthDate: '2014-12-24',
-              get fullName() {
-                return [this.firstName, this.middleName, this.lastName].filter(Boolean).join(" ")
-              },
-            },
-          ],
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          birthDate: '',
+          students: [],
 
           get selectedStudent() {
-            return this.students.find(it => it.ssidNumber === this.studentSsidNumber)
+            return mockStudents().find(it => it.ssidNumber === this.studentSsidNumber)
           },
 
           get isMatchingStudent() {
             return this.selectedStudent?.ssidNumber === @Html.Raw(Json.Serialize(@Model.StudentUniqueId))
           },
+
+          getStudentFullName(student) {
+            return [
+              student.firstName,
+              student.middleName,
+              student.generationCodeSuffix,
+              student.lastSurname,
+              student.maidenName,
+            ].filter(Boolean).join(" ")
+          },
+
+          async searchStudent() {
+            // TODO: Search Ed-Fi students
+            if (!this.firstName && !this.lastSurname && !this.birthDate) {
+              this.students = []
+              return
+            }
+
+            this.students = mockStudents().filter(student =>
+              (!this.firstName || student.firstName.toLowerCase().includes(this.firstName.toLowerCase()))
+              && (!this.lastSurname || student.lastSurname.toLowerCase().includes(this.lastName.toLowerCase()))
+              && (!this.birthDate || student.birthDate.includes(this.birthDate)))
+          },
         }
     })
   })
+
+  function mockStudents() {
+    return [
+      {
+        studentUsi: '635897',
+        ssidNumber: '8000000000001',
+        firstName: 'Dave',
+        middleName: 'Den',
+        generationCodeSuffix: 'Jr',
+        lastSurname: 'Deshawn',
+        maidenName: '',
+        birthSexDescriptor: 'Male',
+        birthDate: '2010-05-04',
+      },
+      {
+        studentUsi: '47845',
+        ssidNumber: '8000000000002',
+        firstName: 'Karl',
+        middleName: 'K',
+        generationCodeSuffix: '',
+        lastSurname: 'Kiril',
+        maidenName: '',
+        birthSexDescriptor: 'Male',
+        birthDate: '2009-08-10',
+      },
+      {
+        studentUsi: '36989852',
+        ssidNumber: '8000000000003',
+        firstName: 'James',
+        middleName: 'Jack',
+        generationCodeSuffix: 'III',
+        lastSurname: 'Je\'even',
+        maidenName: '',
+        birthSexDescriptor: 'Male',
+        birthDate: '2010-07-06',
+      },
+      {
+        studentUsi: '745214',
+        ssidNumber: '8000000000004',
+        firstName: 'Meme',
+        middleName: 'Marie',
+        generationCodeSuffix: '',
+        lastSurname: 'Maris',
+        maidenName: '',
+        birthSexDescriptor: 'Nonbinary',
+        birthDate: '2014-12-24',
+      },
+    ]
+  }
 </script>
 }

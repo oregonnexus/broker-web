@@ -30,4 +30,6 @@ public class CreateEducationOrganizationRequestViewModel
     [Display(Name = "Education Organizations")]
     public IEnumerable<SelectListItem> EducationOrganizations { get; set; } = Enumerable.Empty<SelectListItem>();
 
+    [Display(Name = "States")]
+    public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
 }

@@ -6,9 +6,28 @@
     Layout = "_AuthenticatedLayout";
 }
 
-<div class="grid gap-6">
-  <form method="post" asp-action="Update" autocomplete="off">
-    <input type="hidden" name="_METHOD" value="PUT" />
-    <partial name="_form" for="@Model" />
-  </form>
-</div>
+<form
+  x-data="updateIncomingRecordForm"
+  method="post"
+  asp-action="Update"
+  autocomplete="off"
+>
+  <input type="hidden" name="_METHOD" value="PUT" />
+  <partial name="_form" for="@Model" />
+</form>
+
+@section scripts
+{
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data(
+      'updateIncomingRecordForm',
+      incomingRecordForm(
+        @Html.Raw(Json.Serialize(Model.EducationOrganizationId)),
+        @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
+        @Html.Raw(Json.Serialize(Url.Action("Search", "EducationOrganizations")))
+      )
+    )
+  })
+</script>
+}

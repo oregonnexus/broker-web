@@ -4,14 +4,6 @@
 <div
   x-data="{
     educationOrganizationType: '@Model.EducationOrganizationType',
-    selectedState: '@Model.Address.StateAbbreviation',
-    states: [
-      'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-      'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-      'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-      'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
-      'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-    ],
     get isSchool() {
       return this.educationOrganizationType == 'School'
     }
@@ -95,13 +87,11 @@
                 @Html.LabelFor(it => it.Address.StateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <select
-                    x-model="selectedState"
+                    asp-for="@Model.Address.StateAbbreviation"
+                    asp-items="Model.States"
                     class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
                   >
                     <option value=""></option>
-                    <template x-for="state in states">
-                      <option :value="state" :selected="selectedState === state" x-text="state"></option>
-                    </template>
                   </select>
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="Address.StateAbbreviation">@Html.ValidationMessageFor(m => m.Address.StateAbbreviation)</p>
@@ -127,7 +117,6 @@
           Cancel
         </a>
         <input asp-for="EducationOrganizationId" type="hidden" />
-        <input asp-for="Address.StateAbbreviation" :value="selectedState" type="hidden" />
         <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
       </div>
     </div>

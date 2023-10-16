@@ -19,7 +19,10 @@ public static class JsonDocumentMapperExtension
                 StudentUniqueId = viewModel.StudentUniqueId,
                 FirstName = viewModel.FirstName,
                 MiddleName = viewModel.MiddleName,
-                LastSurname = viewModel.LastSurname
+                LastSurname = viewModel.LastSurname,
+                BirthDate = viewModel.BirthDate,
+                Gender = viewModel.Gender,
+                Grade = viewModel.Grade
             },
             From = new SchoolJsonModel
             {

@@ -1,4 +1,5 @@
-﻿using OregonNexus.Broker.Domain;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using OregonNexus.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
 
 namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
@@ -9,7 +10,7 @@ public class CreateIncomingRequestViewModel
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
-    [Display(Name = "School")]
+    [Display(Name = "Releasing School")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
 
@@ -34,6 +35,15 @@ public class CreateIncomingRequestViewModel
 
     [Display(Name = "Last Name")]
     public string? LastSurname { get; set; }
+
+    [Display(Name = "Birth Date")]
+    public string? BirthDate { get; set; }
+
+    [Display(Name = "Gender")]
+    public string? Gender { get; set; }
+
+    [Display(Name = "Grade")]
+    public string? Grade { get; set; }
 
     [Display(Name = "Releasing District")]
     public string? FromDistrict { get; set; }
@@ -70,4 +80,8 @@ public class CreateIncomingRequestViewModel
 
     [Display(Name = "Files")]
     public IFormFileCollection Files { get; set; } = new FormFileCollection();
+
+    public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
+
+    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
 }

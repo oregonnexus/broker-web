@@ -10,6 +10,7 @@ using OregonNexus.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 using System.Linq.Expressions;
+using OregonNexus.Broker.Web.Extensions.States;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -117,7 +118,8 @@ public class EducationOrganizationsController : AuthenticatedController
         var educationOrganizations = await _educationOrganizationHelper.GetDistrictsOrganizationsSelectList();
         var viewModel = new CreateEducationOrganizationRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
+            EducationOrganizations = educationOrganizations,
+            States = States.GetSelectList()
         };
 
         return View(viewModel);
@@ -172,7 +174,8 @@ public class EducationOrganizationsController : AuthenticatedController
                 Name = organization.Name!,
                 EducationOrganizationType = organization.EducationOrganizationType,
                 Number = organization.Number!,
-                Address = organization.Address!
+                Address = organization.Address!,
+                States = States.GetSelectList()
             };
         }
 

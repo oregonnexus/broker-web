@@ -42,6 +42,36 @@
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="LastSurname">@Html.ValidationMessageFor(m => m.LastSurname)</p>
               </div>
             </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.BirthDate, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="BirthDate" type="date" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="BirthDate">@Html.ValidationMessageFor(m => m.BirthDate)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.Gender, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+
+                    <select
+                      asp-for="Gender"
+                      asp-items="@Model.Genders"
+                      class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
+                    >
+                      <option value="">Select a Gender</option>
+                    </select>
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="Gender">@Html.ValidationMessageFor(m => m.Gender)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.Grade, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="Grade" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="Grade">@Html.ValidationMessageFor(m => m.Grade)</p>
+              </div>
+            </div>
           </div>
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
@@ -95,9 +125,10 @@
                       @@change="searchReleasingSchool"
                     >
                       <option value=""></option>
-                      <template x-for="state in states">
-                        <option :value="state" x-text="state"></option>
-                      </template>
+                      @foreach (var state in @Model.States)
+                      {
+                        <option value="@state.Value">@state.Text</option>
+                      }
                     </select>
                   </div>
                 </div>
@@ -121,37 +152,37 @@
               </div>
               <div x-show="releasingSchools.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-6">
                 <div class="sm:col-span-6">
-                    <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
-                      <template x-for="educationOrganization in releasingSchools">
-                        <label
-                          :for="`education-organization-id-${educationOrganization.id}`"
-                          :class="educationOrganizationId === educationOrganization.id ? 'border-tertiary-600 ring-2 ring-tertiary-600' : 'border-gray-300'"
-                          class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
-                        >
-                          <input :id="`education-organization-id-${educationOrganization.id}`" x-model="educationOrganizationId" :value="educationOrganization.id" type="radio" class="sr-only">
-                          <span class="flex flex-1">
-                            <span class="flex flex-col">
-                              <span class="block text-sm font-medium text-gray-900" x-text="educationOrganization.name"></span>
-                              <span class="mt-1 flex items-center text-sm text-gray-500" x-text="educationOrganization.parentOrganization.name"></span>
-                              <span class="mt-6 text-sm font-medium text-gray-900" x-text="getReleasingSchoolAddressLabel(educationOrganization)"></span>
-                            </span>
+                  <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
+                    <template x-for="educationOrganization in releasingSchools">
+                      <label
+                        :for="`education-organization-id-${educationOrganization.id}`"
+                        :class="educationOrganizationId === educationOrganization.id ? 'border-tertiary-600 ring-2 ring-tertiary-600' : 'border-gray-300'"
+                        class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
+                      >
+                        <input :id="`education-organization-id-${educationOrganization.id}`" x-model="educationOrganizationId" :value="educationOrganization.id" type="radio" class="sr-only">
+                        <span class="flex flex-1">
+                          <span class="flex flex-col">
+                            <span class="block text-sm font-medium text-gray-900" x-text="educationOrganization.name"></span>
+                            <span class="mt-1 flex items-center text-sm text-gray-500" x-text="educationOrganization.parentOrganization.name"></span>
+                            <span class="mt-6 text-sm font-medium text-gray-900" x-text="getReleasingSchoolAddressLabel(educationOrganization)"></span>
                           </span>
-                          <svg
-                            :class="educationOrganizationId === educationOrganization.id ? '' : 'invisible'"
-                            class="h-5 w-5 text-tertiary-600"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                          </svg>
-                          <span
-                            :class="educationOrganizationId === educationOrganization.id ? 'border border-tertiary-600' : 'border-2 border-transparent'"
-                            class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"
-                          ></span>
-                        </label>
-                      </template>
-                    </div>
+                        </span>
+                        <svg
+                          :class="educationOrganizationId === educationOrganization.id ? '' : 'invisible'"
+                          class="h-5 w-5 text-tertiary-600"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                        </svg>
+                        <span
+                          :class="educationOrganizationId === educationOrganization.id ? 'border border-tertiary-600' : 'border-2 border-transparent'"
+                          class="pointer-events-none absolute -inset-px rounded-lg border-2" aria-hidden="true"
+                        ></span>
+                      </label>
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -159,15 +190,22 @@
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.EducationOrganizationId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input
-                    asp-for="EducationOrganizationId"
-                    :value="selectedEducationOrganization?.name"
-                    type="text"
-                    readonly
-                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
-                  >
+                  <select x-model="educationOrganizationId" asp-for="EducationOrganizationId" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:max-w-xs sm:text-sm sm:leading-6">
+                    <option value="">Select a Releasing School</option>
+                    @foreach (var educationOrganization in Model.EducationOrganizations)
+                    {
+                      <option value="@educationOrganization.Id">@educationOrganization.Name</option>
+                    }
+                  </select>
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="EducationOrganizationId">@Html.ValidationMessageFor(m => m.EducationOrganizationId)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.FromDistrict, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="FromDistrict" :value="selectedEducationOrganization?.parentOrganization.name" type="text" readonly class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromEmail">@Html.ValidationMessageFor(m => m.FromDistrict)</p>
               </div>
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.FromEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
@@ -224,7 +262,6 @@
         </a>
         <input asp-for="RequestId" type="hidden" />
         <input asp-for="EducationOrganizationId" type="hidden" />
-        <input asp-for="FromDistrict" :value="selectedEducationOrganization?.parentOrganization.name" type="hidden" />
         <input asp-for="FromSchool" :value="selectedEducationOrganization?.name" type="hidden" />
         @if (@Model.RequestStatus == @OregonNexus.Broker.Domain.RequestStatus.Approved)
         {

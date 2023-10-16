@@ -5,7 +5,7 @@
 }
 
 <form
-  x-data="incomingForm"
+  x-data="createIncomingRecordForm"
   method="post"
   asp-action="Create"
   autocomplete="off"
@@ -17,78 +17,14 @@
 {
 <script>
   document.addEventListener('alpine:init', () => {
-    Alpine.data('incomingForm', () => {
-        return {
-          educationOrganizationId: @Html.Raw(Json.Serialize(@Model.EducationOrganizationId)),
-          educationOrganizations: @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
-          releasingSchools: [],
-          states: [
-            'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-            'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-            'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-            'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
-            'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-          ],
-
-          streetNumberName: '',
-          city: '',
-          stateAbbreviation:'',
-          postalCode: '',
-
-          isSearchingReleasingSchool: false,
-          searchReleasingSchoolError: '',
-          releasingSchoolNotFoundErrorMessage: 'No releasing school was found using the provided search criteria. Try different search criteria.',
-
-          get selectedEducationOrganization() {
-            return this.educationOrganizations.find(it => it.id === this.educationOrganizationId)
-          },
-
-          getReleasingSchoolAddressLabel(releasingSchool) {
-            const {
-              streetNumberName,
-              city,
-              stateAbbreviation,
-              postalCode,
-            } = releasingSchool.address;
-            return [streetNumberName, city, stateAbbreviation, postalCode].join(', ')
-          },
-
-          async searchReleasingSchool() {
-            try {
-              this.searchReleasingSchoolError = ''
-
-              this.isSearchingReleasingSchool = true
-
-              const params = new URLSearchParams()
-              params.append("streetNumberName", this.streetNumberName)
-              params.append("city", this.city)
-              params.append("stateAbbreviation", this.stateAbbreviation)
-              params.append("postalCode", this.postalCode)
-
-              const url = `@Url.Action("Search", "EducationOrganizations")?${params.toString()}`
-
-              const response = await fetch(url);
-
-              if (!response.ok) {
-                throw new Error(this.releasingSchoolNotFoundErrorMessage)
-              }
-
-              const { items } = await response.json()
-
-              if (items.length === 0) {
-                throw new Error(this.releasingSchoolNotFoundErrorMessage)
-              }
-
-              this.releasingSchools = items
-            } catch (error) {
-              this.searchReleasingSchoolError = error.message
-              this.releasingSchools = []
-            } finally {
-              this.isSearchingReleasingSchool = false
-            }
-          }
-        }
-    })
+    Alpine.data(
+      'createIncomingRecordForm',
+      incomingRecordForm(
+        @Html.Raw(Json.Serialize(Model.EducationOrganizationId)),
+        @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
+        @Html.Raw(Json.Serialize(Url.Action("Search", "EducationOrganizations")))
+      )
+    )
   })
 </script>
 }

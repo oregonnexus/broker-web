@@ -17,6 +17,8 @@ using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using System.Linq.Expressions;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using OregonNexus.Broker.Web.Extensions.States;
+using OregonNexus.Broker.Web.Extensions.Genders;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -100,15 +102,15 @@ public class IncomingController : AuthenticatedController
     {
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
         var educationOrganizations = educationOrganizationList
-            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId()
-                && educationOrganization.ParentOrganizationId is not null
-            )
+            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
             .ToList();
 
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
-                
+            EducationOrganizations = educationOrganizations,
+            States = States.GetSelectList(),
+            Genders = Genders.GetSelectList()
         };
 
         return View(viewModel);
@@ -170,8 +172,10 @@ public class IncomingController : AuthenticatedController
         if (incomingRequest is null) return NotFound();
 
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-                .ToList();
+        var educationOrganizations = educationOrganizationList
+            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+            .ToList();
 
         var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
 
@@ -188,6 +192,9 @@ public class IncomingController : AuthenticatedController
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
             LastSurname = requestManifest?.Student?.LastSurname,
+            BirthDate = requestManifest?.Student?.BirthDate,
+            Gender = requestManifest?.Student?.Gender,
+            Grade = requestManifest?.Student?.Grade,
             FromDistrict = requestManifest?.From?.District,
             FromSchool = requestManifest?.From?.School,
             FromEmail = requestManifest?.From?.Email,
@@ -196,7 +203,9 @@ public class IncomingController : AuthenticatedController
             ToEmail = requestManifest?.To?.Email,
             Note = requestManifest?.Note,
             Contents = requestManifest?.Contents,
-            RequestStatus = incomingRequest.RequestStatus
+            RequestStatus = incomingRequest.RequestStatus,
+            States = States.GetSelectList(),
+            Genders = Genders.GetSelectList()
         };
 
         return View(viewModel);
