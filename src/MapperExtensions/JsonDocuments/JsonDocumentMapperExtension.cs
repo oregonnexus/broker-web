@@ -28,7 +28,11 @@ public static class JsonDocumentMapperExtension
             {
                 District = viewModel.FromDistrict,
                 School = viewModel.FromSchool,
-                Email = viewModel.FromEmail
+                Email = viewModel.FromEmail,
+                StreetNumberName = viewModel.FromStreetNumberName,
+                City = viewModel.FromCity,
+                StateAbbreviation = viewModel.FromStateAbbreviation,
+                PostalCode = viewModel.FromPostalCode
             },
             To = new SchoolJsonModel
             {

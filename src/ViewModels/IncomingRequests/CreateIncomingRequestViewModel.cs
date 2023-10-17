@@ -10,7 +10,7 @@ public class CreateIncomingRequestViewModel
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
-    [Display(Name = "Releasing School")]
+    [Display(Name = "Receiving School")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
 
@@ -45,22 +45,34 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Grade")]
     public string? Grade { get; set; }
 
-    [Display(Name = "Releasing District")]
+    [Display(Name = "District (Optional)")]
     public string? FromDistrict { get; set; }
 
-    [Display(Name = "Releasing School")]
+    [Display(Name = "School")]
     public string? FromSchool { get; set; }
 
-    [Display(Name = "Releasing Clerk's Email")]
+    [Display(Name = "Clerk's Email")]
     public string? FromEmail { get; set; }
 
-    [Display(Name = "Receiving District")]
+    [Display(Name = "Street Number and Name")]
+    public string? FromStreetNumberName { get; set; }
+
+    [Display(Name = "City")]
+    public string? FromCity { get; set; }
+
+    [Display(Name = "State")]
+    public string? FromStateAbbreviation { get; set; }
+
+    [Display(Name = "Postal Code")]
+    public string? FromPostalCode { get; set; }
+
+    [Display(Name = "District")]
     public string? ToDistrict { get; set; }
 
-    [Display(Name = "Receiving School")]
+    [Display(Name = "School")]
     public string? ToSchool { get; set; }
 
-    [Display(Name = "Receiving Clerk's Email")]
+    [Display(Name = "Clerk's Email")]
     public string? ToEmail { get; set; }
 
     [Display(Name = "Notes")]
