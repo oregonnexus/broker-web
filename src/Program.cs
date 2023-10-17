@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Authentication;
 using OregonNexus.Broker.Web.Extensions.Routes;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using src.Services.Tokens;
+using src.Services.Students;
+using src.Services.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +70,9 @@ builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPayloadContentService, PayloadContentService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.ConfigureApplicationCookie(options => 
 {
@@ -132,6 +138,7 @@ builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddInertia();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 
