@@ -62,63 +62,64 @@ public class StudentService : IStudentService
         {
             throw new Exception("Failed to obtain students.", ex);
         }
-    }public async Task<StudentAggregateResponse> GetById(string id)
-{
-    try
-    {
-        var accessToken = await _tokenService.GetAccessTokenAsync();
-        var educationOrganizationPayloadSettings = await _educationOrganizationPayloadSettings.ListAsync();
-        var educationOrganizationPayloadSetting = educationOrganizationPayloadSettings.FirstOrDefault(
-            educationOrganizationPayload => educationOrganizationPayload.Payload == "StudentCumulativeRecord"
-        ) ?? throw new Exception("Education organization payload setting not found.");
-
-        var rootElement = educationOrganizationPayloadSetting.Settings?.RootElement ?? throw new ArgumentNullException();
-
-        var studentParamUrl = $"?studentUniqueId={id}";
-
-        var taskDictionary = new Dictionary<string, Task>();
-        var studentAggregateResponse = new StudentAggregateResponse();
-
-        var assessmentResponse = _clientService.GetApiResponseAsync<AssessmentResponse>(
-            $"{rootElement.GetProperty("Assessments").GetString()!}{studentParamUrl}",
-            accessToken);
-
-        var programAssociationResponse = _clientService.GetApiResponseAsync<ProgramAssociationResponse>(
-            $"{rootElement.GetProperty("ProgramAssociations").GetString()!}{studentParamUrl}",
-            accessToken);
-
-        var sectionAssociationResponse = _clientService.GetApiResponseAsync<SectionAssociationResponse>(
-            $"{rootElement.GetProperty("SectionAssociations").GetString()!}{studentParamUrl}",
-            accessToken);
-
-        var courseTranscriptResponse = _clientService.GetApiResponseAsync<CourseTranscriptResponse>(
-            $"{rootElement.GetProperty("CourseTranscripts").GetString()!}{studentParamUrl}",
-            accessToken);
-
-        var gradesResponse = _clientService.GetApiResponseAsync<GradeResponse>(
-            $"{rootElement.GetProperty("Grades").GetString()!}{studentParamUrl}",
-            accessToken);
-
-        await Task.WhenAll(
-            assessmentResponse,
-            programAssociationResponse,
-            sectionAssociationResponse,
-            courseTranscriptResponse,
-            gradesResponse);
-
-        return new StudentAggregateResponse(){
-            Assessments = assessmentResponse.Result,
-            ProgramAssociations = programAssociationResponse.Result,
-            SectionAssociations = sectionAssociationResponse.Result,
-            CourseTranscripts = courseTranscriptResponse.Result,
-            Grades = gradesResponse.Result
-        };
     }
-    catch (Exception ex)
+    public async Task<StudentAggregateResponse> GetById(string id)
     {
-        throw new Exception("Failed to obtain access token.", ex);
+        try
+        {
+            var accessToken = await _tokenService.GetAccessTokenAsync();
+            var educationOrganizationPayloadSettings = await _educationOrganizationPayloadSettings.ListAsync();
+            var educationOrganizationPayloadSetting = educationOrganizationPayloadSettings.FirstOrDefault(
+                educationOrganizationPayload => educationOrganizationPayload.Payload == "StudentCumulativeRecord"
+            ) ?? throw new Exception("Education organization payload setting not found.");
+
+            var rootElement = educationOrganizationPayloadSetting.Settings?.RootElement ?? throw new ArgumentNullException();
+
+            var studentParamUrl = $"?studentUniqueId={id}";
+
+            var taskDictionary = new Dictionary<string, Task>();
+            var studentAggregateResponse = new StudentAggregateResponse();
+
+            var assessmentResponse = _clientService.GetApiResponseAsync<AssessmentResponse>(
+                $"{rootElement.GetProperty("Assessments").GetString()!}{studentParamUrl}",
+                accessToken);
+
+            var programAssociationResponse = _clientService.GetApiResponseAsync<ProgramAssociationResponse>(
+                $"{rootElement.GetProperty("ProgramAssociations").GetString()!}{studentParamUrl}",
+                accessToken);
+
+            var sectionAssociationResponse = _clientService.GetApiResponseAsync<SectionAssociationResponse>(
+                $"{rootElement.GetProperty("SectionAssociations").GetString()!}{studentParamUrl}",
+                accessToken);
+
+            var courseTranscriptResponse = _clientService.GetApiResponseAsync<CourseTranscriptResponse>(
+                $"{rootElement.GetProperty("CourseTranscripts").GetString()!}{studentParamUrl}",
+                accessToken);
+
+            var gradesResponse = _clientService.GetApiResponseAsync<GradeResponse>(
+                $"{rootElement.GetProperty("Grades").GetString()!}{studentParamUrl}",
+                accessToken);
+
+            await Task.WhenAll(
+                assessmentResponse,
+                programAssociationResponse,
+                sectionAssociationResponse,
+                courseTranscriptResponse,
+                gradesResponse);
+
+            return new StudentAggregateResponse(){
+                Assessments = assessmentResponse.Result,
+                ProgramAssociations = programAssociationResponse.Result,
+                SectionAssociations = sectionAssociationResponse.Result,
+                CourseTranscripts = courseTranscriptResponse.Result,
+                Grades = gradesResponse.Result
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to obtain access token.", ex);
+        }
     }
-}
 
     private static string ToQueryString(object requestParams)
     {
