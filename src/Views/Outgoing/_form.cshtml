@@ -133,7 +133,7 @@
 
       <div class="lg:col-span-4">
         <h2 class="sr-only">Student Lookup Summary</h2>
-        <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 px-6 py-6"">
+        <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-6"">
           <div>
             <h2 class="text-base font-semibold leading-7 text-gray-900">Student lookup</h2>
             <p class="mt-1 text-sm leading-6 text-gray-600">Provide information about the student to conduct a lookup and find a match.</p>
@@ -248,79 +248,153 @@
         </div>
       </div>
 
-      <div class="lg:col-span-4">
-        <h2 class="sr-only">Student Data Summary</h2>
-        <div class="rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5"">
-          <dl class="flex flex-wrap">
-            <div class="flex-auto px-6 py-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900 flex gap-2">
-                <span class="flex-1">
-                  Student Data
-                </span>
-              </dt>
-            </div>
-            <div class="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-6 text-sm ">
-              <dt class="flex-none">
-                Student Unique ID:
-              </dt>
-              <dd class="font-semibold text-gray-900" x-text="matchedStudent?.studentUniqueId"></dd>
-            </div>
-            <div class="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-6 text-sm ">
-              <dt class="flex-none">
-                First Name:
-              </dt>
-              <dd class="font-semibold text-gray-900" x-text="matchedStudent?.firstName"></dd>
-            </div>
-            <div class="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-6 text-sm ">
-              <dt class="flex-none">
-                Last Name:
-              </dt>
-              <dd class="font-semibold text-gray-900" x-text="matchedStudent?.lastSurname"></dd>
-            </div>
-            <div class="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-6 text-sm ">
-              <dt class="flex-none">
-                Birth Date:
-              </dt>
-              <dd class="font-semibold text-gray-900" x-text="formatDate(matchedStudent?.birthDate)"></dd>
-            </div>
-          </dl>
-          <div class="border-t border-gray-900/5 px-6 py-6 flex gap-x-2 items-end">
-            <div class="flex-1">
-              @Html.LabelFor(it => it.RequestStatus, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-              <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                <option value="">Select a Status</option>
-                <option value="Approved">Approved</option>
-                <option value="Denied">Denied</option>
-              </select>
-            </div>
-            <div>
-              <input asp-for="RequestId" type="hidden" />
-              <input asp-for="EducationOrganizations" type="hidden" />
-              <input asp-for="EducationOrganizationId" type="hidden" />
-              <input asp-for="Date" type="hidden" />
-              <input asp-for="EdfiId" type="hidden" />
-              <input asp-for="EdfiStudentUniqueId" type="hidden" />
-              <input asp-for="Id" type="hidden" />
-              <input asp-for="StudentUniqueId" type="hidden" />
-              <input asp-for="FirstName" type="hidden" />
-              <input asp-for="MiddleName" type="hidden" />
-              <input asp-for="LastSurname" type="hidden" />
-              <input asp-for="FromDistrict" type="hidden" />
-              <input asp-for="FromSchool" type="hidden" />
-              <input asp-for="FromEmail" type="hidden" />
-              <input asp-for="ToDistrict" type="hidden" />
-              <input asp-for="ToSchool" type="hidden" />
-              <input asp-for="ToEmail" type="hidden" />
-              <input asp-for="Note" type="hidden" />
-              <input asp-for="Contents" type="hidden" />
-              <input asp-for="Files" type="hidden" />
-              <button
-                type="submit"
-                class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
-              >
-                Send
-              </button>
-            </div>
+      <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-gray-900">Student data</h2>
+        </div>
+        <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                  Student Unique ID
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  First Name
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Last Name
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Birth Date
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3" x-text="matchedStudent?.studentUniqueId"></td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="matchedStudent?.firstName"></td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="matchedStudent?.lastSurname"></td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="formatDate(matchedStudent?.birthDate)"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-gray-900">Course Transcript</h2>
+        </div>
+        <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                  School Year
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  School Code / Name
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Course Code / Title
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Att Cr
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Ern Cr
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Letter Grade
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(courseTranscript, index) in studentData?.courseTranscripts">
+                <tr :class="index % 2 === 0 ? 'bg-gray-50': ''">
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3" x-text="courseTranscript.studentAcademicRecordReference.schoolYear"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${courseTranscript.assigningOrganizationIdentificationCode} / @Model.FromSchool`"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${courseTranscript.courseReference.courseCode} / ${courseTranscript.academicSubjects[0].subject}`"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.attemptedCredits"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.earnedCredits"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.finalLetterGradeEarned"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
+        <div>
+          <h2 class="text-base font-semibold leading-7 text-gray-900">Program Associations</h2>
+        </div>
+        <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                  Program Type / Name
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Begin Date
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  End Date
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(programAssociation, index) in studentData?.programAssociations">
+                <tr :class="index % 2 === 0 ? 'bg-gray-50': ''">
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${programAssociation.programReference.programName} / ${programAssociation.programReference.programType}`"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="formatDate(programAssociation.beginDate)"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="formatDate(programAssociation.endDate)"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
+        <div class="flex gap-2 items-end">
+          <div class="flex-1">
+            @Html.LabelFor(it => it.RequestStatus, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+            <select asp-for="RequestStatus" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+              <option value="">Select a Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Denied">Denied</option>
+            </select>
+          </div>
+          <div>
+            <input asp-for="RequestId" type="hidden" />
+            <input asp-for="EducationOrganizations" type="hidden" />
+            <input asp-for="EducationOrganizationId" type="hidden" />
+            <input asp-for="Date" type="hidden" />
+            <input asp-for="EdfiId" type="hidden" />
+            <input asp-for="EdfiStudentUniqueId" type="hidden" />
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="StudentUniqueId" type="hidden" />
+            <input asp-for="FirstName" type="hidden" />
+            <input asp-for="MiddleName" type="hidden" />
+            <input asp-for="LastSurname" type="hidden" />
+            <input asp-for="FromDistrict" type="hidden" />
+            <input asp-for="FromSchool" type="hidden" />
+            <input asp-for="FromEmail" type="hidden" />
+            <input asp-for="ToDistrict" type="hidden" />
+            <input asp-for="ToSchool" type="hidden" />
+            <input asp-for="ToEmail" type="hidden" />
+            <input asp-for="Note" type="hidden" />
+            <input asp-for="Contents" type="hidden" />
+            <input asp-for="Files" type="hidden" />
+            <button
+              type="submit"
+              class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
+            >
+              Send
+            </button>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ public class ProgramAssociationResponse
     public string? Id { get; set; }
     public ProgramReference ProgramReference { get; set; }= new();
     public DateTime BeginDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public bool ServedOutsideOfRegularSession { get; set; }
     public string? Etag { get; set; }
     public DateTime LastModifiedDate { get; set; }

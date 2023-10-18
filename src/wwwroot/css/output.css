@@ -1280,11 +1280,6 @@ select {
        column-gap: 0.375rem;
 }
 
-.gap-x-2 {
-  -moz-column-gap: 0.5rem;
-       column-gap: 0.5rem;
-}
-
 .gap-x-3 {
   -moz-column-gap: 0.75rem;
        column-gap: 0.75rem;
