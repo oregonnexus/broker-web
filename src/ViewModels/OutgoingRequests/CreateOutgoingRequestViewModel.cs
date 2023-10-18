@@ -70,6 +70,4 @@ public class CreateOutgoingRequestViewModel
 
     [Display(Name = "Files")]
     public IFormFileCollection Files { get; set; } = new FormFileCollection();
-
 }
-

@@ -5,26 +5,9 @@
 }
 
 <form
-  x-data="createIncomingRecordForm"
   method="post"
   asp-action="Create"
   autocomplete="off"
 >
   <partial name="_form" for="@Model" />
 </form>
-
-@section scripts
-{
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.data(
-      'createIncomingRecordForm',
-      incomingRecordForm(
-        @Html.Raw(Json.Serialize(Model.EducationOrganizationId)),
-        @Html.Raw(Json.Serialize(Model.EducationOrganizations.ToList())),
-        @Html.Raw(Json.Serialize(Url.Action("Search", "EducationOrganizations")))
-      )
-    )
-  })
-</script>
-}

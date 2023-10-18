@@ -28,7 +28,7 @@ public static class Genders
             selectList.Add(new SelectListItem
             {
                 Text = friendlyGender,
-                Value = friendlyGender
+                Value = gender.ToString()
             });
         }
 

@@ -7,6 +7,7 @@ public class CourseTranscriptResponse
     public CourseReference CourseReference { get; set; } = new();
     public StudentAcademicRecordReference StudentAcademicRecordReference { get; set; } = new();
     public string? CourseAttemptResultDescriptor { get; set; }
+    public string CourseAttemptResult => CourseAttemptResultDescriptor.ExtractDescriptor();
     public string? AssigningOrganizationIdentificationCode { get; set; }
     public double AttemptedCredits { get; set; }
     public string? CourseCatalogURL { get; set; }
@@ -14,11 +15,14 @@ public class CourseTranscriptResponse
     public string? FinalLetterGradeEarned { get; set; }
     public double FinalNumericGradeEarned { get; set; }
     public string? MethodCreditEarnedDescriptor { get; set; }
+    public string MethodCreditEarned => MethodCreditEarnedDescriptor.ExtractDescriptor();
     public string? WhenTakenGradeLevelDescriptor { get; set; }
+    public string WhenTakenGradeLevel => WhenTakenGradeLevelDescriptor.ExtractDescriptor();
     public List<AcademicSubject> AcademicSubjects { get; set; } = new();
     public string? Etag { get; set; }
     public DateTime LastModifiedDate { get; set; }
 }
+
 public class CourseReference
 {
     public string? CourseCode { get; set; }

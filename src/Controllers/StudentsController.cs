@@ -35,7 +35,7 @@ public class StudentsController : AuthenticatedController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(string id)
+    public async Task<IActionResult> Show(string id)
     {
         try
         {
