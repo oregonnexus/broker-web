@@ -13,7 +13,6 @@
   </form>
 </div>
 
-
 @section scripts
 {
 <script>
@@ -24,7 +23,7 @@
             this.fetchStudents()
           },
 
-          studentUniqueId: null,
+          studentUniqueId: @Html.Raw(Json.Serialize(Model.EdfiStudentUniqueId)),
           firstName: '',
           lastSurname: '',
           birthDate: '',
