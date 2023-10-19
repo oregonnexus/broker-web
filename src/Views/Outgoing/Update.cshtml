@@ -23,6 +23,7 @@
             this.fetchStudents()
           },
 
+          requestId: @Html.Raw(Json.Serialize(Model.RequestId)),
           studentUniqueId: @Html.Raw(Json.Serialize(Model.EdfiStudentUniqueId)),
           firstName: '',
           lastSurname: '',
@@ -125,6 +126,30 @@
               this.isLoadingStudentData = false
             }
           },
+
+          async updateRequest() {
+            if (!this.studentData) return
+            try {
+              const { programAssociations, courseTranscripts } = this.studentData
+            
+              const response = await fetch(`${window.location.origin}/api/requests/${this.requestId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  programAssociations,
+                  courseTranscripts,
+                }),
+              });
+
+              if (!response.ok) {
+                throw new Error('Unable to save student data.');
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
         }
     })
   })
