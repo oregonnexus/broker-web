@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
+using src.Models.Courses;
+using src.Models.ProgramAssociations;
 using System.ComponentModel.DataAnnotations;
 
 namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
@@ -96,4 +98,8 @@ public class CreateIncomingRequestViewModel
     public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
 
     public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
+
+    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
+    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();   
+    
 }

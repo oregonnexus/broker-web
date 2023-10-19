@@ -19,6 +19,8 @@ using System.Linq.Expressions;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 using OregonNexus.Broker.Web.Extensions.States;
 using OregonNexus.Broker.Web.Extensions.Genders;
+using src.Models.ProgramAssociations;
+using src.Models.Courses;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -180,6 +182,10 @@ public class IncomingController : AuthenticatedController
         var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
 
         var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+
+        var programAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
+        var courseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
 
         var viewModel = new CreateIncomingRequestViewModel
         {
@@ -205,7 +211,9 @@ public class IncomingController : AuthenticatedController
             Contents = requestManifest?.Contents,
             RequestStatus = incomingRequest.RequestStatus,
             States = States.GetSelectList(),
-            Genders = Genders.GetSelectList()
+            Genders = Genders.GetSelectList(),
+            ProgramAssociations = programAssociations,
+            CourseTranscripts = courseTranscripts
         };
 
         return View(viewModel);

@@ -36,9 +36,6 @@ public class IncomingRequestViewModel
     // TODO: Map Status to proper Voice Tone.
     [Display(Name = "Status Tone")]
     public string StatusTone => VoiceTone.Positive;
-    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
-    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();   
-    
     public IncomingRequestViewModel() { }
 
     public IncomingRequestViewModel(Request incomingRequest)
@@ -54,8 +51,6 @@ public class IncomingRequestViewModel
         Date = incomingRequest.CreatedAt;
         Status = incomingRequest.RequestStatus == RequestStatus.Approved
                 ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
-        ProgramAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
-        CourseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
     }
     public IncomingRequestViewModel(
         Guid id,
