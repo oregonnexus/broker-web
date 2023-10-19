@@ -15,6 +15,7 @@ using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using src.Models.Students;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
@@ -168,4 +169,5 @@ public class OutgoingController : AuthenticatedController
         viewModel.EducationOrganizations = educationOrganizations;
         return View(viewModel);
     }
+
 }

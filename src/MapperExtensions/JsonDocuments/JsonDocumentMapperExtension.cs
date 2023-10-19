@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using src.Models.Students;
 
 namespace OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 
@@ -97,6 +99,16 @@ public static class JsonDocumentMapperExtension
             Contents = viewModel.Contents
         };
 
+        return responseManifest.ToJsonDocument();
+    }
+
+    public static JsonDocument MapToResponseManifestJsonModel(
+        this RequestModel viewModel,
+        Request request)
+    {
+        var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+        responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
+        responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
         return responseManifest.ToJsonDocument();
     }
 }

@@ -40,7 +40,7 @@ public class OutgoingRequestViewModel
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
         var requestManifest = outgoingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
-        var responseManifest = outgoingRequest.RequestManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+        var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = outgoingRequest.Id;
         District = requestManifest?.To?.District ?? string.Empty;
