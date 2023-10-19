@@ -294,10 +294,16 @@
                   School Year
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  School Code / Name
+                  School Code
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  Course Code / Title
+                  School Name
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Course Code
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Course Title
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Att Cr
@@ -308,21 +314,33 @@
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Letter Grade
                 </th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                  <span class="sr-only">Edit</span>
+                </th>
               </tr>
             </thead>
             <tbody>
               <template x-for="(courseTranscript, index) in studentData?.courseTranscripts">
                 <tr :class="index % 2 === 0 ? 'bg-gray-50': ''">
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3" x-text="courseTranscript.studentAcademicRecordReference.schoolYear"></td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${courseTranscript.assigningOrganizationIdentificationCode} / @Model.FromSchool`"></td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${courseTranscript.courseReference.courseCode} / ${courseTranscript.academicSubjects[0].subject}`"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.assigningOrganizationIdentificationCode"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@Model.FromSchool</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.courseReference.courseCode"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.academicSubjects[0].subject"></td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.attemptedCredits"></td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.earnedCredits"></td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="courseTranscript.finalLetterGradeEarned"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
+                    <button
+                      type="button"
+                      class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
+                    >
+                      Edit
+                    </button>
+                  </td>
                 </tr>
               </template>
             </tbody>
-          </table>
         </div>
       </div>
       
@@ -335,7 +353,10 @@
             <thead>
               <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                  Program Type / Name
+                  Program Type
+                </th>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                  Program Name
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Begin Date
@@ -348,7 +369,8 @@
             <tbody>
               <template x-for="(programAssociation, index) in studentData?.programAssociations">
                 <tr :class="index % 2 === 0 ? 'bg-gray-50': ''">
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="`${programAssociation.programReference.programName} / ${programAssociation.programReference.programType}`"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="programAssociation.programReference.programName"></td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="programAssociation.programReference.programType"></td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="formatDate(programAssociation.beginDate)"></td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600" x-text="formatDate(programAssociation.endDate)"></td>
                 </tr>
