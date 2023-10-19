@@ -3,6 +3,8 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
+using src.Models.Courses;
+using src.Models.ProgramAssociations;
 
 namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
@@ -34,12 +36,15 @@ public class IncomingRequestViewModel
     // TODO: Map Status to proper Voice Tone.
     [Display(Name = "Status Tone")]
     public string StatusTone => VoiceTone.Positive;
-
+    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
+    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();   
+    
     public IncomingRequestViewModel() { }
 
     public IncomingRequestViewModel(Request incomingRequest)
     {
         var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = incomingRequest.Id;
         District = requestManifest?.From?.District ?? string.Empty;
@@ -49,8 +54,9 @@ public class IncomingRequestViewModel
         Date = incomingRequest.CreatedAt;
         Status = incomingRequest.RequestStatus == RequestStatus.Approved
                 ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
+        ProgramAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
+        CourseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
     }
-
     public IncomingRequestViewModel(
         Guid id,
         string district,
