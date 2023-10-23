@@ -16,7 +16,7 @@
         <li>
           @if(config.Selected)
           {
-            <a asp-controller="Settings" asp-action="Configuration" asp-route-assembly="@config.ConnectorTypeName" class="text-tertiary-700 bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold">
+            <a asp-controller="Settings" asp-action="Configuration" asp-route-assembly="@config.ConnectorTypeName" class="bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold">
             @config.DisplayName
             </a>
           }
@@ -38,13 +38,13 @@
         <li>
           @if(payload.Selected)
           {
-            <a asp-controller="Settings" asp-action="IncomingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClass("Settings", "IncomingPayload", "text-indigo-700 bg-gray-50 text-indigo-600 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-indigo-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
+            <a asp-controller="Settings" asp-action="IncomingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClassForAction("Settings", "IncomingPayload", "bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-tertiary-700 hover:text-tertiary-700 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
               @payload.DisplayName
             </a>
           }
           else
           {
-            <a asp-controller="Settings" asp-action="IncomingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClass("Settings", "IncomingPayload", "text-indigo-700 bg-gray-50 text-indigo-600 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-indigo-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
+            <a asp-controller="Settings" asp-action="IncomingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClassForAction("Settings", "IncomingPayload", "bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-tertiary-700 hover:text-tertiary-700 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
               @payload.DisplayName
             </a>
           }
@@ -60,13 +60,13 @@
         <li>
           @if(payload.Selected)
           {
-            <a asp-controller="Settings" asp-action="OutgoingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClass("Settings", "OutgoingPayload", "text-indigo-700 bg-gray-50 text-indigo-600 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-indigo-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
+            <a asp-controller="Settings" asp-action="OutgoingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClassForAction("Settings", "OutgoingPayload", "bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-tertiary-700 hover:text-tertiary-700 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
               @payload.DisplayName
             </a>
           }
           else
           {
-            <a asp-controller="Settings" asp-action="OutgoingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClass("Settings", "OutgoingPayload", "text-indigo-700 bg-gray-50 text-indigo-600 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-indigo-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
+            <a asp-controller="Settings" asp-action="OutgoingPayload" asp-route-payload="@payload.PayloadTypeName" class="@Html.ActiveClassForAction("Settings", "OutgoingPayload", "bg-gray-50 text-tertiary-700 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold", "text-tertiary-700 hover:text-tertiary-700 hover:bg-gray-50 group flex gap-x-3 py-2 pl-2 pr-3 text-sm leading-6 font-semibold")">
               @payload.DisplayName
             </a>
           }

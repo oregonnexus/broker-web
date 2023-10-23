@@ -6,6 +6,7 @@ namespace OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
 
 public class CreateEducationOrganizationRequestViewModel
 {
+    [Display(Name = "Education Organization ID")]
     public Guid? EducationOrganizationId { get; set; }
 
     [Required]
@@ -23,6 +24,12 @@ public class CreateEducationOrganizationRequestViewModel
     [Display(Name = "District")]
     public Guid? ParentOrganizationId { get; set; }
 
+    [Display(Name = "Address")]
+    public Address Address {get;set;} = new();
+
+    [Display(Name = "Education Organizations")]
     public IEnumerable<SelectListItem> EducationOrganizations { get; set; } = Enumerable.Empty<SelectListItem>();
 
+    [Display(Name = "States")]
+    public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
 }

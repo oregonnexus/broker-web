@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using src.Models.Students;
 
 namespace OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 
@@ -19,13 +21,20 @@ public static class JsonDocumentMapperExtension
                 StudentUniqueId = viewModel.StudentUniqueId,
                 FirstName = viewModel.FirstName,
                 MiddleName = viewModel.MiddleName,
-                LastSurname = viewModel.LastSurname
+                LastSurname = viewModel.LastSurname,
+                BirthDate = viewModel.BirthDate,
+                Gender = viewModel.Gender,
+                Grade = viewModel.Grade
             },
             From = new SchoolJsonModel
             {
                 District = viewModel.FromDistrict,
                 School = viewModel.FromSchool,
-                Email = viewModel.FromEmail
+                Email = viewModel.FromEmail,
+                StreetNumberName = viewModel.FromStreetNumberName,
+                City = viewModel.FromCity,
+                StateAbbreviation = viewModel.FromStateAbbreviation,
+                PostalCode = viewModel.FromPostalCode
             },
             To = new SchoolJsonModel
             {
@@ -90,6 +99,16 @@ public static class JsonDocumentMapperExtension
             Contents = viewModel.Contents
         };
 
+        return responseManifest.ToJsonDocument();
+    }
+
+    public static JsonDocument MapToResponseManifestJsonModel(
+        this RequestModel viewModel,
+        Request request)
+    {
+        var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+        responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
+        responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
         return responseManifest.ToJsonDocument();
     }
 }

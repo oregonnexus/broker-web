@@ -22,7 +22,10 @@ public class EducationOrganizationRequestViewModel
     [Display(Name = "District")]
     public Guid? ParentOrganizationId { get; set; }
 
-    public EducationOrganization ParentOrganization { get; set; } = new EducationOrganization();
+    [Display(Name = "Address")]
+    public Address Address { get; set; } = new();
+
+    public EducationOrganization ParentOrganization { get; set; } = new();
 
     public EducationOrganizationRequestViewModel() { }
 
@@ -35,6 +38,7 @@ public class EducationOrganizationRequestViewModel
         EducationOrganizationType = educationOrganization.EducationOrganizationType;
         ParentOrganizationId = educationOrganization.ParentOrganizationId;
         ParentOrganization = educationOrganization.ParentOrganization ?? new EducationOrganization();
+        Address = educationOrganization.Address ?? new Address();
     }
 
     public EducationOrganizationRequestViewModel(

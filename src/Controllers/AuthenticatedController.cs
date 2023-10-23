@@ -31,7 +31,19 @@ public class AuthenticatedController : Controller
     protected Guid GetFocusOrganizationId()
     {
         var session = _httpContextAccessor?.HttpContext?.Session;
-        _ = Guid.TryParse(session?.GetString(FocusOrganizationCurrentKey), out var focusOrganizationKey);
+        _ = Guid.TryParse(session?.GetString(FocusOrganizationKey), out var focusOrganizationKey);
         return focusOrganizationKey;
+    }
+
+
+    protected string GetFocusOrganizationDistrict()
+    {
+        var session = _httpContextAccessor?.HttpContext?.Session;
+        return session is null ? string.Empty : session.GetString(FocusOrganizationDistrict) ?? string.Empty;
+    }
+        protected string GetFocusOrganizationSchool()
+    {
+        var session = _httpContextAccessor?.HttpContext?.Session;
+        return session is null ? string.Empty : session.GetString(FocusOrganizationSchool) ?? string.Empty;
     }
 }

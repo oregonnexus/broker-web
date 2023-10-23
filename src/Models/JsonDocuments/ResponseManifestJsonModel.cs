@@ -1,4 +1,7 @@
-﻿namespace OregonNexus.Broker.Web.Models.JsonDocuments;
+﻿using src.Models.Courses;
+using src.Models.ProgramAssociations;
+
+namespace OregonNexus.Broker.Web.Models.JsonDocuments;
 #nullable disable
 public class ResponseManifestJsonModel
 {
@@ -9,5 +12,7 @@ public class ResponseManifestJsonModel
     public SchoolJsonModel To { get; set; }
     public string Note { get; set; }
     public List<string> Contents { get; set; }
+    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
+    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();
 }
 

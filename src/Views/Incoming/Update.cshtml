@@ -2,13 +2,34 @@
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
-    ViewData["Title"] = "Edit Incoming Request";
+    ViewData["Title"] = "Incoming Record Request Details";
     Layout = "_AuthenticatedLayout";
 }
 
-<div class="grid gap-6">
-  <form method="post" asp-action="Update" autocomplete="off">
-    <input type="hidden" name="_METHOD" value="PUT" />
-    <partial name="_form" for="@Model" />
-  </form>
-</div>
+<form
+  x-data="incomingForm"
+  method="post"
+  asp-action="Update"
+  autocomplete="off"
+>
+  <input type="hidden" name="_METHOD" value="PUT" />
+  <partial name="_form" for="@Model" />
+</form>
+
+
+@section scripts
+{
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('incomingForm', () => {
+        return {
+          programAssociations: @Html.Raw(Json.Serialize(@Model.ProgramAssociations)), 
+          mappedProgramAssociations: @Html.Raw(Json.Serialize(@Model.ProgramAssociations)),
+
+          courseTranscripts: @Html.Raw(Json.Serialize(@Model.CourseTranscripts)), 
+          mappedCourseTranscripts: @Html.Raw(Json.Serialize(@Model.CourseTranscripts)),
+        }
+    })
+  })
+</script>
+}
