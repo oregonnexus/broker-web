@@ -23,7 +23,16 @@ public class EducationOrganizationRequestViewModel
     public Guid? ParentOrganizationId { get; set; }
 
     [Display(Name = "Address")]
-    public Address Address { get; set; } = new();
+    public string StreetNumberName { get; set; } = default!;
+
+    [Display(Name = "City")]
+    public string City { get; set; } = default!;
+
+    [Display(Name = "State")]
+    public string StateAbbreviation { get; set; } = default!;
+
+    [Display(Name = "Zip Code")]
+    public string PostalCode { get; set; } = default!;
 
     public EducationOrganization ParentOrganization { get; set; } = new();
 
@@ -38,7 +47,10 @@ public class EducationOrganizationRequestViewModel
         EducationOrganizationType = educationOrganization.EducationOrganizationType;
         ParentOrganizationId = educationOrganization.ParentOrganizationId;
         ParentOrganization = educationOrganization.ParentOrganization ?? new EducationOrganization();
-        Address = educationOrganization.Address ?? new Address();
+        StreetNumberName = educationOrganization.StreetNumberName;
+        City = educationOrganization.City;
+        StateAbbreviation = educationOrganization.StateAbbreviation;
+        PostalCode = educationOrganization.PostalCode;
     }
 
     public EducationOrganizationRequestViewModel(

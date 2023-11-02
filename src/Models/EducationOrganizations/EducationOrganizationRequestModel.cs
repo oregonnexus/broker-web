@@ -71,25 +71,25 @@ public class EducationOrganizationRequestModel : SearchableModelWithPagination
 
         if (!string.IsNullOrWhiteSpace(StreetNumberName))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.Address.StreetNumberName
+            searchExpressions.Add(educationOrganization => educationOrganization.StreetNumberName
                 .ToLower()
                 .Contains(StreetNumberName.ToLower()));
         }
         if (!string.IsNullOrWhiteSpace(City))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.Address.City
+            searchExpressions.Add(educationOrganization => educationOrganization.City
                 .ToLower()
                 .Contains(City.ToLower()));
         }       
         if (!string.IsNullOrWhiteSpace(StateAbbreviation))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.Address.StateAbbreviation
+            searchExpressions.Add(educationOrganization => educationOrganization.StateAbbreviation
                 .ToLower()
                 .Contains(StateAbbreviation.ToLower()));
         }
         if (!string.IsNullOrWhiteSpace(PostalCode))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.Address.PostalCode
+            searchExpressions.Add(educationOrganization => educationOrganization.PostalCode
                 .ToLower()
                 .Contains(PostalCode.ToLower()));
         }

@@ -43,7 +43,6 @@ public class EducationOrganizationsController : AuthenticatedController
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.Address)
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
             .Build();
 
@@ -86,7 +85,6 @@ public class EducationOrganizationsController : AuthenticatedController
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.Address)
                 .Include(educationOrganization => educationOrganization.ParentOrganization)
             )
             .Build();
@@ -138,7 +136,7 @@ public class EducationOrganizationsController : AuthenticatedController
             Name = data.Name,
             Number = data.Number,
             EducationOrganizationType = data.EducationOrganizationType,
-            Address = data.Address
+            StreetNumberName = data.StreetNumberName
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -155,9 +153,6 @@ public class EducationOrganizationsController : AuthenticatedController
 
         var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, -1)
             .WithSearchExpression(focusOrganizationExpression)
-            .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.Address)
-            )
             .Build();
 
         var organizations = await _educationOrganizationRepository.ListAsync(specification,CancellationToken.None);
@@ -174,7 +169,7 @@ public class EducationOrganizationsController : AuthenticatedController
                 Name = organization.Name!,
                 EducationOrganizationType = organization.EducationOrganizationType,
                 Number = organization.Number!,
-                Address = organization.Address!,
+                StreetNumberName = organization.StreetNumberName!,
                 States = States.GetSelectList()
             };
         }
@@ -196,9 +191,6 @@ public class EducationOrganizationsController : AuthenticatedController
 
         var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, -1)
             .WithSearchExpression(focusOrganizationExpression)
-            .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.Address)
-            )
             .Build();
 
         var organizations = await _educationOrganizationRepository.ListAsync(specification,CancellationToken.None);
@@ -221,7 +213,7 @@ public class EducationOrganizationsController : AuthenticatedController
         }
         organization.Number = data.Number;
         organization.EducationOrganizationType = data.EducationOrganizationType;
-        organization.Address = data.Address;
+        organization.StreetNumberName = data.StreetNumberName;
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 

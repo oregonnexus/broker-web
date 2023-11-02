@@ -68,40 +68,40 @@
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.Address.StreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.StreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="Address.StreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="StreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="Address.StreetNumberName">@Html.ValidationMessageFor(m => m.Address.StreetNumberName)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="StreetNumberName">@Html.ValidationMessageFor(m => m.StreetNumberName)</p>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.Address.City, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.City, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="Address.City" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="City" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="Address.City">@Html.ValidationMessageFor(m => m.Address.City)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="City">@Html.ValidationMessageFor(m => m.City)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.Address.StateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.StateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <select
-                    asp-for="@Model.Address.StateAbbreviation"
+                    asp-for="@Model.StateAbbreviation"
                     asp-items="Model.States"
                     class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
                   >
                     <option value=""></option>
                   </select>
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="Address.StateAbbreviation">@Html.ValidationMessageFor(m => m.Address.StateAbbreviation)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="StateAbbreviation">@Html.ValidationMessageFor(m => m.StateAbbreviation)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.Address.PostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.PostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="Address.PostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="PostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="Address.PostalCode">@Html.ValidationMessageFor(m => m.Address.PostalCode)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="PostalCode">@Html.ValidationMessageFor(m => m.PostalCode)</p>
               </div>
             </div>
           </div>
