@@ -14,6 +14,9 @@ public class OutgoingRequestViewModel
     [Display(Name = "District")]
     public string District { get; set; } = string.Empty;
 
+    [Display(Name = "Releasing District")]
+    public string ReleasingDistrict { get; set; } = string.Empty;
+
     [Display(Name = "School")]
     public string School { get; set; } = string.Empty;
 
@@ -36,11 +39,13 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
+        var requestManifest = outgoingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
         var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = outgoingRequest.Id;
-        District = responseManifest?.To?.District ?? string.Empty;
-        School = responseManifest?.To?.School ?? string.Empty;
+        District = requestManifest?.To?.District ?? string.Empty;
+        ReleasingDistrict = requestManifest?.From?.District ?? string.Empty;
+        School = requestManifest?.To?.School ?? string.Empty;
         Student = $"{responseManifest?.Student?.FirstName} {responseManifest?.Student?.LastSurname}";
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus == RequestStatus.Sent

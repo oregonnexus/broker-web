@@ -4,6 +4,23 @@
     Layout = "_SettingsLayout";
 }
 <div>
-  <p>Outgoing Payload @Model.Payload</p>
-  <p>Data Sources: <select></select></p>
+
+<div>
+<h2 class="text-base font-semibold leading-7 text-gray-900">@Model.payloadDisplayName</h2>
+<form method="post" action="/Settings/Update">
+<input type="hidden" name="PayloadConfigurationType" value="@Model.payload">
+<div class="sm:col-span-4 my-4">
+<label for="EdFiApiUrl" class="block text-sm font-medium leading-6 text-gray-900">Student</label>
+<div class="mt-2">
+  <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-tertiary-700 sm:max-w-md">
+    <input type="text" autocomplete="off" name="EdFiApiUrl" id="EdFiApiUrl" value="http://url.test" class="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+  </div>
+  The URL of the Ed-Fi API instance to connect to.
+</div>
+</div>
+<div class="mt-6 flex items-center justify-end gap-x-6">
+    <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+    <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
+</div>
+</form>
 </div>

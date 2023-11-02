@@ -41,8 +41,8 @@ public class SettingsSidebarViewComponent : ViewComponent
             {
                 viewModel.Payloads.Add(new SettingsSidebarViewModel.PayloadSidebarViewModel() {
                     DisplayName = ((DisplayNameAttribute)payload.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!).DisplayName,
-                    PayloadTypeName = payload.Name,
-                    Selected = (selectedView == payload.Name) ? true : false
+                    PayloadTypeName = payload.FullName!,
+                    Selected = (selectedView == payload.FullName) ? true : false
                 });
             }
             

@@ -17,6 +17,10 @@ using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using OregonNexus.Broker.Web.Models.JsonDocuments;
 using System.Linq.Expressions;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using OregonNexus.Broker.Web.Extensions.States;
+using OregonNexus.Broker.Web.Extensions.Genders;
+using src.Models.ProgramAssociations;
+using src.Models.Courses;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -50,15 +54,12 @@ public class IncomingController : AuthenticatedController
 
         var sortExpression = model.BuildSortExpression();
 
-        var organizationId = GetFocusOrganizationId();
-        // Expression<Func<Request, bool>> focusOrganizationExpression = request =>
-        //     request.ToEducationOrganizationId == organizationId;
+        var organizationName = GetFocusOrganizationDistrict();
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
-         //   .WithSearchExpression(focusOrganizationExpression)
             .WithIncludeEntities(builder => builder
                 .Include(incomingRequest => incomingRequest.EducationOrganization)
                 .ThenInclude(educationOrganization => educationOrganization!.ParentOrganization)
@@ -76,7 +77,9 @@ public class IncomingController : AuthenticatedController
         var incomingRequestViewModels = incomingRequests
             .Select(incomingRequest => new IncomingRequestViewModel(incomingRequest));
 
-        //todo: remove this, need to add student FK to request.
+        incomingRequestViewModels = incomingRequestViewModels.Where(request => request.ReceivingDistrict == organizationName);
+        totalItems = incomingRequestViewModels.Count();
+        
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
             incomingRequestViewModels = incomingRequestViewModels
@@ -84,6 +87,7 @@ public class IncomingController : AuthenticatedController
                  || request.School.ToLower().Contains(model.SearchBy));
             totalItems = incomingRequestViewModels.Count();
         }
+
         var result = new PaginatedViewModel<IncomingRequestViewModel>(
             incomingRequestViewModels,
             totalItems,
@@ -100,15 +104,15 @@ public class IncomingController : AuthenticatedController
     {
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
         var educationOrganizations = educationOrganizationList
-            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId()
-                && educationOrganization.ParentOrganizationId is not null
-            )
+            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
             .ToList();
 
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations
-                
+            EducationOrganizations = educationOrganizations,
+            States = States.GetSelectList(),
+            Genders = Genders.GetSelectList()
         };
 
         return View(viewModel);
@@ -124,21 +128,13 @@ public class IncomingController : AuthenticatedController
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
             var organizationId = GetFocusOrganizationId();
-
-            Expression<Func<EducationOrganization, bool>> focusOrganizationExpression = request =>
-                request.Id == organizationId;
-
-            var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(1, 1)
-            .WithSearchExpression(focusOrganizationExpression)
-            .WithIncludeEntities(builder => builder
-                .Include(educationOrganization => educationOrganization.ParentOrganization))
-            .Build();
-
-            var educationOrganization = (await _educationOrganizationRepository.ListAsync(specification)).SingleOrDefault();
-
-            viewModel.ToDistrict = educationOrganization?.ParentOrganization?.Name;
-            viewModel.ToSchool = educationOrganization?.Name;
+            viewModel.ToDistrict = GetFocusOrganizationDistrict();
+            viewModel.ToSchool = GetFocusOrganizationSchool();
             viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+
+            viewModel.FromDistrict = viewModel.FromDistrict;
+            viewModel.FromSchool = viewModel.FromSchool;
+            viewModel.FromEmail = viewModel.FromEmail;
 
             var synergyStudentModel = viewModel.MapToSynergyJsonModel();
             var requestManifest = viewModel.MapToRequestManifestJsonModel();
@@ -147,7 +143,6 @@ public class IncomingController : AuthenticatedController
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
-                //ToEducationOrganizationId = GetFocusOrganizationId(),
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,
                 ResponseManifest = requestManifest,
@@ -179,12 +174,18 @@ public class IncomingController : AuthenticatedController
         if (incomingRequest is null) return NotFound();
 
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-                .ToList();
+        var educationOrganizations = educationOrganizationList
+            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+            .ToList();
 
         var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
 
         var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+
+        var programAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
+        var courseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
 
         var viewModel = new CreateIncomingRequestViewModel
         {
@@ -197,6 +198,9 @@ public class IncomingController : AuthenticatedController
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
             LastSurname = requestManifest?.Student?.LastSurname,
+            BirthDate = requestManifest?.Student?.BirthDate,
+            Gender = requestManifest?.Student?.Gender,
+            Grade = requestManifest?.Student?.Grade,
             FromDistrict = requestManifest?.From?.District,
             FromSchool = requestManifest?.From?.School,
             FromEmail = requestManifest?.From?.Email,
@@ -205,7 +209,11 @@ public class IncomingController : AuthenticatedController
             ToEmail = requestManifest?.To?.Email,
             Note = requestManifest?.Note,
             Contents = requestManifest?.Contents,
-            RequestStatus = incomingRequest.RequestStatus
+            RequestStatus = incomingRequest.RequestStatus,
+            States = States.GetSelectList(),
+            Genders = Genders.GetSelectList(),
+            ProgramAssociations = programAssociations,
+            CourseTranscripts = courseTranscripts
         };
 
         return View(viewModel);
@@ -219,7 +227,9 @@ public class IncomingController : AuthenticatedController
         if (ModelState.IsValid)
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
-
+            viewModel.ToDistrict = GetFocusOrganizationDistrict();
+            viewModel.ToSchool = GetFocusOrganizationSchool();
+            viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var incomingRequest = await _incomingRequestRepository.GetByIdAsync(viewModel.RequestId);
 
             if (incomingRequest is null) return BadRequest();

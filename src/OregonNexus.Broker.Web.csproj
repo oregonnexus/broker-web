@@ -64,8 +64,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" />
-    <Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\OregonNexus.Broker.Connector.EdFiAlliance.EdFi.*" />
+    <Edupoint_Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" />
+    <EdFi_Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\*.dll" />
   </ItemGroup>
 
   <Target Name="BuildCopyConnectorsSynergy" BeforeTargets="Build">
@@ -73,7 +73,7 @@
     </MSBuild>
     <Message Text="Executing BuildCopyConnectors Synergy task" Importance="High" />
 
-    <Copy SourceFiles="@(Files)" DestinationFolder="$(TargetDir)\connectors" />
+    <Copy SourceFiles="@(Edupoint_Files)" DestinationFolder="$(TargetDir)\connectors\OregonNexus.Broker.Connector.Edupoint.Synergy" />
 
     <Message Text="Copied Synergy build files" Importance="High" />
   </Target>
@@ -83,7 +83,7 @@
     </MSBuild>
     <Message Text="Executing BuildCopyConnectors EdFi task" Importance="High" />
 
-    <Copy SourceFiles="@(Files)" DestinationFolder="$(TargetDir)\connectors" />
+    <Copy SourceFiles="@(EdFi_Files)" DestinationFolder="$(TargetDir)\connectors\OregonNexus.Broker.Connector.EdFiAlliance.EdFi" />
 
     <Message Text="Copied EdFi build files" Importance="High" />
   </Target>

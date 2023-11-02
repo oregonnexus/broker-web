@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Dynamic;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -29,21 +30,24 @@ public class SettingsController : AuthenticatedController
     private readonly ConfigurationSerializer _configurationSerializer;
     private readonly IServiceProvider _serviceProvider;
     private readonly IRepository<EducationOrganizationConnectorSettings> _repo;
+    private readonly IRepository<EducationOrganizationPayloadSettings> _educationOrganizationPayloadSettings;
+    
     private readonly FocusHelper _focusHelper;
 
     private Guid? _focusedDistrictEdOrg { get; set; }
 
     public SettingsController(
         IHttpContextAccessor httpContextAccessor,
-        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer) : base(httpContextAccessor)
+        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer, IRepository<EducationOrganizationPayloadSettings> educationOrganizationPayloadSettings) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
-        
+
         _configurationSerializer = configurationSerializer;
         _connectorLoader = connectorLoader;
         _serviceProvider = serviceProvider;
         _repo = repo;
         _focusHelper = focusHelper;
+        _educationOrganizationPayloadSettings = educationOrganizationPayloadSettings;
     }
 
     public async Task<IActionResult> Index()
@@ -125,32 +129,65 @@ public class SettingsController : AuthenticatedController
     public async Task<IActionResult> OutgoingPayload(string payload)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
-        /*
-        var connectorDictionary = _connectorLoader.Assemblies.Where(x => x.Key == assembly).FirstOrDefault();
-        ArgumentException.ThrowIfNullOrEmpty(assembly);
-        var connector = connectorDictionary.Value;
 
-        // Get configurations for connector - TO FIX!
-        var configurations = _connectorLoader.GetConfigurations(connector);
+        var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).FirstOrDefault();
+        ArgumentException.ThrowIfNullOrEmpty(payload);
 
-        var forms = new List<dynamic>();
+        var selectedPayload = await _educationOrganizationPayloadSettings.GetBySpecAsync(new PayloadByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
 
-        foreach(var configType in configurations)
+        var settings = selectedPayload?.Settings is not null
+            ? JsonSerializer.Deserialize<TempStudentCumulativePayloadSettings>(selectedPayload?.Settings)
+            : new TempStudentCumulativePayloadSettings();
+
+        var payloadDisplayName = ((DisplayNameAttribute)payloadAssembly!.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!).DisplayName;
+
+        return View(new { payload = payload, payloadDisplayName = payloadDisplayName, settings = settings});
+    }
+
+    public class TempStudentCumulativePayloadSettings
+    {
+        public string? Students { get; set; }
+        public string? Assessments { get; set; }
+        public string? ProgramAssociations { get; set; }
+        public string? SectionAssociations { get; set; }
+        public string? CourseTranscripts { get; set; }
+        public string? Grades { get; set; }
+    }
+
+    [HttpPost("/Settings/OutgoingPayload/{payload}")]
+    public async Task<IActionResult> UpdateOutgoingPayload(
+        [FromRoute] string payload,
+        [FromBody] TempStudentCumulativePayloadSettings settings)
+    {
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+
+        var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
+        var today = DateTime.UtcNow;
+
+        var payloads = await _educationOrganizationPayloadSettings
+            .ListAsync();
+
+        var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
+
+        if (currentPayload is not null)
         {
-            var configModel = await _configurationSerializer.DeseralizeAsync(configType, _focusedDistrictEdOrg.Value);
-            var displayName = (DisplayNameAttribute)configType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
-
-            forms.Add(
-                new { 
-                    displayName = displayName.DisplayName, 
-                    html = ModelFormBuilderHelper.HtmlForModel(configModel) 
-                }
-            );
+            currentPayload.Settings = settings.ToJsonDocument();
+            await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
+        }
+        else
+        {
+            await _educationOrganizationPayloadSettings.AddAsync(new EducationOrganizationPayloadSettings()
+            {
+                EducationOrganizationId = _focusedDistrictEdOrg!.Value,
+                PayloadDirection = PayloadDirection.Outgoing,
+                Payload = payload,
+                Settings = settings.ToJsonDocument()
+            });
         }
 
-        return View(forms);
-        */
-        return View(new { Payload = payload });
+        await _educationOrganizationPayloadSettings.SaveChangesAsync();
+
+        return RedirectToAction("OutgoingPayload", new { payload = payload });
     }
 
     [HttpPost]
