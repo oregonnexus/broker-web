@@ -130,15 +130,18 @@ public class SettingsController : AuthenticatedController
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 
-        var payloads = await _educationOrganizationPayloadSettings
-            .ListAsync();
+        var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).FirstOrDefault();
+        ArgumentException.ThrowIfNullOrEmpty(payload);
 
-        var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
-        var settings = currentPayload?.Settings is not null
-            ? JsonSerializer.Deserialize<TempStudentCumulativePayloadSettings>(currentPayload?.Settings)
+        var selectedPayload = await _educationOrganizationPayloadSettings.GetBySpecAsync(new PayloadByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
+
+        var settings = selectedPayload?.Settings is not null
+            ? JsonSerializer.Deserialize<TempStudentCumulativePayloadSettings>(selectedPayload?.Settings)
             : new TempStudentCumulativePayloadSettings();
 
-        return View(new { Payload = payload, Settings =  settings });
+        var payloadDisplayName = ((DisplayNameAttribute)payloadAssembly!.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!).DisplayName;
+
+        return View(new { payload = payload, payloadDisplayName = payloadDisplayName, settings = settings});
     }
 
     public class TempStudentCumulativePayloadSettings
@@ -169,8 +172,6 @@ public class SettingsController : AuthenticatedController
         if (currentPayload is not null)
         {
             currentPayload.Settings = settings.ToJsonDocument();
-            currentPayload.UpdatedAt = today;
-            currentPayload.UpdatedBy = userId;
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -180,9 +181,7 @@ public class SettingsController : AuthenticatedController
                 EducationOrganizationId = _focusedDistrictEdOrg!.Value,
                 PayloadDirection = PayloadDirection.Outgoing,
                 Payload = payload,
-                Settings = settings.ToJsonDocument(),
-                CreatedAt = today,
-                CreatedBy = userId,
+                Settings = settings.ToJsonDocument()
             });
         }
 
