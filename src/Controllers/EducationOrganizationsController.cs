@@ -136,7 +136,10 @@ public class EducationOrganizationsController : AuthenticatedController
             Name = data.Name,
             Number = data.Number,
             EducationOrganizationType = data.EducationOrganizationType,
-            StreetNumberName = data.StreetNumberName
+            StreetNumberName = data.StreetNumberName,
+            City = data.City,
+            PostalCode = data.PostalCode,
+            StateAbbreviation = data.StateAbbreviation
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -214,6 +217,9 @@ public class EducationOrganizationsController : AuthenticatedController
         organization.Number = data.Number;
         organization.EducationOrganizationType = data.EducationOrganizationType;
         organization.StreetNumberName = data.StreetNumberName;
+        organization.City = data.City;
+        organization.PostalCode = data.PostalCode;
+        organization.StateAbbreviation = data.StateAbbreviation;
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 
