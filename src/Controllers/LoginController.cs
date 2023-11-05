@@ -85,13 +85,13 @@ public class LoginController : AuthenticatedController
         if (remoteError != null)
         {
             //ErrorMessage = $"Error from external provider: {remoteError}";
-            return RedirectToAction("Login", new { ReturnUrl = returnUrl });
+            return RedirectToAction("Index", new { ReturnUrl = returnUrl });
         }
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
             //ErrorMessage = "Error loading external login information.";
-            return RedirectToAction("Login", new { ReturnUrl = returnUrl });
+            return RedirectToAction("Index", new { ReturnUrl = returnUrl });
         }
 
         // Sign in the user with this external login provider if the user already has a login.
@@ -125,7 +125,7 @@ public class LoginController : AuthenticatedController
             if (user is null)
             {
                 _logger.LogInformation("{Email} not found in database.", email);
-                return RedirectToAction("Login");
+                return RedirectToAction("Index");
             }
             
             var loginResult = await _userManager.AddLoginAsync(user, info);
@@ -141,7 +141,7 @@ public class LoginController : AuthenticatedController
                 _httpContextAccessor.HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
                 return LocalRedirect(returnUrl);
             }
-            return RedirectToAction("Login");
+            return RedirectToAction("Index");
         }
     }
 
