@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Connector;
 using OregonNexus.Broker.Connector.Configuration;
+using OregonNexus.Broker.Connector.Payload;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
@@ -28,6 +29,7 @@ public class SettingsController : AuthenticatedController
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;
+    private readonly PayloadSerializer _payloadSerializer;
     private readonly IServiceProvider _serviceProvider;
     private readonly IRepository<EducationOrganizationConnectorSettings> _repo;
     private readonly IRepository<EducationOrganizationPayloadSettings> _educationOrganizationPayloadSettings;
@@ -38,7 +40,14 @@ public class SettingsController : AuthenticatedController
 
     public SettingsController(
         IHttpContextAccessor httpContextAccessor,
-        ConnectorLoader connectorLoader, IServiceProvider serviceProvider, IRepository<EducationOrganizationConnectorSettings> repo, FocusHelper focusHelper, ConfigurationSerializer configurationSerializer, IRepository<EducationOrganizationPayloadSettings> educationOrganizationPayloadSettings) : base(httpContextAccessor)
+        ConnectorLoader connectorLoader, 
+        IServiceProvider serviceProvider, 
+        IRepository<EducationOrganizationConnectorSettings> repo, 
+        FocusHelper focusHelper, 
+        ConfigurationSerializer configurationSerializer, 
+        IRepository<EducationOrganizationPayloadSettings> educationOrganizationPayloadSettings,
+        PayloadSerializer payloadSerializer
+        ) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
 
@@ -48,6 +57,7 @@ public class SettingsController : AuthenticatedController
         _repo = repo;
         _focusHelper = focusHelper;
         _educationOrganizationPayloadSettings = educationOrganizationPayloadSettings;
+        _payloadSerializer = payloadSerializer;
     }
 
     public async Task<IActionResult> Index()
@@ -55,9 +65,11 @@ public class SettingsController : AuthenticatedController
         if (await FocusedToDistrict() is not null) return View();
         
         var connectors = _connectorLoader.Connectors;
+        var payloads = _connectorLoader.Payloads;
 
         var settingsViewModel = new SettingsViewModel() {
-            ConnectorTypes = connectors
+            ConnectorTypes = connectors,
+            PayloadTypes = payloads
         };
 
         return View(settingsViewModel);
@@ -132,32 +144,43 @@ public class SettingsController : AuthenticatedController
 
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).FirstOrDefault();
         ArgumentException.ThrowIfNullOrEmpty(payload);
+        var payloads = _connectorLoader.GetPayloads(payloadAssembly!.Assembly);
+        var forms = new List<dynamic>();
+        var payloadDirection = PayloadDirection.Outgoing;
 
-        var selectedPayload = await _educationOrganizationPayloadSettings.GetBySpecAsync(new PayloadByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
+        foreach (var payloadType in payloads)
+        {
+            var payloadModel = await _payloadSerializer.DeseralizeAsync(payloadType, payloadDirection, _focusedDistrictEdOrg.Value);
+            var displayName = (DisplayNameAttribute)payloadType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
 
-        var settings = selectedPayload?.Settings is not null
-            ? JsonSerializer.Deserialize<TempStudentCumulativePayloadSettings>(selectedPayload?.Settings)
-            : new TempStudentCumulativePayloadSettings();
+            forms.Add(
+                new
+                {
+                    displayName = displayName.DisplayName,
+                    html = ModelFormBuilderHelper.HtmlForModel(payloadModel, payloadDirection)
+                }
+            );
+        }
 
-        var payloadDisplayName = ((DisplayNameAttribute)payloadAssembly!.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!).DisplayName;
-
-        return View(new { payload = payload, payloadDisplayName = payloadDisplayName, settings = settings});
+        return View(forms);
     }
 
     public class TempStudentCumulativePayloadSettings
     {
         public string? Students { get; set; }
-        public string? Assessments { get; set; }
-        public string? ProgramAssociations { get; set; }
-        public string? SectionAssociations { get; set; }
-        public string? CourseTranscripts { get; set; }
+        public string? StudentAssessments { get; set; }
         public string? Grades { get; set; }
+        public string? CourseTranscripts { get; set; }
+        public string? ProgramAssociations { get; set; }
+        public string? StudentSectionAssociations { get; set; }
+        public string? DisciplineActions { get; set; }
+        public string? DisciplineIncidents { get; set; }
     }
 
     [HttpPost("/Settings/OutgoingPayload/{payload}")]
     public async Task<IActionResult> UpdateOutgoingPayload(
         [FromRoute] string payload,
-        [FromBody] TempStudentCumulativePayloadSettings settings)
+        [FromForm] TempStudentCumulativePayloadSettings settings)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 
@@ -190,7 +213,7 @@ public class SettingsController : AuthenticatedController
         return RedirectToAction("OutgoingPayload", new { payload = payload });
     }
 
-    [HttpPost]
+    [HttpPost("/Settings/Configuration/{assembly}")]
     public async Task<IActionResult> Update(IFormCollection collection)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
