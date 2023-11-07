@@ -7,6 +7,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.WebUtilities;
@@ -145,22 +146,42 @@ public class SettingsController : AuthenticatedController
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).FirstOrDefault();
         ArgumentException.ThrowIfNullOrEmpty(payload);
         var payloads = _connectorLoader.GetPayloads(payloadAssembly!.Assembly);
+
+        var contentTypes = _connectorLoader.GetContentTypes();
+
+        // Make drop down of content types
+        var contentTypesSelect = new List<SelectListItem>();
+
+        if (contentTypes?.Count > 0)
+        {
+            foreach(var contentType in contentTypes)
+            {
+                contentTypesSelect.Add(new SelectListItem()
+                {
+                    Value = contentType.Name,
+                    Text = contentType.Name
+                });
+            }
+        }
+
+        ViewBag.ContentTypesSelect = contentTypesSelect;
+
         var forms = new List<dynamic>();
         var payloadDirection = PayloadDirection.Outgoing;
 
-        foreach (var payloadType in payloads)
-        {
-            var payloadModel = await _payloadSerializer.DeseralizeAsync(payloadType, payloadDirection, _focusedDistrictEdOrg.Value);
-            var displayName = (DisplayNameAttribute)payloadType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
+        // foreach (var payloadType in payloads)
+        // {
+        //     var payloadModel = await _payloadSerializer.DeseralizeAsync(payloadType, payloadDirection, _focusedDistrictEdOrg.Value);
+        //     var displayName = (DisplayNameAttribute)payloadType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
 
-            forms.Add(
-                new
-                {
-                    displayName = displayName.DisplayName,
-                    html = ModelFormBuilderHelper.HtmlForModel(payloadModel, payloadDirection)
-                }
-            );
-        }
+            // forms.Add(
+            //     new
+            //     {
+            //         displayName = displayName.DisplayName,
+            //         html = ModelFormBuilderHelper.HtmlForModel(payloadModel, payloadDirection)
+            //     }
+            // );
+        // }
 
         return View(forms);
     }

@@ -4,6 +4,11 @@
     Layout = "_SettingsLayout";
 }
 <div class="grid gap-3">
+    <form>
+        <select asp-items="ViewBag.ContentTypesSelect">
+        </select>
+        <button type="submit" name="Add">Add</button>
+    </form>
     @foreach (var config in Model)
     {
         @if (config.displayName is not null)
