@@ -3,12 +3,51 @@
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
     Layout = "_SettingsLayout";
 }
+
 <div class="grid gap-3">
-    <form>
-        <select asp-items="ViewBag.ContentTypesSelect">
-        </select>
-        <button type="submit" name="Add">Add</button>
+    <form x-data="outgoingPayloadSettings">
+        <div class="space-y-6">
+            <div class="border-b border-gray-900/10 pb-6">
+                <div class="flex gap-2 items-center">
+                    <div class="flex-1">
+                        <select x-model="selectedPayloadContentKey"
+                                :disabled="filteredContentTypeSelectList.length === 0"
+                                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                            <option value="">Select a payload content</option>
+                            <template x-for="contentTypeSelectItem in filteredContentTypeSelectList" :key="contentTypeSelectItem.value">
+                                <option :value="contentTypeSelectItem.value" x-text="contentTypeSelectItem.text"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <button :disabled="!selectedPayloadContentKey"
+                            type="button"
+                            class="rounded-md bg-tertiary-50 px-2.5 py-1.5 text-sm font-semibold text-tertiary-600 shadow-sm hover:bg-tertiary-100"
+                            @@click="addPayloadContent(selectedPayloadContentKey)">
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            <template x-for="(payloadContentKey) in payloadSettingKeys" :key="payloadContentKey">
+                <div class="border-b border-gray-900/10 pb-6">
+                    <label :for="payloadContentKey"
+                           x-text="payloadContentKey"
+                           class="block text-sm font-medium leading-6 text-gray-900"></label>
+                    <textarea :id="payloadContentKey"
+                              :value="payloadSettings[payloadContentKey]"
+                              rows="6"
+                              placeholder="JSON configuration..."
+                              class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
+                              @@change="updatePayloadContentConfiguration(payloadContentKey, $event.target.value)"></textarea>
+                </div>
+            </template>
+        </div>
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+            <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+            <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
+        </div>
     </form>
+
     @foreach (var config in Model)
     {
         @if (config.displayName is not null)
@@ -22,3 +61,34 @@
         @Html.Raw(config.html)
     }
 </div>
+
+@section scripts
+{
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('outgoingPayloadSettings', () => {
+                return {
+                    contentTypeSelectList: @Html.Raw(Json.Serialize(ViewBag.ContentTypesSelect)),
+                    payloadSettings: {},
+                    selectedPayloadContentKey: null,
+
+                    addPayloadContent(payloadContentKey) {
+                        this.payloadSettings[payloadContentKey] = "";
+                    },
+
+                    updatePayloadContentConfiguration(payloadContentKey, newConfigurationValue) {
+                        this.payloadSettings[payloadContentKey] = JSON.stringify(JSON.parse(newConfigurationValue), null, 4);
+                    },
+
+                    get payloadSettingKeys() {
+                        return Object.keys(this.payloadSettings)
+                    },
+
+                    get filteredContentTypeSelectList() {
+                        return this.contentTypeSelectList.filter(item => !this.payloadSettingKeys.includes(item.value))
+                    },
+                }
+            })
+        })
+    </script>
+}
