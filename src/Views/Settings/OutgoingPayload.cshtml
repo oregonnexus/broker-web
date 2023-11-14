@@ -4,62 +4,85 @@
     Layout = "_SettingsLayout";
 }
 
-<div class="grid gap-3">
-    <form x-data="outgoingPayloadSettings">
+<div class="grid gap-2">
+    <div class="border-b border-gray-200 pb-3 grid gap-1">
+        <div class="flex items-center space-x-2">
+            <h2 class="font-semibold leading-6 text-gray-900">
+                @Model.Payload.DisplayName
+            </h2>
+            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset text-info-700 bg-info-50 ring-info-600/20">
+                Outgoing Payload
+            </span>
+        </div>
+        <p class="text-sm text-gray-600">
+            @Model.Payload.FullName
+        </p>
+    </div>
+    <div x-data="outgoingPayloadSettings">
         <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-6">
-                <div class="flex gap-2 items-center">
-                    <div class="flex-1">
-                        <select x-model="selectedPayloadContentKey"
-                                :disabled="filteredContentTypeSelectList.length === 0"
-                                class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                            <option value="">Select a payload content</option>
-                            <template x-for="contentTypeSelectItem in filteredContentTypeSelectList" :key="contentTypeSelectItem.value">
-                                <option :value="contentTypeSelectItem.value" x-text="contentTypeSelectItem.text"></option>
-                            </template>
-                        </select>
+                <form x-on:submit.prevent="addPayloadContent(selectedPayloadContentKey)">
+                    <label for="payload-content-types"
+                           class="block text-sm font-medium leading-6 text-gray-900">
+                        Data sources:
+                    </label>
+                    <div class="flex space-x-2 items-center">
+                        <div class="flex-1">
+                            <select id="payload-content-types"
+                                    x-model="selectedPayloadContentKey"
+                                    :disabled="filteredContentTypeSelectList.length === 0"
+                                    class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                                <option value="">Select a data source</option>
+                                <template x-for="contentTypeSelectItem in filteredContentTypeSelectList" :key="contentTypeSelectItem.value">
+                                    <option :value="contentTypeSelectItem.value" x-text="contentTypeSelectItem.text"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <button :disabled="!selectedPayloadContentKey"
+                                type="submit"
+                                class="rounded-md bg-tertiary-50 px-2.5 py-1.5 text-sm font-semibold text-tertiary-600 shadow-sm hover:bg-tertiary-100">
+                            Add
+                        </button>
                     </div>
-                    <button :disabled="!selectedPayloadContentKey"
-                            type="button"
-                            class="rounded-md bg-tertiary-50 px-2.5 py-1.5 text-sm font-semibold text-tertiary-600 shadow-sm hover:bg-tertiary-100"
-                            @@click="addPayloadContent(selectedPayloadContentKey)">
-                        Add
-                    </button>
-                </div>
+                </form>
             </div>
-
-            <template x-for="(payloadContentKey) in payloadSettingKeys" :key="payloadContentKey">
-                <div class="border-b border-gray-900/10 pb-6">
-                    <label :for="payloadContentKey"
-                           x-text="payloadContentKey"
-                           class="block text-sm font-medium leading-6 text-gray-900"></label>
-                    <textarea :id="payloadContentKey"
-                              :value="payloadSettings[payloadContentKey]"
-                              rows="6"
-                              placeholder="JSON configuration..."
-                              class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
-                              @@change="updatePayloadContentConfiguration(payloadContentKey, $event.target.value)"></textarea>
+            <form method="post" action="@Url.Action("OutgoingPayload", "Settings", new { payload = Model.Payload.FullName })">
+                <input type="hidden" name="settings" :value="payloadSettingsJsonString" />
+                <div class="space-y-6">
+                    <template x-for="(payloadContentKey) in payloadSettingKeys" :key="payloadContentKey">
+                        <div class="border-b border-gray-900/10 pb-6 grid gap-2">
+                            <div class="flex justify-between items-end">
+                                <label :for="payloadContentKey"
+                                       x-text="payloadContentKey"
+                                       class="block text-sm font-medium leading-6 text-gray-900 flex-1"></label>
+                                <div>
+                                    <button type="button"
+                                            class="inline-flex items-center gap-x-1.5 text-sm font-semibold leading-6 text-gray-900"
+                                            @@click="removePayloadContent(payloadContentKey)">
+                                        Remove <span x-text="payloadContentKey" class="sr-only"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea :id="payloadContentKey"
+                                      :value="payloadSettings[payloadContentKey]"
+                                      rows="6"
+                                      placeholder="JSON configuration..."
+                                      class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
+                                      @@change="updatePayloadContentConfiguration(payloadContentKey, $event.target.value)"></textarea>
+                        </div>
+                    </template>
                 </div>
-            </template>
+                <div class="mt-6 flex items-center justify-end gap-x-6">
+                    <a asp-controller="Settings"
+                       asp-action="Index"
+                       class="text-sm font-semibold leading-6 text-gray-900">
+                        Cancel
+                    </a>
+                    <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
+                </div>
+            </form>
         </div>
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-            <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
-            <button type="submit" class="rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">Save</button>
-        </div>
-    </form>
-
-    @foreach (var config in Model)
-    {
-        @if (config.displayName is not null)
-        {
-            <h2 class="text-base font-semibold leading-7 text-gray-900">@config.displayName</h2>
-        }
-        else
-        {
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Payload</h2>
-        }
-        @Html.Raw(config.html)
-    }
+    </div>
 </div>
 
 @section scripts
@@ -69,19 +92,27 @@
             Alpine.data('outgoingPayloadSettings', () => {
                 return {
                     contentTypeSelectList: @Html.Raw(Json.Serialize(ViewBag.ContentTypesSelect)),
-                    payloadSettings: {},
+                    payloadSettings: JSON.parse(@Html.Raw(Json.Serialize(Model.Payload.Settings))),
                     selectedPayloadContentKey: null,
 
                     addPayloadContent(payloadContentKey) {
-                        this.payloadSettings[payloadContentKey] = "";
+                        this.payloadSettings[payloadContentKey] = ""
+                    },
+
+                    removePayloadContent(payloadContentKey) {
+                        delete this.payloadSettings[payloadContentKey]
                     },
 
                     updatePayloadContentConfiguration(payloadContentKey, newConfigurationValue) {
-                        this.payloadSettings[payloadContentKey] = JSON.stringify(JSON.parse(newConfigurationValue), null, 4);
+                        this.payloadSettings[payloadContentKey] = JSON.stringify(JSON.parse(newConfigurationValue), null, 4)
                     },
 
                     get payloadSettingKeys() {
                         return Object.keys(this.payloadSettings)
+                    },
+
+                    get payloadSettingsJsonString() {
+                        return JSON.stringify(this.payloadSettings)
                     },
 
                     get filteredContentTypeSelectList() {
