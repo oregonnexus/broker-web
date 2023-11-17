@@ -21,7 +21,7 @@
     <div x-data="outgoingPayloadSettings">
         <div class="space-y-6">
             <div class="border-b border-gray-900/10 pb-6">
-                <form x-on:submit.prevent="addPayloadContent(selectedPayloadContentKey)">
+                <form x-on:submit.prevent="addPayloadContent(selectedPayloadContentType)">
                     <label for="payload-content-types"
                            class="block text-sm font-medium leading-6 text-gray-900">
                         Data sources:
@@ -29,16 +29,16 @@
                     <div class="flex space-x-2 items-center">
                         <div class="flex-1">
                             <select id="payload-content-types"
-                                    x-model="selectedPayloadContentKey"
-                                    :disabled="filteredContentTypeSelectList.length === 0"
+                                    x-model="selectedPayloadContentType"
+                                    :disabled="filteredContentTypes.length === 0"
                                     class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                                 <option value="">Select a data source</option>
-                                <template x-for="contentTypeSelectItem in filteredContentTypeSelectList" :key="contentTypeSelectItem.value">
-                                    <option :value="contentTypeSelectItem.value" x-text="contentTypeSelectItem.text"></option>
+                                <template x-for="contentType in filteredContentTypes" :key="contentType.fullName">
+                                    <option :value="contentType.fullName" x-text="contentType.displayName"></option>
                                 </template>
                             </select>
                         </div>
-                        <button :disabled="!selectedPayloadContentKey"
+                        <button :disabled="!selectedPayloadContentType"
                                 type="submit"
                                 class="rounded-md bg-tertiary-50 px-2.5 py-1.5 text-sm font-semibold text-tertiary-600 shadow-sm hover:bg-tertiary-100">
                             Add
@@ -49,26 +49,26 @@
             <form method="post" action="@Url.Action("OutgoingPayload", "Settings", new { payload = Model.Payload.FullName })">
                 <input type="hidden" name="settings" :value="payloadSettingsJsonString" />
                 <div class="space-y-6">
-                    <template x-for="(payloadContentKey) in payloadSettingKeys" :key="payloadContentKey">
+                    <template x-for="(payloadSetting, payloadSettingIndex) in payloadSettings" :key="`${payloadSetting.fullName}-${payloadSettingIndex}`">
                         <div class="border-b border-gray-900/10 pb-6 grid gap-2">
                             <div class="flex justify-between items-end">
-                                <label :for="payloadContentKey"
-                                       x-text="payloadContentKey"
+                                <label :for="`${payloadSetting.fullName}-${payloadSettingIndex}`"
+                                       x-text="payloadSetting.displayName"
                                        class="block text-sm font-medium leading-6 text-gray-900 flex-1"></label>
                                 <div>
                                     <button type="button"
                                             class="inline-flex items-center gap-x-1.5 text-sm font-semibold leading-6 text-gray-900"
-                                            @@click="removePayloadContent(payloadContentKey)">
-                                        Remove <span x-text="payloadContentKey" class="sr-only"></span>
+                                            @@click="removePayloadContent(payloadSettingIndex)">
+                                        Remove <span x-text="payloadSetting.displayName" class="sr-only"></span>
                                     </button>
                                 </div>
                             </div>
-                            <textarea :id="payloadContentKey"
-                                      :value="payloadSettings[payloadContentKey]"
+                            <textarea :id="`${payloadSetting.fullName}-${payloadSettingIndex}`"
+                                      :value="payloadSetting.configuration"
                                       rows="6"
                                       placeholder="JSON configuration..."
                                       class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
-                                      @@change="updatePayloadContentConfiguration(payloadContentKey, $event.target.value)"></textarea>
+                                      @@change="updatePayloadContentConfiguration(payloadSettingIndex, $event.target.value)"></textarea>
                         </div>
                     </template>
                 </div>
@@ -91,32 +91,44 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('outgoingPayloadSettings', () => {
                 return {
-                    contentTypeSelectList: @Html.Raw(Json.Serialize(ViewBag.ContentTypesSelect)),
+                    contentTypes: @Html.Raw(Json.Serialize(Model.ContentTypes)),
                     payloadSettings: JSON.parse(@Html.Raw(Json.Serialize(Model.Payload.Settings))),
-                    selectedPayloadContentKey: null,
+                    selectedPayloadContentType: null,
 
-                    addPayloadContent(payloadContentKey) {
-                        this.payloadSettings[payloadContentKey] = ""
+                    addPayloadContent(payloadContentType) {
+                        const contentType = this.contentTypes.find(({ fullName }) => fullName === payloadContentType)
+
+                        if (!contentType) return
+
+                        this.payloadSettings.push({
+                            fullName: contentType.fullName,
+                            displayName: contentType.displayName,
+                            configuration: '',
+                        })
                     },
 
-                    removePayloadContent(payloadContentKey) {
-                        delete this.payloadSettings[payloadContentKey]
+                    removePayloadContent(index) {
+                        this.payloadSettings.splice(index, 1)
                     },
 
-                    updatePayloadContentConfiguration(payloadContentKey, newConfigurationValue) {
-                        this.payloadSettings[payloadContentKey] = JSON.stringify(JSON.parse(newConfigurationValue), null, 4)
+                    updatePayloadContentConfiguration(index, newConfigurationValue) {
+                        this.payloadSettings[index] = {
+                            ...this.payloadSettings[index],
+                            configuration: JSON.stringify(JSON.parse(newConfigurationValue), null, 4),
+                        }
                     },
 
-                    get payloadSettingKeys() {
-                        return Object.keys(this.payloadSettings)
+                    get addedPayloadSettingsContentTypes() {
+                        return [...new Set(this.payloadSettings.map(({ fullName }) => fullName))]
                     },
 
                     get payloadSettingsJsonString() {
                         return JSON.stringify(this.payloadSettings)
                     },
 
-                    get filteredContentTypeSelectList() {
-                        return this.contentTypeSelectList.filter(item => !this.payloadSettingKeys.includes(item.value))
+                    get filteredContentTypes() {
+                        return this.contentTypes.filter(item => item.allowMultiple
+                            || !this.addedPayloadSettingsContentTypes.includes(item.fullName))
                     },
                 }
             })

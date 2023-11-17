@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using OregonNexus.Broker.Connector;
 using OregonNexus.Broker.Connector.Configuration;
 using OregonNexus.Broker.Connector.Payload;
+using OregonNexus.Broker.Connector.PayloadContentTypes;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
@@ -22,6 +24,7 @@ using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -150,34 +153,26 @@ public class SettingsController : AuthenticatedController
 
         var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
 
-        var contentTypes = _connectorLoader.GetContentTypes();
-
-        // Make drop down of content types
-        var contentTypesSelect = new List<SelectListItem>();
-
-        if (contentTypes?.Count > 0)
-        {
-            foreach(var contentType in contentTypes)
+        var contentTypes = _connectorLoader
+            .GetContentTypes()?
+            .Select(contentType => new
             {
-                contentTypesSelect.Add(new SelectListItem()
-                {
-                    Value = contentType.Name,
-                    Text = contentType.Name
-                });
-            }
-        }
-
-        ViewBag.ContentTypesSelect = contentTypesSelect;
+                DisplayName = contentType.Name, // TODO: Display name
+                contentType.Name,
+                contentType.FullName,
+                AllowMultiple = (bool?)contentType.GetProperty("AllowMultiple")?.GetValue(null) ?? false
+            });
 
         return View(new
         {
+            ContentTypes = contentTypes ?? Enumerable.Empty<dynamic>(),
             Payload = new
             {
                 FullName = payload,
                 ((DisplayNameAttribute)payloadAssembly
                     .GetCustomAttributes(false)
                     .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
-                Settings = currentPayload?.Settings ?? "{}".ToJsonDocument()
+                Settings = currentPayload?.Settings ?? "[]".ToJsonDocument()
             }
         });
     }
