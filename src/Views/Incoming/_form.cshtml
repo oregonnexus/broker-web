@@ -384,7 +384,7 @@
               requestStatus: @Html.Raw(Json.Serialize(@Model.RequestStatus)),
               options: [
                 {
-                  id: 'option-menu-item-0', label: 'Save and send incoming request', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Sent)),
+                  id: 'option-menu-item-0', label: 'Save and send incoming request', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.WaitingToSend)),
                 },
                 {
                   id: 'option-menu-item-1', label: 'Save incoming request draft', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Draft)),
