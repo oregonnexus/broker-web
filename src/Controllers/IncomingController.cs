@@ -142,7 +142,7 @@ public class IncomingController : AuthenticatedController
             var today = DateTime.UtcNow;
             var incomingRequest = new Request
             {
-                EducationOrganizationId = viewModel.EducationOrganizationId,
+                EducationOrganizationId = organizationId,
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,
                 ResponseManifest = requestManifest,
