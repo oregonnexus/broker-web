@@ -63,12 +63,14 @@
                                     </button>
                                 </div>
                             </div>
-                            <textarea :id="`${payloadSetting.fullName}-${payloadSettingIndex}`"
-                                      :value="payloadSetting.configuration"
-                                      rows="6"
-                                      placeholder="JSON configuration..."
-                                      class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
-                                      @@change="updatePayloadContentConfiguration(payloadSettingIndex, $event.target.value)"></textarea>
+                            <template x-if="getShouldAllowConfiguration(payloadSetting.fullName)">
+                                <textarea :id="`${payloadSetting.fullName}-${payloadSettingIndex}`"
+                                          :value="payloadSetting.configuration"
+                                          rows="6"
+                                          placeholder="JSON configuration..."
+                                          class="font-mono block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-600 sm:text-sm sm:leading-6"
+                                          @@change="updatePayloadContentConfiguration(payloadSettingIndex, $event.target.value)"></textarea>
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -116,6 +118,10 @@
                             ...this.payloadSettings[index],
                             configuration: JSON.stringify(JSON.parse(newConfigurationValue), null, 4),
                         }
+                    },
+
+                    getShouldAllowConfiguration(fullName) {
+                        return this.contentTypes.some(it => it.fullName === fullName && it.allowConfiguration);
                     },
 
                     get addedPayloadSettingsContentTypes() {

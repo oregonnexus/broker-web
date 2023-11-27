@@ -160,7 +160,8 @@ public class SettingsController : AuthenticatedController
                 DisplayName = contentType.Name, // TODO: Display name
                 contentType.Name,
                 contentType.FullName,
-                AllowMultiple = (bool?)contentType.GetProperty("AllowMultiple")?.GetValue(null) ?? false
+                AllowMultiple = (bool?)contentType.GetProperty("AllowMultiple")?.GetValue(null) ?? false,
+                AllowConfiguration = (bool?)contentType.GetProperty("AllowConfiguration")?.GetValue(null) ?? false
             });
 
         return View(new
