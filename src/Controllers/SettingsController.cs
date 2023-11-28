@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using OregonNexus.Broker.Connector;
 using OregonNexus.Broker.Connector.Configuration;
 using OregonNexus.Broker.Connector.Payload;
+using OregonNexus.Broker.Connector.PayloadContentTypes;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
@@ -22,6 +24,7 @@ using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -143,65 +146,42 @@ public class SettingsController : AuthenticatedController
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 
-        var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).FirstOrDefault();
-        ArgumentException.ThrowIfNullOrEmpty(payload);
-        var payloads = _connectorLoader.GetPayloads(payloadAssembly!.Assembly);
+        var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).First();
 
-        var contentTypes = _connectorLoader.GetContentTypes();
+        var payloads = await _educationOrganizationPayloadSettings
+            .ListAsync();
 
-        // Make drop down of content types
-        var contentTypesSelect = new List<SelectListItem>();
+        var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
 
-        if (contentTypes?.Count > 0)
-        {
-            foreach(var contentType in contentTypes)
+        var contentTypes = _connectorLoader
+            .GetContentTypes()?
+            .Select(contentType => new
             {
-                contentTypesSelect.Add(new SelectListItem()
-                {
-                    Value = contentType.Name,
-                    Text = contentType.Name
-                });
+                DisplayName = contentType.Name, // TODO: Display name
+                contentType.Name,
+                contentType.FullName,
+                AllowMultiple = (bool?)contentType.GetProperty("AllowMultiple")?.GetValue(null) ?? false,
+                AllowConfiguration = (bool?)contentType.GetProperty("AllowConfiguration")?.GetValue(null) ?? false
+            });
+
+        return View(new
+        {
+            ContentTypes = contentTypes ?? Enumerable.Empty<dynamic>(),
+            Payload = new
+            {
+                FullName = payload,
+                ((DisplayNameAttribute)payloadAssembly
+                    .GetCustomAttributes(false)
+                    .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
+                Settings = currentPayload?.Settings ?? "[]".ToJsonDocument()
             }
-        }
-
-        ViewBag.ContentTypesSelect = contentTypesSelect;
-
-        var forms = new List<dynamic>();
-        var payloadDirection = PayloadDirection.Outgoing;
-
-        // foreach (var payloadType in payloads)
-        // {
-        //     var payloadModel = await _payloadSerializer.DeseralizeAsync(payloadType, payloadDirection, _focusedDistrictEdOrg.Value);
-        //     var displayName = (DisplayNameAttribute)payloadType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
-
-            // forms.Add(
-            //     new
-            //     {
-            //         displayName = displayName.DisplayName,
-            //         html = ModelFormBuilderHelper.HtmlForModel(payloadModel, payloadDirection)
-            //     }
-            // );
-        // }
-
-        return View(forms);
-    }
-
-    public class TempStudentCumulativePayloadSettings
-    {
-        public string? Students { get; set; }
-        public string? StudentAssessments { get; set; }
-        public string? Grades { get; set; }
-        public string? CourseTranscripts { get; set; }
-        public string? ProgramAssociations { get; set; }
-        public string? StudentSectionAssociations { get; set; }
-        public string? DisciplineActions { get; set; }
-        public string? DisciplineIncidents { get; set; }
+        });
     }
 
     [HttpPost("/Settings/OutgoingPayload/{payload}")]
     public async Task<IActionResult> UpdateOutgoingPayload(
         [FromRoute] string payload,
-        [FromForm] TempStudentCumulativePayloadSettings settings)
+        [FromForm] string settings)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 
@@ -231,7 +211,7 @@ public class SettingsController : AuthenticatedController
 
         await _educationOrganizationPayloadSettings.SaveChangesAsync();
 
-        return RedirectToAction("OutgoingPayload", new { payload = payload });
+        return RedirectToAction("OutgoingPayload", new { payload });
     }
 
     [HttpPost("/Settings/Configuration/{assembly}")]
