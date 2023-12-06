@@ -2184,6 +2184,11 @@ select {
   color: rgb(197 199 201 / var(--tw-text-opacity));
 }
 
+.even\:bg-gray-50:nth-child(even) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 252 254 / var(--tw-bg-opacity));
+}
+
 .focus-within\:z-10:focus-within {
   z-index: 10;
 }
@@ -2251,6 +2256,11 @@ select {
 .hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgb(105 107 108 / var(--tw-text-opacity));
+}
+
+.hover\:text-tertiary-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(103 188 227 / var(--tw-text-opacity));
 }
 
 .hover\:text-tertiary-500:hover {
