@@ -239,6 +239,14 @@ public class SettingsController : AuthenticatedController
         return RedirectToAction("Configuration", new { assembly = connectorConfigType.Assembly.GetName().Name });
     }
 
+    [HttpGet("/Settings/Mapping")]
+    public async Task<IActionResult> Mapping()
+    {
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+        
+        return View(new {});
+    }
+
     private async Task<IActionResult?> FocusedToDistrict()
     {
         if (_focusedDistrictEdOrg == null)
