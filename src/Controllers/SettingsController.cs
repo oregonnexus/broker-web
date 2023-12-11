@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using OregonNexus.Broker.Connector;
@@ -20,10 +22,12 @@ using OregonNexus.Broker.Connector.PayloadContentTypes;
 using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
+using OregonNexus.Broker.Service;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.Models;
+using OregonNexus.Broker.Web.Services.PayloadContents;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace OregonNexus.Broker.Web.Controllers;
@@ -37,6 +41,7 @@ public class SettingsController : AuthenticatedController
     private readonly IServiceProvider _serviceProvider;
     private readonly IRepository<EducationOrganizationConnectorSettings> _repo;
     private readonly IRepository<EducationOrganizationPayloadSettings> _educationOrganizationPayloadSettings;
+    private readonly PayloadContentTypeService _payloadContentTypeService;
     
     private readonly FocusHelper _focusHelper;
 
@@ -50,7 +55,8 @@ public class SettingsController : AuthenticatedController
         FocusHelper focusHelper, 
         ConfigurationSerializer configurationSerializer, 
         IRepository<EducationOrganizationPayloadSettings> educationOrganizationPayloadSettings,
-        PayloadSerializer payloadSerializer
+        PayloadSerializer payloadSerializer,
+        PayloadContentTypeService payloadContentTypeService
         ) : base(httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
@@ -62,6 +68,7 @@ public class SettingsController : AuthenticatedController
         _focusHelper = focusHelper;
         _educationOrganizationPayloadSettings = educationOrganizationPayloadSettings;
         _payloadSerializer = payloadSerializer;
+        _payloadContentTypeService = payloadContentTypeService;
     }
 
     public async Task<IActionResult> Index()
@@ -148,32 +155,35 @@ public class SettingsController : AuthenticatedController
 
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).First();
 
-        var payloads = await _educationOrganizationPayloadSettings
-            .ListAsync();
+        var currentPayload = await _educationOrganizationPayloadSettings
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Outgoing, _focusedDistrictEdOrg!.Value));
 
-        var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
+        var contentTypes = _payloadContentTypeService.GetPayloadContentTypes() ?? Enumerable.Empty<PayloadContentTypeDisplay>();
 
-        var contentTypes = _connectorLoader
-            .GetContentTypes()?
-            .Select(contentType => new
+        // Format for json on screen
+        var settings = new List<dynamic>();
+        if (currentPayload is not null && currentPayload?.Settings.Count() > 0)
+        {
+            foreach(var currentSettings in currentPayload.Settings)
             {
-                DisplayName = contentType.Name, // TODO: Display name
-                contentType.Name,
-                contentType.FullName,
-                AllowMultiple = (bool?)contentType.GetProperty("AllowMultiple")?.GetValue(null) ?? false,
-                AllowConfiguration = (bool?)contentType.GetProperty("AllowConfiguration")?.GetValue(null) ?? false
-            });
+                settings.Add(new {
+                    fullName = currentSettings.PayloadContentType,
+                    displayName = contentTypes.Where(a => a.FullName == currentSettings.PayloadContentType).FirstOrDefault()!.DisplayName,
+                    configuration = currentSettings.Settings
+                });
+            }
+        }
 
         return View(new
         {
-            ContentTypes = contentTypes ?? Enumerable.Empty<dynamic>(),
+            ContentTypes = contentTypes,
             Payload = new
             {
                 FullName = payload,
                 ((DisplayNameAttribute)payloadAssembly
                     .GetCustomAttributes(false)
                     .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
-                Settings = currentPayload?.Settings ?? "[]".ToJsonDocument()
+                Settings = settings.ToJsonDocument() ?? "[]".ToJsonDocument()
             }
         });
     }
@@ -185,17 +195,29 @@ public class SettingsController : AuthenticatedController
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 
-        var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
-        var today = DateTime.UtcNow;
+        // Transform incoming form json data to jsonnode
+        var jsonSettings = JsonNode.Parse(settings)!.AsArray();
 
-        var payloads = await _educationOrganizationPayloadSettings
-            .ListAsync();
+        // Start Payload Settings Content Types
+        var payloadContentTypeSettings = new List<PayloadSettingsContentType>();
+        
+        foreach(var jsonSetting in jsonSettings)
+        {
+            payloadContentTypeSettings.Add(
+                new PayloadSettingsContentType()
+                {
+                    PayloadContentType = jsonSetting["fullName"].ToString(),
+                    Settings = jsonSetting["configuration"].ToString()
+                }
+            );
+        }
 
-        var currentPayload = payloads.SingleOrDefault(p => p.Payload == payload && p.EducationOrganizationId == _focusedDistrictEdOrg!.Value);
+        var currentPayload = await _educationOrganizationPayloadSettings
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Outgoing, _focusedDistrictEdOrg!.Value));
 
         if (currentPayload is not null)
         {
-            currentPayload.Settings = settings.ToJsonDocument();
+            currentPayload.Settings = payloadContentTypeSettings;
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -205,11 +227,11 @@ public class SettingsController : AuthenticatedController
                 EducationOrganizationId = _focusedDistrictEdOrg!.Value,
                 PayloadDirection = PayloadDirection.Outgoing,
                 Payload = payload,
-                Settings = settings.ToJsonDocument()
+                Settings = payloadContentTypeSettings
             });
         }
 
-        await _educationOrganizationPayloadSettings.SaveChangesAsync();
+        TempData[VoiceTone.Positive] = $"Updated Outgoing Payload.";
 
         return RedirectToAction("OutgoingPayload", new { payload });
     }

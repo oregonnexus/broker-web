@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\broker-core\src\OregonNexus.Broker.Connector\OregonNexus.Broker.Connector.csproj" />
     <ProjectReference Include="..\..\broker-data\src\OregonNexus.Broker.Data.Migrations.PostgreSQL\OregonNexus.Broker.Data.Migrations.PostgreSQL.csproj" />
     <ProjectReference Include="..\..\broker-core\src\OregonNexus.Broker.SharedKernel\OregonNexus.Broker.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\broker-service\src\OregonNexus.Broker.Service\OregonNexus.Broker.Service.csproj" />
   </ItemGroup>
 
   <Target Name="Tailwind" BeforeTargets="Build">
