@@ -1,5 +1,6 @@
 ﻿@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 @model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>
+@using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -194,17 +195,32 @@
                                             @incomingRequest.Status
                                         </span>
                                     </td>
-                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a
-                                            asp-controller="Incoming"
-                                            asp-action="Update"
-                                            asp-route-requestId="@incomingRequest.Id"
-                                            asp-authorize
-                                            asp-policy="@TransferIncomingRecords"
-                                            class="text-tertiary-700 hover:text-tertiary-900"
-                                        >
-                                            Edit
-                                        </a>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-3">
+                                        <div class="flex justify-end gap-2">
+                                            <a
+                                                asp-controller="Incoming"
+                                                asp-action="Update"
+                                                asp-route-requestId="@incomingRequest.Id"
+                                                asp-authorize
+                                                asp-policy="@TransferIncomingRecords"
+                                                class="text-tertiary-700 hover:text-tertiary-900"
+                                            >
+                                                Edit
+                                            </a>
+                                            @if (@incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Imported.ToFriendlyString())
+                                            {
+                                                <a
+                                                    asp-controller="Incoming"
+                                                    asp-action="Mapping"
+                                                    asp-route-requestId="@incomingRequest.Id"
+                                                    asp-authorize
+                                                    asp-policy="@TransferIncomingRecords"
+                                                    class="text-tertiary-700 hover:text-tertiary-900"
+                                                >
+                                                    Mapping
+                                                </a>
+                                            }
+                                        </div>
                                     </td>
                                 </tr>
                                 even = !even;
