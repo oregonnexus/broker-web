@@ -91,7 +91,7 @@
             Alpine.data('outgoingPayloadSettings', () => {
                 return {
                     contentTypes: @Html.Raw(Json.Serialize(Model.ContentTypes)),
-                    payloadSettings: @Html.Raw(Json.Serialize(Model.Payload.Settings)),
+                    payloadSettings: @Html.Raw(Json.Serialize(Model.Payload.Settings) ?? "[]"),
                     selectedPayloadContentType: null,
 
                     addPayloadContent(payloadContentType) {

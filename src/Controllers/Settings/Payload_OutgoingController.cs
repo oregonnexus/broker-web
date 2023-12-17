@@ -6,6 +6,7 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Service;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
+using OregonNexus.Broker.Web.ViewModels.Settings;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -22,32 +23,33 @@ public partial class SettingsController : AuthenticatedController
         var currentPayload = await _educationOrganizationPayloadSettings
             .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Outgoing, _focusedDistrictEdOrg!.Value));
 
-        var contentTypes = _payloadContentTypeService.GetPayloadContentTypes() ?? Enumerable.Empty<PayloadContentTypeDisplay>();
+        var contentTypes = _payloadContentTypeService.GetPayloadContentTypes().OrderBy(i => i.DisplayName) ?? Enumerable.Empty<PayloadContentTypeDisplay>();
 
         // Format for json on screen
-        var settings = new List<dynamic>();
+        var settings = new List<PayloadSettingsViewModel>();
         if (currentPayload is not null && currentPayload?.Settings.Count() > 0)
         {
             foreach(var currentSettings in currentPayload.Settings)
             {
-                settings.Add(new {
-                    fullName = currentSettings.PayloadContentType,
-                    displayName = contentTypes.Where(a => a.FullName == currentSettings.PayloadContentType).FirstOrDefault()!.DisplayName,
-                    configuration = currentSettings.Settings
+                settings.Add(new PayloadSettingsViewModel() {
+                    FullName = currentSettings.PayloadContentType,
+                    DisplayName = contentTypes.Where(a => a.FullName == currentSettings.PayloadContentType).FirstOrDefault()!.DisplayName,
+                    Configuration = currentSettings.Settings
                 });
             }
         }
+        settings = settings.OrderBy(i => i.DisplayName).ToList();
 
         return View(new
         {
             ContentTypes = contentTypes,
-            Payload = new
+            Payload = new 
             {
                 FullName = payload,
                 ((DisplayNameAttribute)payloadAssembly
                     .GetCustomAttributes(false)
                     .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
-                Settings = settings.ToJsonDocument() ?? "[]".ToJsonDocument()
+                Settings = settings
             }
         });
     }
