@@ -261,4 +261,55 @@ public class IncomingController : AuthenticatedController
         viewModel.EducationOrganizations = educationOrganizations;
         return View(viewModel);
     }
+
+    public async Task<IActionResult> Mapping(Guid requestId)
+    {
+        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
+        if (incomingRequest is null) return NotFound();
+
+        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
+        var educationOrganizations = educationOrganizationList
+            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
+            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
+            .ToList();
+
+        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
+
+        var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
+        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+
+        var programAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
+        var courseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
+
+        var viewModel = new CreateIncomingRequestViewModel
+        {
+            RequestId = incomingRequest.Id,
+            EducationOrganizations = educationOrganizations,
+            EducationOrganizationId = incomingRequest.EducationOrganizationId,
+            SisNumber = synergyStudentModel?.Student?.SisNumber,
+            Id = requestManifest?.Student?.Id,
+            StudentUniqueId = requestManifest?.Student?.StudentUniqueId,
+            FirstName = requestManifest?.Student?.FirstName,
+            MiddleName = requestManifest?.Student?.MiddleName,
+            LastSurname = requestManifest?.Student?.LastSurname,
+            BirthDate = requestManifest?.Student?.BirthDate,
+            Gender = requestManifest?.Student?.Gender,
+            Grade = requestManifest?.Student?.Grade,
+            FromDistrict = requestManifest?.From?.District,
+            FromSchool = requestManifest?.From?.School,
+            FromEmail = requestManifest?.From?.Email,
+            ToDistrict = requestManifest?.To?.District,
+            ToSchool = requestManifest?.To?.School,
+            ToEmail = requestManifest?.To?.Email,
+            Note = requestManifest?.Note,
+            Contents = requestManifest?.Contents,
+            RequestStatus = incomingRequest.RequestStatus,
+            States = States.GetSelectList(),
+            Genders = Genders.GetSelectList(),
+            ProgramAssociations = programAssociations,
+            CourseTranscripts = courseTranscripts
+        };
+
+        return View(viewModel);
+    }
 }

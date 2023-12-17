@@ -863,6 +863,10 @@ select {
   margin-bottom: 1rem;
 }
 
+.-mb-px {
+  margin-bottom: -1px;
+}
+
 .-ml-px {
   margin-left: -1px;
 }
@@ -2286,6 +2290,11 @@ select {
   z-index: 10;
 }
 
+.focus\:border-tertiary-500:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(72 161 215 / var(--tw-border-opacity));
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -2314,6 +2323,11 @@ select {
 .focus\:ring-green-600:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(22 163 74 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-tertiary-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(72 161 215 / var(--tw-ring-opacity));
 }
 
 .focus\:ring-tertiary-600:focus {
@@ -2451,6 +2465,10 @@ select {
 
   .sm\:table-cell {
     display: table-cell;
+  }
+
+  .sm\:hidden {
+    display: none;
   }
 
   .sm\:w-auto {
