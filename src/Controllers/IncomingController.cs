@@ -145,7 +145,7 @@ public class IncomingController : AuthenticatedController
                 EducationOrganizationId = organizationId,
                 Student = synergyStudentModel, 
                 RequestManifest = requestManifest,
-                ResponseManifest = requestManifest,
+                ResponseManifest = null,
                 InitialRequestSentDate = today,
                 RequestProcessUserId = userId,
                 RequestStatus = viewModel.RequestStatus,
@@ -242,7 +242,7 @@ public class IncomingController : AuthenticatedController
             incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
             incomingRequest.Student = synergyStudentModel;
             incomingRequest.RequestManifest = requestManifest;
-            incomingRequest.ResponseManifest = requestManifest;
+            incomingRequest.ResponseManifest = null;
             incomingRequest.RequestStatus = viewModel.RequestStatus;
             incomingRequest.UpdatedAt = today;
             incomingRequest.UpdatedBy = userId;
