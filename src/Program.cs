@@ -32,26 +32,16 @@ builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<ScopedHttpContext>();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
-var msSqlConnectionString = builder.Configuration.GetConnectionString("MsSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'MsSqlBrokerDatabase' not found.");
-var pgSqlConnectionString = builder.Configuration.GetConnectionString("PgSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'PgSqlBrokerDatabase' not found.");
+switch (builder.Configuration["DatabaseProvider"])
+{
+    case DbProviderType.MsSql:
+        builder.Services.AddDbContext<BrokerDbContext, MsSqlDbContext>();
+        break;
 
-builder.Services.AddDbContext<BrokerDbContext>(options => {
-    if (msSqlConnectionString is not null && msSqlConnectionString != "")
-    {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("MsSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.SqlServer")
-        );
-    }
-    if (pgSqlConnectionString is not null && pgSqlConnectionString != "")
-    {
-        options.UseNpgsql(
-            builder.Configuration.GetConnectionString("PgSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.PostgreSQL")
-        );
-    }
+    case DbProviderType.PostgreSql:
+        builder.Services.AddDbContext<BrokerDbContext, PostgresDbContext>();
+        break;
 }
-);
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
