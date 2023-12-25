@@ -41,7 +41,8 @@ public class AuthenticatedController : Controller
         var session = _httpContextAccessor?.HttpContext?.Session;
         return session is null ? string.Empty : session.GetString(FocusOrganizationDistrict) ?? string.Empty;
     }
-        protected string GetFocusOrganizationSchool()
+    
+    protected string GetFocusOrganizationSchool()
     {
         var session = _httpContextAccessor?.HttpContext?.Session;
         return session is null ? string.Empty : session.GetString(FocusOrganizationSchool) ?? string.Empty;

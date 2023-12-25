@@ -7,10 +7,16 @@
       <div class="px-4 py-6 sm:p-8 grid gap-8">
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
-              <h2 class="text-base font-semibold leading-7 text-gray-900">Student information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Basic information about the student being enrolled.</p>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Student Lookup</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Find the student in your SIS. This is the student record for which the records will be imported.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Student</label>
+                <div class="mt-2">
+                  <Search-Select asp-for="StudentUniqueId">
+                </div>
+              </div>
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.StudentUniqueId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
@@ -19,6 +25,12 @@
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="StudentUniqueId">@Html.ValidationMessageFor(m => m.StudentUniqueId)</p>
               </div>
             </div>
+          </div>
+          <div class="grid gap-6 border-b border-gray-900/10 pb-8">
+            <div>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Student information</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Basic information about the student being enrolled.</p>
+            </div>  
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.FirstName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
