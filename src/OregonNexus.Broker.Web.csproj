@@ -64,7 +64,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Edupoint_Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\OregonNexus.Broker.Connector.Edupoint.Synergy.*" />
+    <Edupoint_Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\*.dll" />
     <EdFi_Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\*.dll" />
   </ItemGroup>
 

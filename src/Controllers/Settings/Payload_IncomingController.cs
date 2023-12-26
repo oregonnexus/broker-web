@@ -21,7 +21,7 @@ public partial class SettingsController : AuthenticatedController
         var currentPayload = await _educationOrganizationPayloadSettings
             .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Incoming, _focusedDistrictEdOrg!.Value));
         
-        var currentDataConnector = currentPayload?.Settings.Where(i => i.PayloadContentType == "DataConnector").FirstOrDefault();
+        var currentDataConnector = currentPayload?.Settings.Where(i => i.PayloadContentType == "DataConnector").FirstOrDefault();               
 
         var connectors = _connectorLoader.Connectors;
 
