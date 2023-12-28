@@ -66,6 +66,7 @@
   <ItemGroup>
     <Edupoint_Files Include="..\..\broker-connector-edupointsynergy\src\bin\**\*.dll" />
     <EdFi_Files Include="..\..\broker-connector-edfi\src\OregonNexus.Broker.Connector.EdFiAlliance.EdFi\bin\**\*.dll" />
+    <Fixture_Files Include="..\..\broker-connector-fixture\src\bin\**\*.dll" />
   </ItemGroup>
 
   <Target Name="BuildCopyConnectorsSynergy" BeforeTargets="Build">
@@ -86,6 +87,16 @@
     <Copy SourceFiles="@(EdFi_Files)" DestinationFolder="$(TargetDir)\connectors\OregonNexus.Broker.Connector.EdFiAlliance.EdFi" />
 
     <Message Text="Copied EdFi build files" Importance="High" />
+  </Target>
+
+  <Target Name="BuildCopyConnectorsFixture" BeforeTargets="Build">
+    <MSBuild Projects="..\..\broker-connector-fixture\src\OregonNexus.Broker.Connector.Fixture.csproj" Properties="Configuration=$(Configuration)">
+    </MSBuild>
+    <Message Text="Executing BuildCopyConnectors Fixture task" Importance="High" />
+
+    <Copy SourceFiles="@(Fixture_Files)" DestinationFolder="$(TargetDir)\connectors\OregonNexus.Broker.Connector.Fixture" />
+
+    <Message Text="Copied Fixture build files" Importance="High" />
   </Target>
 
 </Project>
