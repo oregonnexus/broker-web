@@ -21,15 +21,19 @@ public partial class SettingsController : AuthenticatedController
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).First();
 
         var currentPayload = await _educationOrganizationPayloadSettings
-            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Outgoing, _focusedDistrictEdOrg!.Value));
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
 
         var contentTypes = _payloadContentTypeService.GetPayloadContentTypes().OrderBy(i => i.DisplayName) ?? Enumerable.Empty<PayloadContentTypeDisplay>();
 
         // Format for json on screen
         var settings = new List<PayloadSettingsViewModel>();
-        if (currentPayload is not null && currentPayload?.Settings.Count() > 0)
+        if (currentPayload is not null 
+            && currentPayload?.OutgoingPayloadSettings is not null 
+            && currentPayload?.OutgoingPayloadSettings.PayloadContents is not null
+            && currentPayload?.OutgoingPayloadSettings.PayloadContents?.Count() > 0
+        )
         {
-            foreach(var currentSettings in currentPayload.Settings)
+            foreach(var currentSettings in currentPayload.OutgoingPayloadSettings.PayloadContents)
             {
                 settings.Add(new PayloadSettingsViewModel() {
                     FullName = currentSettings.PayloadContentType,
@@ -79,11 +83,22 @@ public partial class SettingsController : AuthenticatedController
         }
 
         var currentPayload = await _educationOrganizationPayloadSettings
-            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Outgoing, _focusedDistrictEdOrg!.Value));
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
 
         if (currentPayload is not null)
         {
-            currentPayload.Settings = payloadContentTypeSettings;
+            if (currentPayload.OutgoingPayloadSettings is not null)
+            {
+                currentPayload.OutgoingPayloadSettings.PayloadContents = payloadContentTypeSettings;
+            }
+            else
+            {
+                currentPayload.OutgoingPayloadSettings = new OutgoingPayloadSettings()
+                {
+                    PayloadContents = payloadContentTypeSettings
+                };
+            }
+            
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -91,9 +106,11 @@ public partial class SettingsController : AuthenticatedController
             await _educationOrganizationPayloadSettings.AddAsync(new EducationOrganizationPayloadSettings()
             {
                 EducationOrganizationId = _focusedDistrictEdOrg!.Value,
-                PayloadDirection = PayloadDirection.Outgoing,
                 Payload = payload,
-                Settings = payloadContentTypeSettings
+                OutgoingPayloadSettings = new OutgoingPayloadSettings()
+                {
+                    PayloadContents = payloadContentTypeSettings
+                }
             });
         }
 

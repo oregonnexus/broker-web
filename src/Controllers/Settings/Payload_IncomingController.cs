@@ -19,9 +19,9 @@ public partial class SettingsController : AuthenticatedController
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).First();
 
         var currentPayload = await _educationOrganizationPayloadSettings
-            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Incoming, _focusedDistrictEdOrg!.Value));
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
         
-        var currentDataConnector = currentPayload?.Settings.Where(i => i.PayloadContentType == "DataConnector").FirstOrDefault();               
+        var currentDataConnector = currentPayload?.IncomingPayloadSettings?.StudentInformationSystem;               
 
         var connectors = _connectorLoader.Connectors;
 
@@ -35,7 +35,7 @@ public partial class SettingsController : AuthenticatedController
                         .GetCustomAttributes(false)
                         .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
                 Value = connector.FullName,
-                Selected = (connector.FullName == currentDataConnector?.Settings) ? true : false
+                Selected = (connector.FullName == currentDataConnector) ? true : false
             });
         }
         connectorListItems = connectorListItems.OrderBy(x => x.Text).ToList();
@@ -59,20 +59,11 @@ public partial class SettingsController : AuthenticatedController
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
         
         var currentPayload = await _educationOrganizationPayloadSettings
-            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, PayloadDirection.Incoming, _focusedDistrictEdOrg!.Value));
-
-        var payloadContentSettingsToSave = new List<PayloadSettingsContentType>();
-
-        payloadContentSettingsToSave.Add(
-            new PayloadSettingsContentType() {
-                PayloadContentType = "DataConnector",
-                Settings = Request.Form.Where(i => i.Key == "DataConnector").FirstOrDefault().Value.ToString()
-            }
-        );
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
 
         if (currentPayload is not null)
         {
-            currentPayload.Settings = payloadContentSettingsToSave;
+            currentPayload.IncomingPayloadSettings!.StudentInformationSystem = Request.Form.Where(i => i.Key == "DataConnector").FirstOrDefault().Value.ToString();
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -80,9 +71,11 @@ public partial class SettingsController : AuthenticatedController
             await _educationOrganizationPayloadSettings.AddAsync(new EducationOrganizationPayloadSettings()
             {
                 EducationOrganizationId = _focusedDistrictEdOrg!.Value,
-                PayloadDirection = PayloadDirection.Incoming,
                 Payload = payload,
-                Settings = payloadContentSettingsToSave
+                IncomingPayloadSettings = new IncomingPayloadSettings()
+                {
+                    StudentInformationSystem = Request.Form.Where(i => i.Key == "DataConnector").FirstOrDefault().Value.ToString()
+                }
             });
         }
 

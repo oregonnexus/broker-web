@@ -23,6 +23,7 @@ using OregonNexus.Broker.Data;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Service;
+using OregonNexus.Broker.Service.Serializers;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using OregonNexus.Broker.Web.Helpers;
@@ -37,7 +38,8 @@ public partial class SettingsController : AuthenticatedController
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;
-    private readonly PayloadSerializer _payloadSerializer;
+    private readonly IncomingPayloadSerializer _incomingPayloadSerializer;
+    private readonly OutgoingPayloadSerializer _outgoingPayloadSerializer;
     private readonly IServiceProvider _serviceProvider;
     private readonly IRepository<EducationOrganizationConnectorSettings> _repo;
     private readonly IRepository<EducationOrganizationPayloadSettings> _educationOrganizationPayloadSettings;
@@ -55,7 +57,8 @@ public partial class SettingsController : AuthenticatedController
         FocusHelper focusHelper, 
         ConfigurationSerializer configurationSerializer, 
         IRepository<EducationOrganizationPayloadSettings> educationOrganizationPayloadSettings,
-        PayloadSerializer payloadSerializer,
+        IncomingPayloadSerializer incomingPayloadSerializer,
+        OutgoingPayloadSerializer outgoingPayloadSerializer,
         PayloadContentTypeService payloadContentTypeService
         ) : base(httpContextAccessor)
     {
@@ -67,7 +70,8 @@ public partial class SettingsController : AuthenticatedController
         _repo = repo;
         _focusHelper = focusHelper;
         _educationOrganizationPayloadSettings = educationOrganizationPayloadSettings;
-        _payloadSerializer = payloadSerializer;
+        _incomingPayloadSerializer = incomingPayloadSerializer;
+        _outgoingPayloadSerializer = outgoingPayloadSerializer;
         _payloadContentTypeService = payloadContentTypeService;
     }
 
