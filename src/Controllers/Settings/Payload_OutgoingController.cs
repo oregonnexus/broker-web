@@ -6,6 +6,7 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Service;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
+using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Web.ViewModels.Settings;
 
 namespace OregonNexus.Broker.Web.Controllers;
@@ -54,14 +55,47 @@ public partial class SettingsController : AuthenticatedController
                     .GetCustomAttributes(false)
                     .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
                 Settings = settings
-            }
+            },
+            ConnectorListItems = ConnectorSelectMenuHelper.ConnectorsListMenu(
+                _connectorLoader.Connectors, 
+                currentPayload?.OutgoingPayloadSettings?.PrimaryDataConnector
+            )
         });
     }
 
     [HttpPost("/Settings/OutgoingPayload/{payload}")]
-    public async Task<IActionResult> UpdateOutgoingPayload(
-        [FromRoute] string payload,
-        [FromForm] string settings)
+    public async Task<IActionResult> UpdateOutgoingPayload([FromRoute] string payload, [FromForm] CreateOutgoingPayloadSettingsViewModel input)
+    {
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+
+        var currentPayload = await _educationOrganizationPayloadSettings
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
+
+        if (currentPayload is not null && currentPayload.OutgoingPayloadSettings is not null)
+        {
+            currentPayload.OutgoingPayloadSettings.PrimaryDataConnector = input.PrimaryDataConnector;
+            await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
+        }
+        else
+        {
+            await _educationOrganizationPayloadSettings.AddAsync(new EducationOrganizationPayloadSettings()
+            {
+                EducationOrganizationId = _focusedDistrictEdOrg!.Value,
+                Payload = payload,
+                OutgoingPayloadSettings = new OutgoingPayloadSettings()
+                {
+                    PrimaryDataConnector = input.PrimaryDataConnector
+                }
+            });
+        }
+
+        TempData[VoiceTone.Positive] = $"Updated Outgoing Payload.";
+
+        return RedirectToAction("OutgoingPayload", new { payload });
+    }
+
+    [HttpPost("/Settings/OutgoingPayloadContents/{payload}")]
+    public async Task<IActionResult> UpdateOutgoingPayloadContents([FromRoute] string payload, [FromForm] string settings)
     {
         if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
 

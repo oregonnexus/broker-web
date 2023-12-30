@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
+using OregonNexus.Broker.Web.Helpers;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -19,26 +20,7 @@ public partial class SettingsController : AuthenticatedController
         var payloadAssembly = _connectorLoader.Payloads.Where(x => x.FullName == payload).First();
 
         var currentPayload = await _educationOrganizationPayloadSettings
-            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));
-        
-        var currentDataConnector = currentPayload?.IncomingPayloadSettings?.StudentInformationSystem;               
-
-        var connectors = _connectorLoader.Connectors;
-
-        // Create select menu
-        var connectorListItems = new List<SelectListItem>();
-
-        foreach(var connector in connectors)
-        {
-            connectorListItems.Add(new SelectListItem() {
-                Text = ((DisplayNameAttribute)connector
-                        .GetCustomAttributes(false)
-                        .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName,
-                Value = connector.FullName,
-                Selected = (connector.FullName == currentDataConnector) ? true : false
-            });
-        }
-        connectorListItems = connectorListItems.OrderBy(x => x.Text).ToList();
+            .FirstOrDefaultAsync(new PayloadSettingsByNameAndEdOrgIdSpec(payload, _focusedDistrictEdOrg!.Value));           
 
         return View(
             new { Payload = 
@@ -48,7 +30,10 @@ public partial class SettingsController : AuthenticatedController
                         .GetCustomAttributes(false)
                         .First(x => x.GetType() == typeof(DisplayNameAttribute))).DisplayName
                 },
-                ConnectorListItems = connectorListItems
+                ConnectorListItems = ConnectorSelectMenuHelper.ConnectorsListMenu(
+                    _connectorLoader.Connectors, 
+                    currentPayload?.IncomingPayloadSettings?.StudentInformationSystem
+                )
             }
         );
     }
@@ -63,7 +48,7 @@ public partial class SettingsController : AuthenticatedController
 
         if (currentPayload is not null)
         {
-            currentPayload.IncomingPayloadSettings!.StudentInformationSystem = Request.Form.Where(i => i.Key == "DataConnector").FirstOrDefault().Value.ToString();
+            currentPayload.IncomingPayloadSettings!.StudentInformationSystem = Request.Form.Where(i => i.Key == "StudentInformationSystem").FirstOrDefault().Value.ToString();
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -74,7 +59,7 @@ public partial class SettingsController : AuthenticatedController
                 Payload = payload,
                 IncomingPayloadSettings = new IncomingPayloadSettings()
                 {
-                    StudentInformationSystem = Request.Form.Where(i => i.Key == "DataConnector").FirstOrDefault().Value.ToString()
+                    StudentInformationSystem = Request.Form.Where(i => i.Key == "StudentInformationSystem").FirstOrDefault().Value.ToString()
                 }
             });
         }
