@@ -48,7 +48,17 @@ public partial class SettingsController : AuthenticatedController
 
         if (currentPayload is not null)
         {
-            currentPayload.IncomingPayloadSettings!.StudentInformationSystem = Request.Form.Where(i => i.Key == "StudentInformationSystem").FirstOrDefault().Value.ToString();
+            if (currentPayload.IncomingPayloadSettings is not null)
+            {
+                currentPayload.IncomingPayloadSettings!.StudentInformationSystem = Request.Form.Where(i => i.Key == "StudentInformationSystem").FirstOrDefault().Value.ToString();
+            }
+            else
+            {
+                currentPayload.IncomingPayloadSettings = new IncomingPayloadSettings()
+                {
+                    StudentInformationSystem = Request.Form.Where(i => i.Key == "StudentInformationSystem").FirstOrDefault().Value.ToString()
+                };
+            }
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
