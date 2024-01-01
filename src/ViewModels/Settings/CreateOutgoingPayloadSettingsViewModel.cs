@@ -8,5 +8,5 @@ namespace OregonNexus.Broker.Web.ViewModels.Settings;
 
 public class CreateOutgoingPayloadSettingsViewModel
 {
-    public string? PrimaryDataConnector { get; set; }
+    public string? StudentLookupConnector { get; set; }
 }

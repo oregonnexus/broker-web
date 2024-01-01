@@ -17,13 +17,13 @@
     </div>
     <div class="sm:col-span-4 my-4">
     <form method="post" action="@Url.Action("OutgoingPayload", "Settings", new { payload = Model.Payload.FullName })">
-    <label for="PrimaryDataConnector" class="block text-sm font-medium leading-6 text-gray-900">Primary Data Connector</label>
+    <label for="StudentLookupConnector" class="block text-sm font-medium leading-6 text-gray-900">Student Lookup Connector</label>
     <div class="mt-2">
       <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-tertiary-700 sm:max-w-md">
-        <select name="PrimaryDataConnector" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6" asp-items="@Model.ConnectorListItems">
+        <select name="StudentLookupConnector" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6" asp-items="@Model.ConnectorListItems">
         </select>
       </div>
-      <div class="block text-sm font-medium leading-6 text-gray-900">Connector to facilitate raw data transfer to SIS.</div>
+      <div class="block text-sm font-medium leading-6 text-gray-900">Connector to perform live student lookups.</div>
     </div>
     <div class="mt-6 flex items-center justify-end gap-x-6">
         <a asp-controller="Settings"

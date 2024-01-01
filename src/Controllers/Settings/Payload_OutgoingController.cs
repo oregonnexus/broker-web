@@ -58,7 +58,7 @@ public partial class SettingsController : AuthenticatedController
             },
             ConnectorListItems = ConnectorSelectMenuHelper.ConnectorsListMenu(
                 _connectorLoader.Connectors, 
-                currentPayload?.OutgoingPayloadSettings?.PrimaryDataConnector
+                currentPayload?.OutgoingPayloadSettings?.StudentLookupConnector
             )
         });
     }
@@ -73,7 +73,7 @@ public partial class SettingsController : AuthenticatedController
 
         if (currentPayload is not null && currentPayload.OutgoingPayloadSettings is not null)
         {
-            currentPayload.OutgoingPayloadSettings.PrimaryDataConnector = input.PrimaryDataConnector;
+            currentPayload.OutgoingPayloadSettings.StudentLookupConnector = input.StudentLookupConnector;
             await _educationOrganizationPayloadSettings.UpdateAsync(currentPayload);
         }
         else
@@ -84,7 +84,7 @@ public partial class SettingsController : AuthenticatedController
                 Payload = payload,
                 OutgoingPayloadSettings = new OutgoingPayloadSettings()
                 {
-                    PrimaryDataConnector = input.PrimaryDataConnector
+                    StudentLookupConnector = input.StudentLookupConnector
                 }
             });
         }
