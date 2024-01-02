@@ -61,8 +61,18 @@
             else {
                 this.selected = selected;
                 this.filter = this.selectedName();
+                this.updateFormFields();
             }
             this.close();
+        },
+        updateFormFields() {
+            document.getElementById('StudentUniqueId').value = this.selected.studentId;
+            document.getElementById('FirstName').value = this.selected.firstName;
+            document.getElementById('MiddleName').value = this.selected.middleName;
+            document.getElementById('LastSurname').value = this.selected.lastName;
+            document.getElementById('BirthDate').value = this.selected.birthDate;
+            document.getElementById('Gender').value = this.selected.gender;
+            document.getElementById('Grade').value = this.selected.grade;
         },
         focusPrevOption() {
         if (!this.isOpen()) {
