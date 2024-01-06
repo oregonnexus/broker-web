@@ -23,8 +23,8 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('incomingForm', () => {
         return {
-            programAssociations: @Html.Raw(Json.Serialize(@Model.ProgramAssociations)), 
-            mappedProgramAssociations: @Html.Raw(Json.Serialize(@Model.ProgramAssociations)),
+            programAssociations: '', 
+            mappedProgramAssociations: '',
 
             courseTranscripts: mockCourseTranscript(), 
             mappedCourseTranscripts: mockCourseTranscript(),

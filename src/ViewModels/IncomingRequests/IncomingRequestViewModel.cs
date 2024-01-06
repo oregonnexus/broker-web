@@ -40,14 +40,12 @@ public class IncomingRequestViewModel
 
     public IncomingRequestViewModel(Request incomingRequest)
     {
-        var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
-        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = incomingRequest.Id;
-        District = requestManifest?.From?.District ?? string.Empty;
-        ReceivingDistrict = requestManifest?.To?.District ?? string.Empty;
-        School = requestManifest?.From?.School ?? string.Empty;
-        Student = $"{requestManifest?.Student?.FirstName} {requestManifest?.Student?.LastSurname}";
+        District = incomingRequest.RequestManifest?.From?.District ?? string.Empty;
+        ReceivingDistrict = incomingRequest.RequestManifest?.To?.District ?? string.Empty;
+        School = incomingRequest.RequestManifest?.From?.School ?? string.Empty;
+        Student = $"{incomingRequest.RequestManifest?.Student?.FirstName} {incomingRequest.RequestManifest?.Student?.LastName}";
         Date = incomingRequest.CreatedAt;
         Status = incomingRequest.RequestStatus == RequestStatus.Approved
                 ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();

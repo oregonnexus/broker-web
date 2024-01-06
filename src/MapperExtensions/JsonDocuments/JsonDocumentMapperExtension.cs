@@ -17,7 +17,7 @@ public static class JsonDocumentMapperExtension
             RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
             Student = new StudentJsonModel
             {
-                Id = viewModel.Id,
+                Id = viewModel.StudentUniqueId,
                 StudentUniqueId = viewModel.StudentUniqueId,
                 FirstName = viewModel.FirstName,
                 MiddleName = viewModel.MiddleName,
@@ -54,7 +54,7 @@ public static class JsonDocumentMapperExtension
         {
             Student = new SynergyStudentJsonModel
             {
-                SisNumber = viewModel.SisNumber
+                SisNumber = viewModel.StudentUniqueId
             }
         };
 
@@ -102,13 +102,13 @@ public static class JsonDocumentMapperExtension
         return responseManifest.ToJsonDocument();
     }
 
-    public static JsonDocument MapToResponseManifestJsonModel(
-        this RequestModel viewModel,
-        Request request)
-    {
-        var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
-        responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
-        responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
-        return responseManifest.ToJsonDocument();
-    }
+    // public static JsonDocument MapToResponseManifestJsonModel(
+    //     this RequestModel viewModel,
+    //     Request request)
+    // {
+    //     var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+    //     responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
+    //     responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
+    //     return responseManifest.ToJsonDocument();
+    // }
 }

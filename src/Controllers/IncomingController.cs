@@ -21,6 +21,7 @@ using OregonNexus.Broker.Web.Extensions.States;
 using OregonNexus.Broker.Web.Extensions.Genders;
 using src.Models.ProgramAssociations;
 using src.Models.Courses;
+using OregonNexus.Broker.Connector.Payload;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -127,36 +128,35 @@ public class IncomingController : AuthenticatedController
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
-            var organizationId = GetFocusOrganizationId();
-            viewModel.ToDistrict = GetFocusOrganizationDistrict();
-            viewModel.ToSchool = GetFocusOrganizationSchool();
-            viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var student = new Student() {
+                LastName = viewModel.LastSurname,
+                FirstName = viewModel.FirstName,
+                MiddleName = viewModel.MiddleName,
+                StudentNumber = viewModel.StudentUniqueId,
+                Grade = viewModel.Grade,
+                Gender = viewModel.Gender
+            };
 
-            viewModel.FromDistrict = viewModel.FromDistrict;
-            viewModel.FromSchool = viewModel.FromSchool;
-            viewModel.FromEmail = viewModel.FromEmail;
-
-            var synergyStudentModel = viewModel.MapToSynergyJsonModel();
-            var requestManifest = viewModel.MapToRequestManifestJsonModel();
-
-            var today = DateTime.UtcNow;
             var incomingRequest = new Request
             {
-                EducationOrganizationId = organizationId,
-                Student = synergyStudentModel, 
-                RequestManifest = requestManifest,
+                EducationOrganizationId = GetFocusOrganizationId(),
+                Student = new StudentRequest() {
+                    Student = student
+                }, 
+                RequestManifest = new Manifest() {
+                    RequestType = nameof(StudentCumulativeRecord),
+                    Student = student
+                },
                 ResponseManifest = null,
-                InitialRequestSentDate = today,
+                InitialRequestSentDate = DateTime.UtcNow,
                 RequestProcessUserId = userId,
-                RequestStatus = viewModel.RequestStatus,
-                CreatedAt = today,
-                CreatedBy = userId
+                RequestStatus = RequestStatus.Draft
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
-            await _incomingRequestRepository.SaveChangesAsync();
+            //await _incomingRequestRepository.SaveChangesAsync();
 
-            await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
+            //await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
             return RedirectToAction(nameof(Index));
         }
@@ -179,26 +179,18 @@ public class IncomingController : AuthenticatedController
             .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
             .ToList();
 
-        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
-
-        var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
-        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
-
-        var programAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
-        var courseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
+        var requestManifest = incomingRequest.RequestManifest;
 
         var viewModel = new CreateIncomingRequestViewModel
         {
             RequestId = incomingRequest.Id,
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = incomingRequest.EducationOrganizationId,
-            SisNumber = synergyStudentModel?.Student?.SisNumber,
-            Id = requestManifest?.Student?.Id,
-            StudentUniqueId = requestManifest?.Student?.StudentUniqueId,
+            StudentUniqueId = requestManifest?.Student?.StudentNumber,
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
-            LastSurname = requestManifest?.Student?.LastSurname,
-            BirthDate = requestManifest?.Student?.BirthDate,
+            LastSurname = requestManifest?.Student?.LastName,
+            BirthDate = requestManifest?.Student?.Birthdate.ToString(),
             Gender = requestManifest?.Student?.Gender,
             Grade = requestManifest?.Student?.Grade,
             FromDistrict = requestManifest?.From?.District,
@@ -208,12 +200,10 @@ public class IncomingController : AuthenticatedController
             ToSchool = requestManifest?.To?.School,
             ToEmail = requestManifest?.To?.Email,
             Note = requestManifest?.Note,
-            Contents = requestManifest?.Contents,
+            Contents = requestManifest?.Contents?.Select(x => x.FileName).ToList(),
             RequestStatus = incomingRequest.RequestStatus,
             States = States.GetSelectList(),
-            Genders = Genders.GetSelectList(),
-            ProgramAssociations = programAssociations,
-            CourseTranscripts = courseTranscripts
+            Genders = Genders.GetSelectList()
         };
 
         return View(viewModel);
@@ -234,18 +224,17 @@ public class IncomingController : AuthenticatedController
 
             if (incomingRequest is null) return BadRequest();
 
-            var synergyStudentModel = viewModel.MapToSynergyJsonModel();
-            var requestManifest = viewModel.MapToRequestManifestJsonModel();
-
-            var today = DateTime.UtcNow;
-
             incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
-            incomingRequest.Student = synergyStudentModel;
-            incomingRequest.RequestManifest = requestManifest;
+            incomingRequest.Student!.Student!.LastName = viewModel.LastSurname;
+            incomingRequest.Student!.Student!.FirstName = viewModel.FirstName;
+            incomingRequest.Student!.Student!.MiddleName = viewModel.MiddleName;
+            incomingRequest.Student!.Student!.Gender = viewModel.Gender;
+            incomingRequest.Student!.Student!.Grade = viewModel.Grade;
+            incomingRequest.Student!.Student!.StudentNumber = viewModel.StudentUniqueId;
+
+            incomingRequest.RequestManifest.Student.StudentNumber = viewModel.StudentUniqueId;
             incomingRequest.ResponseManifest = null;
             incomingRequest.RequestStatus = viewModel.RequestStatus;
-            incomingRequest.UpdatedAt = today;
-            incomingRequest.UpdatedBy = userId;
 
             await _incomingRequestRepository.UpdateAsync(incomingRequest);
             await _incomingRequestRepository.SaveChangesAsync();
@@ -273,41 +262,14 @@ public class IncomingController : AuthenticatedController
             .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
             .ToList();
 
-        var synergyStudentModel = incomingRequest.Student?.DeserializeFromJsonDocument<SynergyJsonModel>();
-
-        var requestManifest = incomingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
-        var responseManifest = incomingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
-
-        var programAssociations = responseManifest?.ProgramAssociations ?? Enumerable.Empty<ProgramAssociationResponse>();
-        var courseTranscripts = responseManifest?.CourseTranscripts ?? Enumerable.Empty<CourseTranscriptResponse>();
-
         var viewModel = new CreateIncomingRequestViewModel
         {
             RequestId = incomingRequest.Id,
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = incomingRequest.EducationOrganizationId,
-            SisNumber = synergyStudentModel?.Student?.SisNumber,
-            Id = requestManifest?.Student?.Id,
-            StudentUniqueId = requestManifest?.Student?.StudentUniqueId,
-            FirstName = requestManifest?.Student?.FirstName,
-            MiddleName = requestManifest?.Student?.MiddleName,
-            LastSurname = requestManifest?.Student?.LastSurname,
-            BirthDate = requestManifest?.Student?.BirthDate,
-            Gender = requestManifest?.Student?.Gender,
-            Grade = requestManifest?.Student?.Grade,
-            FromDistrict = requestManifest?.From?.District,
-            FromSchool = requestManifest?.From?.School,
-            FromEmail = requestManifest?.From?.Email,
-            ToDistrict = requestManifest?.To?.District,
-            ToSchool = requestManifest?.To?.School,
-            ToEmail = requestManifest?.To?.Email,
-            Note = requestManifest?.Note,
-            Contents = requestManifest?.Contents,
             RequestStatus = incomingRequest.RequestStatus,
             States = States.GetSelectList(),
-            Genders = Genders.GetSelectList(),
-            ProgramAssociations = programAssociations,
-            CourseTranscripts = courseTranscripts
+            Genders = Genders.GetSelectList()
         };
 
         return View(viewModel);

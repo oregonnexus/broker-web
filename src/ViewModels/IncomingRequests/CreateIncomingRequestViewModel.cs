@@ -20,12 +20,6 @@ public class CreateIncomingRequestViewModel
     // [Required(ErrorMessage = "Student is required")]
     public string? Student { get; set; } = string.Empty;
 
-    [Display(Name = "SIS Number")]
-    public string? SisNumber { get; set; }
-
-    [Display(Name = "EdFi ID")]
-    public string? Id { get; set; }
-
     [Display(Name = "Student ID")]
     public string? StudentUniqueId { get; set; }
 
@@ -97,9 +91,6 @@ public class CreateIncomingRequestViewModel
 
     public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
 
-    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
-
-    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
-    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();   
+    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();   
     
 }
