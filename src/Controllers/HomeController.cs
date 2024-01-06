@@ -15,7 +15,7 @@ using OregonNexus.Broker.Web.Helpers;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class HomeController : AuthenticatedController
+public class HomeController : AuthenticatedController<HomeController>
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IRepository<User> _userRepository;
@@ -29,7 +29,7 @@ public class HomeController : AuthenticatedController
         IRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<Request> requestRepository,
         ILogger<HomeController> logger,
-        FocusHelper focusHelper) : base(httpContextAccessor)
+        FocusHelper focusHelper)
     {
         _userRepository = userRepository;
         _educationOrganizationRepository = educationOrganizationRepository;

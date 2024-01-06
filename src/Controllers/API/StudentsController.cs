@@ -12,11 +12,11 @@ namespace OregonNexus.Broker.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/v1/students")]
-public class StudentsSearchController : AuthenticatedController
+public class StudentsSearchController : AuthenticatedController<StudentsSearchController>
 {
     private readonly StudentLookupService _studentLookupService;
 
-    public StudentsSearchController(IHttpContextAccessor httpContextAccessor, StudentLookupService studentLookupService) : base(httpContextAccessor)
+    public StudentsSearchController(IHttpContextAccessor httpContextAccessor, StudentLookupService studentLookupService)
     {
         _studentLookupService = studentLookupService;
     }

@@ -880,10 +880,6 @@ select {
   margin-left: -1px;
 }
 
-.-mr-1 {
-  margin-right: -0.25rem;
-}
-
 .-mt-1 {
   margin-top: -0.25rem;
 }
@@ -1086,10 +1082,6 @@ select {
 
 .w-5 {
   width: 1.25rem;
-}
-
-.w-56 {
-  width: 14rem;
 }
 
 .w-6 {

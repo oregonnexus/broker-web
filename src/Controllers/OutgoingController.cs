@@ -19,7 +19,7 @@ using src.Models.Students;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
-public class OutgoingController : AuthenticatedController
+public class OutgoingController : AuthenticatedController<OutgoingController>
 {
     private readonly IRepository<Request> _outgoingRequestRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
@@ -32,7 +32,7 @@ public class OutgoingController : AuthenticatedController
         IRepository<Request> outgoingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IPayloadContentService payloadContentService) : base(httpContextAccessor)
+        IPayloadContentService payloadContentService)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;

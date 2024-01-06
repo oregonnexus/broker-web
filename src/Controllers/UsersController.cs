@@ -16,7 +16,7 @@ using OregonNexus.Broker.Web.ViewModels.Users;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UsersController : AuthenticatedController
+public class UsersController : AuthenticatedController<UsersController>
 {
     private readonly IRepository<User> _userRepository;
     private readonly BrokerDbContext _brokerDbContext;
@@ -26,7 +26,7 @@ public class UsersController : AuthenticatedController
         IHttpContextAccessor httpContextAccessor,
         IRepository<User> userRepository,
         BrokerDbContext brokerDbContext,
-        UserManager<IdentityUser<Guid>> userManager) : base(httpContextAccessor)
+        UserManager<IdentityUser<Guid>> userManager)
     {
         _userRepository = userRepository;
         _brokerDbContext = brokerDbContext;

@@ -21,6 +21,7 @@ using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 using src.Services.Tokens;
 //using src.Services.Students;
 using src.Services.Shared;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,13 @@ switch (builder.Configuration["DatabaseProvider"])
         break;
 }
 
+builder.Services.AddScoped(typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(CachedRepository<>));
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IReadRepository<>), typeof(CachedRepository<>));
+
+builder.Services.AddScoped(typeof(IMemoryCache), typeof(MemoryCache));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

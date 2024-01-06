@@ -48,7 +48,7 @@ public class IncomingRequestModel : SearchableModelWithPagination
     {
         var searchExpressions = new List<Expression<Func<Request, bool>>>
         {
-            request => request.RequestProcessUserId.HasValue
+            //request => request.RequestProcessUserId.HasValue
         };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))

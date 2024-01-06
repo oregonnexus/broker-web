@@ -34,7 +34,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public partial class SettingsController : AuthenticatedController
+public partial class SettingsController : AuthenticatedController<SettingsController>
 {
     private readonly ConnectorLoader _connectorLoader;
     private readonly ConfigurationSerializer _configurationSerializer;
@@ -60,7 +60,7 @@ public partial class SettingsController : AuthenticatedController
         IncomingPayloadSerializer incomingPayloadSerializer,
         OutgoingPayloadSerializer outgoingPayloadSerializer,
         PayloadContentTypeService payloadContentTypeService
-        ) : base(httpContextAccessor)
+        )
     {
         ArgumentNullException.ThrowIfNull(connectorLoader);
 

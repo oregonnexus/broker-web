@@ -12,7 +12,7 @@ using OregonNexus.Broker.Web.Models;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class UserRolesController : AuthenticatedController
+public class UserRolesController : AuthenticatedController<UserRolesController>
 {
     private readonly IRepository<UserRole> _userRoleRepo;
 
@@ -22,7 +22,7 @@ public class UserRolesController : AuthenticatedController
     
     public UserRolesController(
         IHttpContextAccessor httpContextAccessor,
-        IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper) : base(httpContextAccessor)
+        IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper)
     {
         _userRoleRepo = userRoleRepo;
         _userRepo = userRepo;

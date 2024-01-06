@@ -1,36 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
+using OregonNexus.Broker.Data;
+using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Domain.Specifications;
+using OregonNexus.Broker.SharedKernel;
 using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
-public class AuthenticatedController : Controller
+public class AuthenticatedController<T> : Controller where T : AuthenticatedController<T>
 {
-    protected readonly IHttpContextAccessor _httpContextAccessor;
+    private IReadRepository<EducationOrganization> _edOrgRepo => HttpContext.RequestServices.GetService<IReadRepository<EducationOrganization>>()!;
 
-    public AuthenticatedController(IHttpContextAccessor httpContextAccessor)
+    public AuthenticatedController()
     {
-        _httpContextAccessor = httpContextAccessor;
     }
 
     protected void RefreshSession()
     {
-        var context = _httpContextAccessor.HttpContext;
-        context?.Session.SetString("LastAccessed", DateTime.UtcNow.ToString());
+        HttpContext.Session.SetString("LastAccessed", DateTime.UtcNow.ToString());
     }
 
     protected void ValidateSession()
     {
-        var context = _httpContextAccessor.HttpContext;
-        if(context is not null && !context.Request.Path.StartsWithSegments("/login/logout"))
+        if(HttpContext is not null && !HttpContext.Request.Path.StartsWithSegments("/login/logout"))
         {
-            context.Response.Redirect("/login/logout");
+            HttpContext.Response.Redirect("/login/logout");
             return;
         }
     }
 
     protected Guid GetFocusOrganizationId()
     {
-        var session = _httpContextAccessor?.HttpContext?.Session;
+        var session = HttpContext?.Session;
         _ = Guid.TryParse(session?.GetString(FocusOrganizationKey), out var focusOrganizationKey);
         return focusOrganizationKey;
     }
@@ -38,13 +39,13 @@ public class AuthenticatedController : Controller
 
     protected string GetFocusOrganizationDistrict()
     {
-        var session = _httpContextAccessor?.HttpContext?.Session;
+        var session = HttpContext?.Session;
         return session is null ? string.Empty : session.GetString(FocusOrganizationDistrict) ?? string.Empty;
     }
     
     protected string GetFocusOrganizationSchool()
     {
-        var session = _httpContextAccessor?.HttpContext?.Session;
+        var session = HttpContext?.Session;
         return session is null ? string.Empty : session.GetString(FocusOrganizationSchool) ?? string.Empty;
     }
 }

@@ -15,14 +15,14 @@ using OregonNexus.Broker.Web.Extensions.States;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class EducationOrganizationsController : AuthenticatedController
+public class EducationOrganizationsController : AuthenticatedController<EducationOrganizationsController>
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly EducationOrganizationHelper _educationOrganizationHelper;
     public EducationOrganizationsController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        EducationOrganizationHelper educationOrganizationHelper) : base(httpContextAccessor)
+        EducationOrganizationHelper educationOrganizationHelper)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _educationOrganizationHelper = educationOrganizationHelper;

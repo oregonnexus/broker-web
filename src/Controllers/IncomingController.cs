@@ -22,28 +22,32 @@ using OregonNexus.Broker.Web.Extensions.Genders;
 using src.Models.ProgramAssociations;
 using src.Models.Courses;
 using OregonNexus.Broker.Connector.Payload;
+using OregonNexus.Broker.Web.Helpers;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferIncomingRecords)]
-public class IncomingController : AuthenticatedController
+public class IncomingController : AuthenticatedController<IncomingController>
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
     private readonly IPayloadContentService _payloadContentService;
+    private readonly FocusHelper _focusHelper;
 
     public IncomingController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<Request> incomingRequestRepository,
-        IPayloadContentService payloadContentService) : base(httpContextAccessor)
+        IPayloadContentService payloadContentService,
+        FocusHelper focusHelper)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentRepository = payloadContentRepository;
         _incomingRequestRepository = incomingRequestRepository;
         _payloadContentService = payloadContentService;
+        _focusHelper = focusHelper;
     }
 
     public async Task<IActionResult> Index(
@@ -51,7 +55,12 @@ public class IncomingController : AuthenticatedController
         CancellationToken cancellationToken)
     {
         RefreshSession();
-        var searchExpressions = model.BuildSearchExpressions();
+        var searchExpressions = new List<Expression<Func<Request, bool>>>(); 
+        searchExpressions = model.BuildSearchExpressions();
+
+        var schools = await _focusHelper.GetFocusedSchools();
+
+        searchExpressions.Add(x => schools.Contains(x.EducationOrganization));
 
         var sortExpression = model.BuildSortExpression();
 
@@ -77,9 +86,6 @@ public class IncomingController : AuthenticatedController
 
         var incomingRequestViewModels = incomingRequests
             .Select(incomingRequest => new IncomingRequestViewModel(incomingRequest));
-
-        incomingRequestViewModels = incomingRequestViewModels.Where(request => request.ReceivingDistrict == organizationName);
-        totalItems = incomingRequestViewModels.Count();
         
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
@@ -134,7 +140,8 @@ public class IncomingController : AuthenticatedController
                 MiddleName = viewModel.MiddleName,
                 StudentNumber = viewModel.StudentUniqueId,
                 Grade = viewModel.Grade,
-                Gender = viewModel.Gender
+                Gender = viewModel.Gender,
+                Birthdate = DateOnly.Parse(viewModel.BirthDate!)
             };
 
             var incomingRequest = new Request
@@ -144,20 +151,15 @@ public class IncomingController : AuthenticatedController
                     Student = student
                 }, 
                 RequestManifest = new Manifest() {
-                    RequestType = nameof(StudentCumulativeRecord),
+                    RequestType = typeof(StudentCumulativeRecord).FullName!,
                     Student = student
                 },
                 ResponseManifest = null,
-                InitialRequestSentDate = DateTime.UtcNow,
                 RequestProcessUserId = userId,
                 RequestStatus = RequestStatus.Draft
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
-            //await _incomingRequestRepository.SaveChangesAsync();
-
-            //await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -190,7 +192,7 @@ public class IncomingController : AuthenticatedController
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
             LastSurname = requestManifest?.Student?.LastName,
-            BirthDate = requestManifest?.Student?.Birthdate.ToString(),
+            BirthDate = requestManifest?.Student?.Birthdate.Value.ToString("yyyy-MM-dd"),
             Gender = requestManifest?.Student?.Gender,
             Grade = requestManifest?.Student?.Grade,
             FromDistrict = requestManifest?.From?.District,

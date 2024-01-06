@@ -11,13 +11,13 @@ namespace OregonNexus.Broker.Web.Helpers;
 
 public class FocusHelper
 {
-    private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
+    private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<UserRole> _userRoleRepo;
     private readonly IRepository<User> _userRepo;
     private readonly ISession _session;
 
     public FocusHelper(
-        IRepository<EducationOrganization> educationOrganizationRepository,
+        IReadRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<UserRole> userRoleRepo,
         IRepository<User> userRepo,
         IHttpContextAccessor httpContextAccessor)
@@ -25,7 +25,7 @@ public class FocusHelper
         _educationOrganizationRepository = educationOrganizationRepository;
         _userRepo = userRepo;
         _userRoleRepo = userRoleRepo;
-        _session = httpContextAccessor.HttpContext?.Session;
+        _session = httpContextAccessor!.HttpContext?.Session!;
     }
 
     public async Task<IEnumerable<SelectListItem>> GetFocusableEducationOrganizationsSelectList()
@@ -49,8 +49,6 @@ public class FocusHelper
                     Selected = _session.GetString(FocusOrganizationKey) == "ALL"
                 });
             
-        
-
             foreach(var organization in organizations)
             {
                 selectListItems.Add(new SelectListItem() {
@@ -126,6 +124,25 @@ public class FocusHelper
         return selectedSelectList;
     }
 
+    public async void SetInitialFocus()
+    {
+        // Get initial user
+        var currentUser = _session.GetObjectFromJson<User>("User.Current");
+        var allEdOrgs = currentUser?.AllEducationOrganizations;
+
+        if (allEdOrgs == PermissionType.Read || allEdOrgs == PermissionType.Write)
+        {
+            _session.SetString(FocusOrganizationKey, "ALL");
+        }
+        else
+        {
+            var userRoleSpec = new UserRolesByUserSpec(currentUser.Id);
+            var userRoles = await _userRoleRepo.ListAsync(userRoleSpec);
+            var first = userRoles.Where(role => role.EducationOrganization?.ParentOrganizationId is not null).FirstOrDefault();
+            _session.SetString(FocusOrganizationKey, first!.EducationOrganization!.Id.ToString());
+        }
+    }
+
     public Guid? CurrentEdOrgFocus()
     {
         var currentEdOrgFocus = _session.GetString(FocusOrganizationKey);
@@ -154,6 +171,27 @@ public class FocusHelper
             }
         }
         return null;
+    }
+
+    public async Task<List<EducationOrganization>> GetFocusedSchools()
+    {
+        if (IsEdOrgAllFocus())
+        {
+            return await _educationOrganizationRepository.ListAsync(new OrganizationByTypeSpec(EducationOrganizationType.School));
+        }
+        else if (await CurrentDistrictEdOrgFocus() is not null)
+        {
+            return await _educationOrganizationRepository.ListAsync(new OrganizationByParentSpec((await CurrentDistrictEdOrgFocus()).Value));
+        }
+        else
+        {
+            var list = new List<EducationOrganization>
+            {
+                await _educationOrganizationRepository.GetByIdAsync(CurrentEdOrgFocus().Value)!
+            };
+
+            return list;
+        }
     }
 
     public bool IsEdOrgAllFocus()

@@ -10,7 +10,7 @@ using OregonNexus.Broker.Web.Helpers;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public partial class SettingsController : AuthenticatedController
+public partial class SettingsController : AuthenticatedController<SettingsController>
 {
     [HttpGet("/Settings/IncomingPayload/{payload}")]
     public async Task<IActionResult> IncomingPayload(string payload)
