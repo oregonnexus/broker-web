@@ -26,6 +26,8 @@ using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Domain.Specifications;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Ardalis.GuardClauses;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
+using System.Text.Json;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -130,6 +132,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
+            var edOrg = await _educationOrganizationRepository.GetByIdAsync(new OrganizationByIdWithParentSpec(viewModel.EducationOrganizationId!.Value));
+
             var student = new Student() {
                 LastName = viewModel.LastSurname,
                 FirstName = viewModel.FirstName,
@@ -140,16 +144,42 @@ public class IncomingController : AuthenticatedController<IncomingController>
                 Birthdate = DateOnly.Parse(viewModel.BirthDate!)
             };
 
+            var jsonConnector = (viewModel.Additional is not null) ? JsonSerializer.Deserialize<Dictionary<string, object>>(viewModel.Additional) : null;
+
             var incomingRequest = new Request
             {
                 EducationOrganizationId = viewModel.EducationOrganizationId,
                 Student = new StudentRequest() {
-                    Student = student
+                    Student = student,
+                    Connectors = (jsonConnector is not null) ? new Dictionary<string, object>
+                    { 
+                        [jsonConnector.Keys.First()] = jsonConnector.GetValueOrDefault(jsonConnector.Keys.First())!
+                    } : null
                 }, 
                 RequestManifest = new Manifest() {
                     RequestType = typeof(StudentCumulativeRecord).FullName!,
                     Student = student,
-                    Note = viewModel.Note
+                    Note = viewModel.Note,
+                    To = new RequestAddress()
+                    {
+                        District = viewModel.ToDistrict,
+                        School = viewModel.ToSchool,
+                        Email = viewModel.ToEmail,
+                        StreetNumberName = viewModel.ToStreetNumberName,
+                        City = viewModel.ToCity,
+                        StateAbbreviation = viewModel.ToStateAbbreviation,
+                        PostalCode = viewModel.ToPostalCode
+                    },
+                    From = new RequestAddress()
+                    {
+                        District = edOrg?.ParentOrganization?.Name,
+                        School = edOrg?.Name,
+                        Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
+                        StreetNumberName = edOrg?.StreetNumberName,
+                        City = edOrg?.City,
+                        StateAbbreviation = edOrg?.StateAbbreviation,
+                        PostalCode = edOrg?.PostalCode
+                    }
                 },
                 ResponseManifest = null,
                 RequestProcessUserId = userId,
@@ -157,7 +187,9 @@ public class IncomingController : AuthenticatedController<IncomingController>
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
-            return RedirectToAction(nameof(Index));
+
+            TempData[VoiceTone.Positive] = $"Created request for {viewModel.FirstName} {viewModel.LastSurname} ({incomingRequest.Id}).";
+            return RedirectToAction(nameof(Update), new { requestId = incomingRequest.Id });
         }
 
         viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();
@@ -176,19 +208,21 @@ public class IncomingController : AuthenticatedController<IncomingController>
             RequestId = incomingRequest.Id,
             EducationOrganizations = await _focusHelper.GetFocusedSchools(),
             EducationOrganizationId = incomingRequest.EducationOrganizationId,
-            StudentUniqueId = requestManifest?.Student?.StudentNumber,
-            FirstName = requestManifest?.Student?.FirstName,
-            MiddleName = requestManifest?.Student?.MiddleName,
-            LastSurname = requestManifest?.Student?.LastName,
-            BirthDate = requestManifest?.Student?.Birthdate!.Value.ToString("yyyy-MM-dd"),
-            Gender = requestManifest?.Student?.Gender,
-            Grade = requestManifest?.Student?.Grade,
-            FromDistrict = requestManifest?.From?.District,
-            FromSchool = requestManifest?.From?.School,
-            FromEmail = requestManifest?.From?.Email,
+            StudentUniqueId = incomingRequest.Student?.Student?.StudentNumber,
+            FirstName = incomingRequest.Student?.Student?.FirstName,
+            MiddleName = incomingRequest.Student?.Student?.MiddleName,
+            LastSurname = incomingRequest.Student?.Student?.LastName,
+            BirthDate = incomingRequest.Student?.Student?.Birthdate!.Value.ToString("yyyy-MM-dd"),
+            Gender = incomingRequest.Student?.Student?.Gender,
+            Grade = incomingRequest.Student?.Student?.Grade,
+            Additional = incomingRequest.Student?.Connectors?.ToString(),
             ToDistrict = requestManifest?.To?.District,
             ToSchool = requestManifest?.To?.School,
             ToEmail = requestManifest?.To?.Email,
+            ToStreetNumberName = requestManifest?.To?.StreetNumberName,
+            ToCity = requestManifest?.To?.City,
+            ToStateAbbreviation = requestManifest?.To?.StateAbbreviation,
+            ToPostalCode = requestManifest?.To?.PostalCode,
             Note = requestManifest?.Note,
             Contents = requestManifest?.Contents?.Select(x => x.FileName).ToList(),
             RequestStatus = incomingRequest.RequestStatus,
@@ -206,11 +240,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
     {
         if (ModelState.IsValid)
         {
-            var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
-            viewModel.ToDistrict = GetFocusOrganizationDistrict();
-            viewModel.ToSchool = GetFocusOrganizationSchool();
-            viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            var incomingRequest = await _incomingRequestRepository.GetByIdAsync(viewModel.RequestId);
+            var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(viewModel.RequestId));
 
             Guard.Against.Null(incomingRequest);
 
@@ -227,14 +257,43 @@ public class IncomingController : AuthenticatedController<IncomingController>
                 StudentNumber = viewModel.StudentUniqueId
             };
 
+            // Resolve Student
+
+            var jsonConnector = (viewModel.Additional is not null) ? JsonSerializer.Deserialize<Dictionary<string, object>>(viewModel.Additional) : null;
+
             incomingRequest.Student = new StudentRequest()
             {
-                Student = student
+                Student = student,
+                Connectors = (jsonConnector is not null) ? new Dictionary<string, object>
+                    { 
+                        [jsonConnector.Keys.First()] = jsonConnector.GetValueOrDefault(jsonConnector.Keys.First())!
+                    } : null
             };
+
             incomingRequest.RequestManifest = new Manifest() {
                 RequestType = typeof(StudentCumulativeRecord).FullName!,
                 Student = student,
-                Note = viewModel.Note
+                Note = viewModel.Note,
+                To = new RequestAddress()
+                {
+                    District = viewModel.ToDistrict,
+                    School = viewModel.ToSchool,
+                    Email = viewModel.ToEmail,
+                    StreetNumberName = viewModel.ToStreetNumberName,
+                    City = viewModel.ToCity,
+                    StateAbbreviation = viewModel.ToStateAbbreviation,
+                    PostalCode = viewModel.ToPostalCode
+                },
+                From = new RequestAddress()
+                {
+                    District = incomingRequest.EducationOrganization?.ParentOrganization?.Name,
+                    School = incomingRequest.EducationOrganization?.Name,
+                    Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
+                    StreetNumberName = incomingRequest.EducationOrganization?.StreetNumberName,
+                    City = incomingRequest.EducationOrganization?.City,
+                    StateAbbreviation = incomingRequest.EducationOrganization?.StateAbbreviation,
+                    PostalCode = incomingRequest.EducationOrganization?.PostalCode
+                }
             };
             incomingRequest.RequestStatus = viewModel.RequestStatus;
 
@@ -243,7 +302,9 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
-            return RedirectToAction(nameof(Index));
+            TempData[VoiceTone.Positive] = $"Updated request for {viewModel.FirstName} {viewModel.LastSurname} ({incomingRequest.Id}).";
+
+            return RedirectToAction(nameof(Update), new { requestId = incomingRequest.Id });
         }
 
         viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();

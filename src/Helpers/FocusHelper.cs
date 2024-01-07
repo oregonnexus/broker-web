@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.Exceptions;
 using OregonNexus.Broker.Web.Specifications.Paginations;
 using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 
@@ -185,7 +186,14 @@ public class FocusHelper
         }
         else
         {
-            return await _educationOrganizationRepository.ListAsync(new OrganizationByIdWithParentSpec(CurrentEdOrgFocus().Value));
+            if (CurrentEdOrgFocus().HasValue)
+            {
+                return await _educationOrganizationRepository.ListAsync(new OrganizationByIdWithParentSpec(CurrentEdOrgFocus()!.Value));
+            }
+            else
+            {
+                throw new ForceLogoutException();
+            }
         }
     }
 

@@ -60,38 +60,31 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Grade")]
     public string? Grade { get; set; }
 
-    [Display(Name = "District (Optional)")]
-    public string? FromDistrict { get; set; }
-
-    [Display(Name = "School")]
-    public string? FromSchool { get; set; }
-
-    [Display(Name = "Clerk's Email")]
-    public string? FromEmail { get; set; }
-
-    [Display(Name = "Street Number and Name")]
-    public string? FromStreetNumberName { get; set; }
-
-    [Display(Name = "City")]
-    public string? FromCity { get; set; }
-
-    [Display(Name = "State")]
-    public string? FromStateAbbreviation { get; set; }
-
-    [Display(Name = "Postal Code")]
-    public string? FromPostalCode { get; set; }
-
     [Display(Name = "District")]
     public string? ToDistrict { get; set; }
 
     [Display(Name = "School")]
     public string? ToSchool { get; set; }
 
-    [Display(Name = "Clerk's Email")]
+    [Display(Name = "Email")]
     public string? ToEmail { get; set; }
+
+    [Display(Name = "Address")]
+    public string? ToStreetNumberName { get; set; }
+
+    [Display(Name = "City")]
+    public string? ToCity { get; set; }
+
+    [Display(Name = "State")]
+    public string? ToStateAbbreviation { get; set; }
+
+    [Display(Name = "Zip Code")]
+    public string? ToPostalCode { get; set; }
 
     [Display(Name = "Notes")]
     public string? Note { get; set; }
+
+    public string? Additional { get; set; }
 
     [Display(Name = "Contents")]
     public List<string>? Contents { get; set; }

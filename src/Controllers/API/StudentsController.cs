@@ -6,6 +6,9 @@ using OregonNexus.Broker.Web.Controllers;
 using src.Models.Students;
 using OregonNexus.Broker.Service.Lookup;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Connector.Student;
+using System.Text.Json;
+using OregonNexus.Broker.Connector.StudentLookup;
 
 namespace OregonNexus.Broker.Controllers;
 
@@ -39,7 +42,7 @@ public class StudentsSearchController : AuthenticatedController<StudentsSearchCo
         }
         catch(Exception ex)
         {
-            return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            return StatusCode((int)HttpStatusCode.InternalServerError, $"{ex.Message}\n\n{ex.StackTrace}");
         }
     }
 

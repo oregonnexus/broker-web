@@ -21,6 +21,7 @@
                 @Html.LabelFor(it => it.StudentUniqueId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <input asp-for="StudentUniqueId" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="Additional" type="hidden">
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="StudentUniqueId">@Html.ValidationMessageFor(m => m.StudentUniqueId)</p>
               </div>
@@ -106,63 +107,63 @@
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromSchool, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToSchool, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromSchool">@Html.ValidationMessageFor(m => m.FromSchool)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToSchool">@Html.ValidationMessageFor(m => m.ToSchool)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromDistrict, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToDistrict, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromDistrict" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToDistrict" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromDistrict">@Html.ValidationMessageFor(m => m.FromDistrict)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToDistrict">@Html.ValidationMessageFor(m => m.ToDistrict)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromEmail" type="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToEmail" type="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromEmail">@Html.ValidationMessageFor(m => m.FromEmail)</p>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
-              <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromStreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-                <div class="mt-2">
-                  <input asp-for="FromStreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromStreetNumberName">@Html.ValidationMessageFor(m => m.FromStreetNumberName)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToEmail">@Html.ValidationMessageFor(m => m.ToEmail)</p>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromCity, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToStreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromCity" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToStreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromCity">@Html.ValidationMessageFor(m => m.FromCity)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToStreetNumberName">@Html.ValidationMessageFor(m => m.ToStreetNumberName)</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ToCity, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ToCity" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToCity">@Html.ValidationMessageFor(m => m.ToCity)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromStateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToStateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <select
-                    asp-for="FromStateAbbreviation"
+                    asp-for="ToStateAbbreviation"
                     asp-items="@Model.States"
                     class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
                   >
                     <option value=""></option>
                   </select>
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromStateAbbreviation">@Html.ValidationMessageFor(m => m.FromStateAbbreviation)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToStateAbbreviation">@Html.ValidationMessageFor(m => m.ToStateAbbreviation)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromPostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToPostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromPostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToPostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromPostalCode">@Html.ValidationMessageFor(m => m.FromPostalCode)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToPostalCode">@Html.ValidationMessageFor(m => m.ToPostalCode)</p>
               </div>
             </div>
           </div>
@@ -252,7 +253,7 @@
                         <input x-model="courseTranscript.assigningOrganizationIdentificationCode" :placeholder="courseTranscripts[index].assigningOrganizationIdentificationCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                       </td>
                       <td class="whitespace-nowrap px-3 py-4 text-sm w-64">
-                        <input asp-for="@Model.FromSchool" placeholder="@Model.FromSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                        <input asp-for="@Model.ToSchool" placeholder="@Model.ToSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                       </td>
                       <td class="whitespace-nowrap px-3 py-4 text-sm w-32">
                         <select x-model="courseTranscript.courseReference.courseCode" :placeholder="courseTranscripts[index].courseReference.courseCode"

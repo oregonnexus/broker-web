@@ -73,6 +73,7 @@
             document.getElementById('BirthDate').value = this.selected.birthDate;
             document.getElementById('Gender').value = this.selected.gender;
             document.getElementById('Grade').value = this.selected.grade;
+            document.getElementById('Additional').value = JSON.stringify(this.selected.additional);
         },
         focusPrevOption() {
         if (!this.isOpen()) {

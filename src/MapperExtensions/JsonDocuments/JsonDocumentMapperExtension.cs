@@ -26,21 +26,15 @@ public static class JsonDocumentMapperExtension
                 Gender = viewModel.Gender,
                 Grade = viewModel.Grade
             },
-            From = new SchoolJsonModel
-            {
-                District = viewModel.FromDistrict,
-                School = viewModel.FromSchool,
-                Email = viewModel.FromEmail,
-                StreetNumberName = viewModel.FromStreetNumberName,
-                City = viewModel.FromCity,
-                StateAbbreviation = viewModel.FromStateAbbreviation,
-                PostalCode = viewModel.FromPostalCode
-            },
             To = new SchoolJsonModel
             {
                 District = viewModel.ToDistrict,
                 School = viewModel.ToSchool,
-                Email = viewModel.ToEmail
+                Email = viewModel.ToEmail,
+                StreetNumberName = viewModel.ToStreetNumberName,
+                City = viewModel.ToCity,
+                StateAbbreviation = viewModel.ToStateAbbreviation,
+                PostalCode = viewModel.ToPostalCode
             },
             Note = viewModel.Note,
             Contents = viewModel.Contents
@@ -82,12 +76,6 @@ public static class JsonDocumentMapperExtension
                 FirstName = viewModel.FirstName,
                 MiddleName = viewModel.MiddleName,
                 LastSurname = viewModel.LastSurname
-            },
-            From = new SchoolJsonModel
-            {
-                District = viewModel.FromDistrict,
-                School = viewModel.FromSchool,
-                Email = viewModel.FromEmail
             },
             To = new SchoolJsonModel
             {
