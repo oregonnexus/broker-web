@@ -22,6 +22,7 @@ using src.Services.Tokens;
 //using src.Services.Students;
 using src.Services.Shared;
 using Microsoft.Extensions.Caching.Memory;
+using OregonNexus.Broker.Web.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -134,6 +135,8 @@ builder.Services.AddAuthorization(options => {
 
 builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>();
 
+builder.Services.AddExceptionHandler<ForceLogoutExceptionHandler>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddInertia();
 builder.Services.AddHttpClient();
@@ -144,6 +147,7 @@ builder.Services.AddConnectorLoader();
 builder.Services.AddConnectorDependencies();
 
 builder.Services.AddBrokerServices();
+
 
 var app = builder.Build();
 
