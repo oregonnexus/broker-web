@@ -25,6 +25,7 @@ using OregonNexus.Broker.Connector.Payload;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Domain.Specifications;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Ardalis.GuardClauses;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -91,8 +92,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
             incomingRequestViewModels = incomingRequestViewModels
-                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.District.ToLower().Contains(model.SearchBy)
-                 || request.School.ToLower().Contains(model.SearchBy));
+                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.ReleasingDistrict.ToLower().Contains(model.SearchBy)
+                 || request.ReleasingSchool.ToLower().Contains(model.SearchBy));
             totalItems = incomingRequestViewModels.Count();
         }
 
@@ -141,13 +142,14 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             var incomingRequest = new Request
             {
-                EducationOrganizationId = GetFocusOrganizationId(),
+                EducationOrganizationId = viewModel.EducationOrganizationId,
                 Student = new StudentRequest() {
                     Student = student
                 }, 
                 RequestManifest = new Manifest() {
                     RequestType = typeof(StudentCumulativeRecord).FullName!,
-                    Student = student
+                    Student = student,
+                    Note = viewModel.Note
                 },
                 ResponseManifest = null,
                 RequestProcessUserId = userId,
@@ -210,18 +212,30 @@ public class IncomingController : AuthenticatedController<IncomingController>
             viewModel.ToEmail = User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var incomingRequest = await _incomingRequestRepository.GetByIdAsync(viewModel.RequestId);
 
-            if (incomingRequest is null) return BadRequest();
+            Guard.Against.Null(incomingRequest);
 
             incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
-            incomingRequest.Student!.Student!.LastName = viewModel.LastSurname;
-            incomingRequest.Student!.Student!.FirstName = viewModel.FirstName;
-            incomingRequest.Student!.Student!.MiddleName = viewModel.MiddleName;
-            incomingRequest.Student!.Student!.Gender = viewModel.Gender;
-            incomingRequest.Student!.Student!.Grade = viewModel.Grade;
-            incomingRequest.Student!.Student!.StudentNumber = viewModel.StudentUniqueId;
 
-            incomingRequest.RequestManifest.Student.StudentNumber = viewModel.StudentUniqueId;
-            incomingRequest.ResponseManifest = null;
+            var student = new Student()
+            {
+                LastName = viewModel.LastSurname,
+                FirstName = viewModel.FirstName,
+                MiddleName = viewModel.MiddleName,
+                Gender = viewModel.Gender,
+                Grade = viewModel.Grade,
+                Birthdate = (viewModel.BirthDate is not null) ? DateOnly.Parse(viewModel.BirthDate) : null,
+                StudentNumber = viewModel.StudentUniqueId
+            };
+
+            incomingRequest.Student = new StudentRequest()
+            {
+                Student = student
+            };
+            incomingRequest.RequestManifest = new Manifest() {
+                RequestType = typeof(StudentCumulativeRecord).FullName!,
+                Student = student,
+                Note = viewModel.Note
+            };
             incomingRequest.RequestStatus = viewModel.RequestStatus;
 
             await _incomingRequestRepository.UpdateAsync(incomingRequest);

@@ -13,21 +13,24 @@ public class IncomingRequestViewModel
     [Required]
     public Guid Id { get; set; }
 
-    [Display(Name = "District")]
-    public string District { get; set; } = string.Empty;
+    [Display(Name = "Releasing District")]
+    public string ReleasingDistrict { get; set; } = string.Empty;
+
+    [Display(Name = "Releasing School")]
+    public string ReleasingSchool { get; set; } = string.Empty;
 
     [Display(Name = "Receiving District")]
     public string ReceivingDistrict { get; set; } = string.Empty;
 
-    [Display(Name = "School")]
-    public string School { get; set; } = string.Empty;
+    [Display(Name = "Receiving School")]
+    public string ReceivingSchool { get; set; } = string.Empty;
 
     [Display(Name = "Student")]
     public string? Student { get; set; } = string.Empty;
 
     [Required]
     [Display(Name = "Date")]
-    public DateTimeOffset Date { get; set; }
+    public DateTimeOffset? Date { get; set; }
 
     [Required]
     [Display(Name = "Status")]
@@ -42,25 +45,30 @@ public class IncomingRequestViewModel
     {
 
         Id = incomingRequest.Id;
-        District = incomingRequest.RequestManifest?.From?.District ?? string.Empty;
-        ReceivingDistrict = incomingRequest.RequestManifest?.To?.District ?? string.Empty;
-        School = incomingRequest.RequestManifest?.From?.School ?? string.Empty;
+        ReleasingDistrict = incomingRequest.RequestManifest?.To?.District ?? string.Empty;
+        ReleasingSchool = incomingRequest.RequestManifest?.To?.School ?? string.Empty;
+        ReceivingDistrict = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
+        ReceivingSchool = incomingRequest.EducationOrganization?.Name ?? string.Empty;
         Student = $"{incomingRequest.RequestManifest?.Student?.FirstName} {incomingRequest.RequestManifest?.Student?.LastName}";
-        Date = incomingRequest.CreatedAt;
+        Date = incomingRequest.InitialRequestSentDate;
         Status = incomingRequest.RequestStatus == RequestStatus.Approved
                 ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
     }
     public IncomingRequestViewModel(
         Guid id,
-        string district,
-        string school,
+        string releasingDistrict,
+        string releasingSchool,
+        string receivingDistrict,
+        string receivingSchool,
         string? student,
         DateTime date,
         string status)
     {
         Id = id;
-        District = district;
-        School = school;
+        ReleasingDistrict = releasingDistrict;
+        ReleasingSchool = releasingSchool;
+        ReceivingDistrict = receivingDistrict;
+        ReceivingSchool = receivingSchool;
         Student = student;
         Date = date;
         Status = status;
