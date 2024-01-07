@@ -23,21 +23,22 @@ using src.Models.ProgramAssociations;
 using src.Models.Courses;
 using OregonNexus.Broker.Connector.Payload;
 using OregonNexus.Broker.Web.Helpers;
+using OregonNexus.Broker.Domain.Specifications;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferIncomingRecords)]
 public class IncomingController : AuthenticatedController<IncomingController>
 {
-    private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
+    private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
     private readonly IPayloadContentService _payloadContentService;
     private readonly FocusHelper _focusHelper;
 
     public IncomingController(
-        IHttpContextAccessor httpContextAccessor,
-        IRepository<EducationOrganization> educationOrganizationRepository,
+        IReadRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<Request> incomingRequestRepository,
         IPayloadContentService payloadContentService,
@@ -109,15 +110,9 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
     public async Task<IActionResult> Create()
     {
-        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList
-            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
-            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-            .ToList();
-
         var viewModel = new CreateIncomingRequestViewModel
         {
-            EducationOrganizations = educationOrganizations,
+            EducationOrganizations = await _focusHelper.GetFocusedSchools(),
             States = States.GetSelectList(),
             Genders = Genders.GetSelectList()
         };
@@ -163,10 +158,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
             return RedirectToAction(nameof(Index));
         }
 
-        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-                .ToList();
-        viewModel.EducationOrganizations = educationOrganizations;
+        viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();
         return View(viewModel);
     }
 
@@ -175,24 +167,18 @@ public class IncomingController : AuthenticatedController<IncomingController>
         var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
         if (incomingRequest is null) return NotFound();
 
-        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList
-            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
-            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-            .ToList();
-
         var requestManifest = incomingRequest.RequestManifest;
 
         var viewModel = new CreateIncomingRequestViewModel
         {
             RequestId = incomingRequest.Id,
-            EducationOrganizations = educationOrganizations,
+            EducationOrganizations = await _focusHelper.GetFocusedSchools(),
             EducationOrganizationId = incomingRequest.EducationOrganizationId,
             StudentUniqueId = requestManifest?.Student?.StudentNumber,
             FirstName = requestManifest?.Student?.FirstName,
             MiddleName = requestManifest?.Student?.MiddleName,
             LastSurname = requestManifest?.Student?.LastName,
-            BirthDate = requestManifest?.Student?.Birthdate.Value.ToString("yyyy-MM-dd"),
+            BirthDate = requestManifest?.Student?.Birthdate!.Value.ToString("yyyy-MM-dd"),
             Gender = requestManifest?.Student?.Gender,
             Grade = requestManifest?.Student?.Grade,
             FromDistrict = requestManifest?.From?.District,
@@ -246,10 +232,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
             return RedirectToAction(nameof(Index));
         }
 
-        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList.Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-                .ToList();
-        viewModel.EducationOrganizations = educationOrganizations;
+        viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();
         return View(viewModel);
     }
 

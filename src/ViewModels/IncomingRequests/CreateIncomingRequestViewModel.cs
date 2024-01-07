@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Ardalis.GuardClauses;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 using src.Models.Courses;
 using src.Models.ProgramAssociations;
@@ -11,6 +12,24 @@ public class CreateIncomingRequestViewModel
     public Guid RequestId { get; set; }
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
+
+    public List<SelectListItem> SelectEducationOrganizations
+    {
+        get {
+            var educationOrganizationSelectList = new List<SelectListItem>();
+            Guard.Against.Null(EducationOrganizations);
+            foreach(var edOrgList in EducationOrganizations)
+            {
+                educationOrganizationSelectList.Add(new SelectListItem()
+                {
+                    Value = edOrgList.Id.ToString(),
+                    Text = $"{edOrgList.ParentOrganization?.Name} / {edOrgList.Name}"
+                });
+            }
+            educationOrganizationSelectList = educationOrganizationSelectList.OrderBy(x => x.Text).ToList();
+            return educationOrganizationSelectList;
+        }
+    }
 
     [Display(Name = "Receiving School")]
     // [Required(ErrorMessage = "Education Organization is required")]

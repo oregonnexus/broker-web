@@ -185,12 +185,7 @@ public class FocusHelper
         }
         else
         {
-            var list = new List<EducationOrganization>
-            {
-                await _educationOrganizationRepository.GetByIdAsync(CurrentEdOrgFocus().Value)!
-            };
-
-            return list;
+            return await _educationOrganizationRepository.ListAsync(new OrganizationByIdWithParentSpec(CurrentEdOrgFocus().Value));
         }
     }
 
