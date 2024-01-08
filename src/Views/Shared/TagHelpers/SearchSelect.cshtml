@@ -112,6 +112,7 @@
                             @@keydown.enter.stop.prevent="selectOption()"
                             @@keydown.arrow-up.prevent="focusPrevOption()"
                             @@keydown.arrow-down.prevent="focusNextOption()"
+                            placeholder="@Model.Placeholder"
                             class="p-1 px-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 w-full sm:text-sm sm:leading-6">
                     <div class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center">
                         <div @@click="toggle()" class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">

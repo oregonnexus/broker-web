@@ -28,6 +28,8 @@ public class SearchSelectTagHelper : TagHelper
     [HtmlAttributeName("asp-name")]
     public string? Name { get; set; }
 
+    public string Placeholder { get; set; }
+
     [HtmlAttributeName(ForAttributeName)]
     public ModelExpression? For { get; set; }
 
@@ -41,7 +43,7 @@ public class SearchSelectTagHelper : TagHelper
         output.TagName = null; // required to get HTML to output
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/SearchSelect.cshtml");
+        var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/SearchSelect.cshtml", new { Placeholder = Placeholder });
         output.Content.SetHtmlContent(content);
     }
 
