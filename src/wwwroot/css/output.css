@@ -888,14 +888,6 @@ select {
   margin-top: -4rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -1030,10 +1022,6 @@ select {
 
 .h-64 {
   height: 16rem;
-}
-
-.h-8 {
-  height: 2rem;
 }
 
 .h-px {
@@ -1860,10 +1848,6 @@ select {
 
 .pt-1 {
   padding-top: 0.25rem;
-}
-
-.pt-5 {
-  padding-top: 1.25rem;
 }
 
 .pt-6 {
