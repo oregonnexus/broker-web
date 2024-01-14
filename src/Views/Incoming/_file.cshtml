@@ -1,3 +1,6 @@
+@model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+
 <div class="my-4">
     <div class="px-4 sm:px-0">
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
@@ -6,10 +9,14 @@
                     <div class="sm:col-span-3">
                         <div class="block text-sm font-medium leading-6 text-gray-900">Attachment List</div>
                         <div class="mt-2">
-                            <div class="flex items-center justify-center w-full">
-                                <label for="dropzone-file"
-                                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                                </label>
+                            <div class="flex w-full">
+                                <ul>
+                                    @if(Model.Attachments is not null)
+                                    @foreach(var payloadContent in Model.Attachments)
+                                    {
+                                        <li>@payloadContent.FileName [@payloadContent.Id]</li>
+                                    }
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -17,11 +24,20 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Upload File(s)</label>
                         <div class="mt-2">
                             <div class="flex items-center justify-center w-full">
-                                <input id="dropzone-file" type="file" multiple="true" />
+                                <input id="dropzone-file" type="file" multiple="true" name="files" />
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+                <a asp-controller="Incoming" asp-action="Index" asp-authorize asp-policy="@TransferIncomingRecords"
+                    class="text-sm font-semibold leading-6 text-gray-900">
+                    Cancel
+                </a>
+                <input asp-for="RequestId" type="hidden" />
+                <button type="submit"
+                    class="relative inline-flex items-center rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10">Save</button>
             </div>
         </div>
     </div>

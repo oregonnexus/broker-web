@@ -103,6 +103,8 @@ public class CreateIncomingRequestViewModel
 
     public IEnumerable<SelectListItem> States { get; set; } = Enumerable.Empty<SelectListItem>();
 
-    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();   
+    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
+
+    public List<PayloadContent>? Attachments { get; set; }
     
 }

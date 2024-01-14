@@ -1020,10 +1020,6 @@ select {
   height: 1.5rem;
 }
 
-.h-64 {
-  height: 16rem;
-}
-
 .h-px {
   height: 1px;
 }
@@ -1492,10 +1488,6 @@ select {
 
 .border-t {
   border-top-width: 1px;
-}
-
-.border-dashed {
-  border-style: dashed;
 }
 
 .border-gray-100 {
@@ -2290,11 +2282,6 @@ select {
 .hover\:bg-critical-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(253 48 42 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-gray-100:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(245 247 249 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-50:hover {

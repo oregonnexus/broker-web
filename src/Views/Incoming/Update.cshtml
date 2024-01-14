@@ -18,7 +18,14 @@
   <partial name="_form" for="@Model" />
 </form>
 
+<form
+  method="post"
+  asp-action="UploadAttachment"
+  autocomplete="off"
+  enctype="multipart/form-data"
+>
 <partial name="_file" for="@Model" />
+</form>
 
 
 @section scripts

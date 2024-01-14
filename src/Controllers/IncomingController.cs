@@ -28,6 +28,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Ardalis.GuardClauses;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using System.Text.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using OregonNexus.Broker.Web.Utilities;
+using System.ComponentModel.DataAnnotations;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -37,6 +40,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
     private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
+    private readonly IRepository<PayloadContent> _payloadContentRespository;
     private readonly IPayloadContentService _payloadContentService;
     private readonly FocusHelper _focusHelper;
 
@@ -44,12 +48,14 @@ public class IncomingController : AuthenticatedController<IncomingController>
         IReadRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<Request> incomingRequestRepository,
+        IRepository<PayloadContent> payloadContentRespository,
         IPayloadContentService payloadContentService,
         FocusHelper focusHelper)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentRepository = payloadContentRepository;
         _incomingRequestRepository = incomingRequestRepository;
+        _payloadContentRespository = payloadContentRespository;
         _payloadContentService = payloadContentService;
         _focusHelper = focusHelper;
     }
@@ -198,7 +204,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
     public async Task<IActionResult> Update(Guid requestId)
     {
-        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdWithPayloadContents(requestId));
         if (incomingRequest is null) return NotFound();
 
         var requestManifest = incomingRequest.RequestManifest;
@@ -227,7 +233,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
             Contents = requestManifest?.Contents?.Select(x => x.FileName).ToList(),
             RequestStatus = incomingRequest.RequestStatus,
             States = States.GetSelectList(),
-            Genders = Genders.GetSelectList()
+            Genders = Genders.GetSelectList(),
+            Attachments = incomingRequest.PayloadContents
         };
 
         return View(viewModel);
@@ -311,6 +318,37 @@ public class IncomingController : AuthenticatedController<IncomingController>
         return View(viewModel);
     }
 
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadAttachment(List<IFormFile> files, Guid requestId)
+    {
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(requestId));
+
+        Guard.Against.Null(incomingRequest);
+
+        foreach (var formFile in files)
+        {
+            if (formFile.Length > 0)
+            {
+                var file = await FileHelpers
+                        .ProcessFormFile<BufferedSingleFileUploadDb>(formFile, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
+                
+                var payloadContent = new PayloadContent()
+                {
+                    Request = incomingRequest,
+                    ContentType = formFile.ContentType,
+                    BlobContent = file,
+                    FileName = formFile.FileName
+                };
+                
+                await _payloadContentRespository.AddAsync(payloadContent);
+            }
+        }
+
+        return RedirectToAction(nameof(Update), new { requestId = requestId });
+    }
+
     public async Task<IActionResult> Mapping(Guid requestId)
     {
         var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
@@ -335,3 +373,14 @@ public class IncomingController : AuthenticatedController<IncomingController>
         return View(viewModel);
     }
 }
+
+    public class BufferedSingleFileUploadDb
+    {
+        [Required]
+        [Display(Name="File")]
+        public IFormFile? FormFile { get; set; }
+
+        [Display(Name="Note")]
+        [StringLength(50, MinimumLength = 0)]
+        public string? Note { get; set; }
+    }
