@@ -13,23 +13,6 @@
     x-data="incomingRequestsIndex"
     class="grid gap-4"
 >
-    <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-            <h1 class="font-title text-base font-semibold leading-6 text-gray-900">Incoming Requests</h1>
-            <p class="mt-2 text-sm text-gray-700">Incoming record requests.</p>
-        </div>
-        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <a
-                asp-controller="Incoming"
-                asp-action="Create"
-                asp-authorize
-                asp-policy="@TransferIncomingRecords"
-                class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
-            >
-                Start Incoming Request
-            </a>
-        </div>
-    </div>
     <div class="grid gap-4">
         <form
             autocomplete="off"
@@ -267,6 +250,19 @@
         </div>
     </div>
 </div>
+
+@section HeaderAction
+{
+  <a
+                asp-controller="Incoming"
+                asp-action="Create"
+                asp-authorize
+                asp-policy="@TransferIncomingRecords"
+                class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
+            >
+                Start Incoming Request
+            </a>
+}
 
 @section scripts
 {
