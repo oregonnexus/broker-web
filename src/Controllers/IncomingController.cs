@@ -40,24 +40,24 @@ public class IncomingController : AuthenticatedController<IncomingController>
     private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
-    private readonly IRepository<PayloadContent> _payloadContentRespository;
     private readonly IPayloadContentService _payloadContentService;
     private readonly FocusHelper _focusHelper;
+    private readonly ICurrentUser _currentUser;
 
     public IncomingController(
         IReadRepository<EducationOrganization> educationOrganizationRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<Request> incomingRequestRepository,
-        IRepository<PayloadContent> payloadContentRespository,
         IPayloadContentService payloadContentService,
-        FocusHelper focusHelper)
+        FocusHelper focusHelper,
+        ICurrentUser currentUser)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentRepository = payloadContentRepository;
         _incomingRequestRepository = incomingRequestRepository;
-        _payloadContentRespository = payloadContentRespository;
         _payloadContentService = payloadContentService;
         _focusHelper = focusHelper;
+        _currentUser = currentUser;
     }
 
     public async Task<IActionResult> Index(
@@ -342,45 +342,57 @@ public class IncomingController : AuthenticatedController<IncomingController>
                     FileName = formFile.FileName
                 };
                 
-                await _payloadContentRespository.AddAsync(payloadContent);
+                await _payloadContentRepository.AddAsync(payloadContent);
             }
         }
 
         return RedirectToAction(nameof(Update), new { requestId = requestId });
     }
 
-    public async Task<IActionResult> Mapping(Guid requestId)
+    [HttpDelete]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAttachment(Guid requestId, Guid payloadContentId)
     {
-        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
-        if (incomingRequest is null) return NotFound();
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(requestId));
 
-        var educationOrganizationList = await _educationOrganizationRepository.ListAsync();
-        var educationOrganizations = educationOrganizationList
-            .Where(educationOrganization => educationOrganization.ParentOrganizationId is not null)
-            .Where(educationOrganization => educationOrganization.Id != GetFocusOrganizationId())
-            .ToList();
+        Guard.Against.Null(incomingRequest);
 
-        var viewModel = new CreateIncomingRequestViewModel
-        {
-            RequestId = incomingRequest.Id,
-            EducationOrganizations = educationOrganizations,
-            EducationOrganizationId = incomingRequest.EducationOrganizationId,
-            RequestStatus = incomingRequest.RequestStatus,
-            States = States.GetSelectList(),
-            Genders = Genders.GetSelectList()
-        };
+        var payloadContentToDelete = await _payloadContentRepository.GetByIdAsync(payloadContentId);
 
-        return View(viewModel);
+        Guard.Against.Null(payloadContentToDelete);
+
+        await _payloadContentRepository.DeleteAsync(payloadContentToDelete);
+
+        return RedirectToAction(nameof(Update), new { requestId = requestId });
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Send(Guid id)
+    {
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(id));
+
+        Guard.Against.Null(incomingRequest);
+
+        incomingRequest.RequestStatus = RequestStatus.WaitingToSend;
+        incomingRequest.RequestProcessUserId = _currentUser.AuthenticatedUserId();
+
+        await _incomingRequestRepository.UpdateAsync(incomingRequest);
+
+        TempData[VoiceTone.Positive] = $"Request marked to send ({incomingRequest.Id}).";
+        return RedirectToAction(nameof(Update), new { requestId = id });
     }
 }
 
-    public class BufferedSingleFileUploadDb
-    {
-        [Required]
-        [Display(Name="File")]
-        public IFormFile? FormFile { get; set; }
+public class BufferedSingleFileUploadDb
+{
+    [Required]
+    [Display(Name="File")]
+    public IFormFile? FormFile { get; set; }
 
-        [Display(Name="Note")]
-        [StringLength(50, MinimumLength = 0)]
-        public string? Note { get; set; }
-    }
+    [Display(Name="Note")]
+    [StringLength(50, MinimumLength = 0)]
+    public string? Note { get; set; }
+}
