@@ -221,7 +221,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
             BirthDate = incomingRequest.Student?.Student?.Birthdate!.Value.ToString("yyyy-MM-dd"),
             Gender = incomingRequest.Student?.Student?.Gender,
             Grade = incomingRequest.Student?.Student?.Grade,
-            Additional = incomingRequest.Student?.Connectors?.ToString(),
+            Additional = JsonSerializer.Serialize(incomingRequest.Student?.Connectors),
             ToDistrict = requestManifest?.To?.District,
             ToSchool = requestManifest?.To?.School,
             ToEmail = requestManifest?.To?.Email,
