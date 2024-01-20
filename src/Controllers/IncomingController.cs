@@ -138,7 +138,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
 
-            var edOrg = await _educationOrganizationRepository.GetByIdAsync(new OrganizationByIdWithParentSpec(viewModel.EducationOrganizationId!.Value));
+            var edOrg = await _educationOrganizationRepository.FirstOrDefaultAsync(new OrganizationByIdWithParentSpec(viewModel.EducationOrganizationId!.Value));
 
             var student = new Student() {
                 LastName = viewModel.LastSurname,

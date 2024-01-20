@@ -51,7 +51,7 @@ builder.Services.AddScoped(typeof(CachedRepository<>));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(CachedRepository<>));
 
-builder.Services.AddScoped(typeof(IMemoryCache), typeof(MemoryCache));
+builder.Services.AddSingleton(typeof(IMemoryCache), typeof(MemoryCache));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

@@ -16,9 +16,9 @@ namespace OregonNexus.Broker.Web.Controllers;
 [Authorize]
 public class FocusController : AuthenticatedController<FocusController>
 {
-    private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
+    private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
 
-    public FocusController(IRepository<EducationOrganization> educationOrganizationRepository)
+    public FocusController(IReadRepository<EducationOrganization> educationOrganizationRepository)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
     }
