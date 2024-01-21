@@ -36,6 +36,9 @@ public class CreateEducationOrganizationRequestViewModel
     [Display(Name = "Zip Code")]
     public string? PostalCode { get; set; }
 
+    [Display(Name = "Domain")]
+    public string? Domain { get; set; }
+
     [Display(Name = "Education Organizations")]
     public IEnumerable<SelectListItem> EducationOrganizations { get; set; } = Enumerable.Empty<SelectListItem>();
 

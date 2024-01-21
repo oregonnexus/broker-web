@@ -139,7 +139,8 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
             StreetNumberName = data.StreetNumberName,
             City = data.City,
             PostalCode = data.PostalCode,
-            StateAbbreviation = data.StateAbbreviation
+            StateAbbreviation = data.StateAbbreviation,
+            Domain = data.Domain
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -173,7 +174,8 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
                 EducationOrganizationType = organization.EducationOrganizationType,
                 Number = organization.Number!,
                 StreetNumberName = organization.StreetNumberName!,
-                States = States.GetSelectList()
+                States = States.GetSelectList(),
+                Domain = organization.Domain
             };
         }
 
@@ -220,6 +222,7 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
         organization.City = data.City;
         organization.PostalCode = data.PostalCode;
         organization.StateAbbreviation = data.StateAbbreviation;
+        organization.Domain = data.Domain;
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 
