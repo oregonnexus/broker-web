@@ -1,11 +1,6 @@
-using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
 using IConfiguration = OregonNexus.Broker.Connector.Configuration.IConfiguration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace OregonNexus.Broker.Web.Helpers;
 
@@ -14,7 +9,7 @@ public class ModelFormBuilderHelper
     public static string HtmlForModel(IConfiguration model)
     {
         var formHTML = $"""
-<form method="post" action="/Settings/Update">
+<form method="post" action="/Settings/Configuration/{model.GetType().FullName}">
 <input type="hidden" name="ConnectorConfigurationType" value="{model.GetType().AssemblyQualifiedName}">
 """; // start form html output
 

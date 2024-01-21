@@ -13,13 +13,16 @@ using OregonNexus.Broker.Web;
 using OregonNexus.Broker.Web.Services;
 using System.Reflection;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Service;
 using Microsoft.AspNetCore.Authentication;
 using OregonNexus.Broker.Web.Extensions.Routes;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 using src.Services.Tokens;
-using src.Services.Students;
+//using src.Services.Students;
 using src.Services.Shared;
+using Microsoft.Extensions.Caching.Memory;
+using OregonNexus.Broker.Web.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,32 +34,28 @@ builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<ScopedHttpContext>();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
-var msSqlConnectionString = builder.Configuration.GetConnectionString("MsSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'MsSqlBrokerDatabase' not found.");
-var pgSqlConnectionString = builder.Configuration.GetConnectionString("PgSqlBrokerDatabase") ?? throw new InvalidOperationException("Connection string 'PgSqlBrokerDatabase' not found.");
+switch (builder.Configuration["DatabaseProvider"])
+{
+    case DbProviderType.MsSql:
+        builder.Services.AddDbContext<BrokerDbContext, MsSqlDbContext>();
+        break;
 
-builder.Services.AddDbContext<BrokerDbContext>(options => {
-    if (msSqlConnectionString is not null && msSqlConnectionString != "")
-    {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("MsSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.SqlServer")
-        );
-    }
-    if (pgSqlConnectionString is not null && pgSqlConnectionString != "")
-    {
-        options.UseNpgsql(
-            builder.Configuration.GetConnectionString("PgSqlBrokerDatabase")!,
-            x => x.MigrationsAssembly("OregonNexus.Broker.Data.Migrations.PostgreSQL")
-        );
-    }
+    case DbProviderType.PostgreSql:
+        builder.Services.AddDbContext<BrokerDbContext, PostgresDbContext>();
+        break;
 }
-);
+
+builder.Services.AddScoped(typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(CachedRepository<>));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped(typeof(IReadRepository<>), typeof(CachedRepository<>));
+
+builder.Services.AddSingleton(typeof(IMemoryCache), typeof(MemoryCache));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-foreach (var assembly in Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
+foreach (var assembly in Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
     builder.Services.AddScoped(assembly, assembly);
 }
@@ -71,7 +70,7 @@ builder.Services.AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPayloadContentService, PayloadContentService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IStudentService, StudentService>();
+//builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
 builder.Services.ConfigureApplicationCookie(options => 
@@ -136,6 +135,8 @@ builder.Services.AddAuthorization(options => {
 
 builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>();
 
+builder.Services.AddExceptionHandler<ForceLogoutExceptionHandler>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddInertia();
 builder.Services.AddHttpClient();
@@ -144,6 +145,9 @@ builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 
 builder.Services.AddConnectorLoader();
 builder.Services.AddConnectorDependencies();
+
+builder.Services.AddBrokerServices();
+
 
 var app = builder.Build();
 

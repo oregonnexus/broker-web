@@ -23,16 +23,16 @@ public class EducationOrganizationRequestViewModel
     public Guid? ParentOrganizationId { get; set; }
 
     [Display(Name = "Address")]
-    public string StreetNumberName { get; set; } = default!;
+    public string? StreetNumberName { get; set; }
 
     [Display(Name = "City")]
-    public string City { get; set; } = default!;
+    public string? City { get; set; }
 
     [Display(Name = "State")]
-    public string StateAbbreviation { get; set; } = default!;
+    public string? StateAbbreviation { get; set; }
 
     [Display(Name = "Zip Code")]
-    public string PostalCode { get; set; } = default!;
+    public string? PostalCode { get; set; }
 
     public EducationOrganization ParentOrganization { get; set; } = new();
 

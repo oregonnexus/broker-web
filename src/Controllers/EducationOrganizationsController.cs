@@ -15,14 +15,14 @@ using OregonNexus.Broker.Web.Extensions.States;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
-public class EducationOrganizationsController : AuthenticatedController
+public class EducationOrganizationsController : AuthenticatedController<EducationOrganizationsController>
 {
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly EducationOrganizationHelper _educationOrganizationHelper;
     public EducationOrganizationsController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        EducationOrganizationHelper educationOrganizationHelper) : base(httpContextAccessor)
+        EducationOrganizationHelper educationOrganizationHelper)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _educationOrganizationHelper = educationOrganizationHelper;
@@ -136,7 +136,11 @@ public class EducationOrganizationsController : AuthenticatedController
             Name = data.Name,
             Number = data.Number,
             EducationOrganizationType = data.EducationOrganizationType,
-            StreetNumberName = data.StreetNumberName
+            StreetNumberName = data.StreetNumberName,
+            City = data.City,
+            PostalCode = data.PostalCode,
+            StateAbbreviation = data.StateAbbreviation,
+            Domain = data.Domain
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -170,7 +174,8 @@ public class EducationOrganizationsController : AuthenticatedController
                 EducationOrganizationType = organization.EducationOrganizationType,
                 Number = organization.Number!,
                 StreetNumberName = organization.StreetNumberName!,
-                States = States.GetSelectList()
+                States = States.GetSelectList(),
+                Domain = organization.Domain
             };
         }
 
@@ -214,6 +219,10 @@ public class EducationOrganizationsController : AuthenticatedController
         organization.Number = data.Number;
         organization.EducationOrganizationType = data.EducationOrganizationType;
         organization.StreetNumberName = data.StreetNumberName;
+        organization.City = data.City;
+        organization.PostalCode = data.PostalCode;
+        organization.StateAbbreviation = data.StateAbbreviation;
+        organization.Domain = data.Domain;
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 

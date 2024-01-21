@@ -10,11 +10,12 @@ using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
+using OregonNexus.Broker.Web.Helpers;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
 [AllowAnonymous]
-public class LoginController : AuthenticatedController
+public class LoginController : AuthenticatedController<LoginController>
 {
     private readonly ILogger<LoginController> _logger;
     //private readonly OregonNexus.Broker.Connector.Edupoint.Synergy.Authentication.ThirdPartyApplication _auth;
@@ -23,20 +24,22 @@ public class LoginController : AuthenticatedController
     private readonly UserManager<IdentityUser<Guid>> _userManager;
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly IRepository<User> _userRepo;
+    private readonly FocusHelper _focusHelper;
 
     public LoginController(
-        IHttpContextAccessor httpContextAccessor,
         ILogger<LoginController> logger,
         BrokerDbContext db,
         UserManager<IdentityUser<Guid>> userManager,
         SignInManager<IdentityUser<Guid>> signInManager,
-        IRepository<User> userRepo) : base(httpContextAccessor)
+        IRepository<User> userRepo,
+        FocusHelper focusHelper)
     {
         _logger = logger;
         _db = db;
         _userManager = userManager;
         _signInManager = signInManager;
         _userRepo = userRepo;
+        _focusHelper = focusHelper;
     }
 
     [HttpGet]
@@ -85,13 +88,13 @@ public class LoginController : AuthenticatedController
         if (remoteError != null)
         {
             //ErrorMessage = $"Error from external provider: {remoteError}";
-            return RedirectToAction("Login", new { ReturnUrl = returnUrl });
+            return RedirectToAction("Index", new { ReturnUrl = returnUrl });
         }
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
             //ErrorMessage = "Error loading external login information.";
-            return RedirectToAction("Login", new { ReturnUrl = returnUrl });
+            return RedirectToAction("Index", new { ReturnUrl = returnUrl });
         }
 
         // Sign in the user with this external login provider if the user already has a login.
@@ -102,11 +105,12 @@ public class LoginController : AuthenticatedController
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            _httpContextAccessor.HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
+            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
+            _focusHelper.SetInitialFocus();
             
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
 
-            _httpContextAccessor.HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
+            HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
             return LocalRedirect(returnUrl);
         }
         if (result.IsLockedOut)
@@ -120,12 +124,13 @@ public class LoginController : AuthenticatedController
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            _httpContextAccessor.HttpContext?.Session?.SetObjectAsJson("User.Current", currentUser);
+            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
+            _focusHelper.SetInitialFocus();
 
             if (user is null)
             {
                 _logger.LogInformation("{Email} not found in database.", email);
-                return RedirectToAction("Login");
+                return RedirectToAction("Index");
             }
             
             var loginResult = await _userManager.AddLoginAsync(user, info);
@@ -138,10 +143,10 @@ public class LoginController : AuthenticatedController
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
 
-                _httpContextAccessor.HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
+                HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
                 return LocalRedirect(returnUrl);
             }
-            return RedirectToAction("Login");
+            return RedirectToAction("Index");
         }
     }
 
@@ -150,7 +155,7 @@ public class LoginController : AuthenticatedController
     public async Task<IActionResult> Logout()
     {
          await _signInManager.SignOutAsync();
-        _httpContextAccessor.HttpContext?.Session.Clear();
+        HttpContext?.Session.Clear();
         _logger.LogInformation("User logged out.");
         return RedirectToAction("Index", "Home");
     }

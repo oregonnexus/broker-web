@@ -39,14 +39,12 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
-        var requestManifest = outgoingRequest.RequestManifest?.DeserializeFromJsonDocument<RequestManifestJsonModel>();
-        var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
 
         Id = outgoingRequest.Id;
-        District = requestManifest?.To?.District ?? string.Empty;
-        ReleasingDistrict = requestManifest?.From?.District ?? string.Empty;
-        School = requestManifest?.To?.School ?? string.Empty;
-        Student = $"{responseManifest?.Student?.FirstName} {responseManifest?.Student?.LastSurname}";
+        District = outgoingRequest.RequestManifest?.To?.District ?? string.Empty;
+        ReleasingDistrict = outgoingRequest.RequestManifest?.From?.District ?? string.Empty;
+        School = outgoingRequest.RequestManifest?.To?.School ?? string.Empty;
+        Student = $"{outgoingRequest.ResponseManifest?.Student?.FirstName} {outgoingRequest.ResponseManifest?.Student?.LastName}";
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus == RequestStatus.Sent
                 ? RequestStatus.WaitingApproval.ToFriendlyString() : outgoingRequest.RequestStatus.ToFriendlyString();

@@ -17,7 +17,7 @@ public static class JsonDocumentMapperExtension
             RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
             Student = new StudentJsonModel
             {
-                Id = viewModel.Id,
+                Id = viewModel.StudentUniqueId,
                 StudentUniqueId = viewModel.StudentUniqueId,
                 FirstName = viewModel.FirstName,
                 MiddleName = viewModel.MiddleName,
@@ -26,21 +26,15 @@ public static class JsonDocumentMapperExtension
                 Gender = viewModel.Gender,
                 Grade = viewModel.Grade
             },
-            From = new SchoolJsonModel
-            {
-                District = viewModel.FromDistrict,
-                School = viewModel.FromSchool,
-                Email = viewModel.FromEmail,
-                StreetNumberName = viewModel.FromStreetNumberName,
-                City = viewModel.FromCity,
-                StateAbbreviation = viewModel.FromStateAbbreviation,
-                PostalCode = viewModel.FromPostalCode
-            },
             To = new SchoolJsonModel
             {
                 District = viewModel.ToDistrict,
                 School = viewModel.ToSchool,
-                Email = viewModel.ToEmail
+                Email = viewModel.ToEmail,
+                StreetNumberName = viewModel.ToStreetNumberName,
+                City = viewModel.ToCity,
+                StateAbbreviation = viewModel.ToStateAbbreviation,
+                PostalCode = viewModel.ToPostalCode
             },
             Note = viewModel.Note,
             Contents = viewModel.Contents
@@ -54,7 +48,7 @@ public static class JsonDocumentMapperExtension
         {
             Student = new SynergyStudentJsonModel
             {
-                SisNumber = viewModel.SisNumber
+                SisNumber = viewModel.StudentUniqueId
             }
         };
 
@@ -83,12 +77,6 @@ public static class JsonDocumentMapperExtension
                 MiddleName = viewModel.MiddleName,
                 LastSurname = viewModel.LastSurname
             },
-            From = new SchoolJsonModel
-            {
-                District = viewModel.FromDistrict,
-                School = viewModel.FromSchool,
-                Email = viewModel.FromEmail
-            },
             To = new SchoolJsonModel
             {
                 District = viewModel.ToDistrict,
@@ -102,13 +90,13 @@ public static class JsonDocumentMapperExtension
         return responseManifest.ToJsonDocument();
     }
 
-    public static JsonDocument MapToResponseManifestJsonModel(
-        this RequestModel viewModel,
-        Request request)
-    {
-        var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
-        responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
-        responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
-        return responseManifest.ToJsonDocument();
-    }
+    // public static JsonDocument MapToResponseManifestJsonModel(
+    //     this RequestModel viewModel,
+    //     Request request)
+    // {
+    //     var responseManifest = request.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
+    //     responseManifest.ProgramAssociations = viewModel.ProgramAssociations;
+    //     responseManifest.CourseTranscripts = viewModel.CourseTranscripts;
+    //     return responseManifest.ToJsonDocument();
+    // }
 }

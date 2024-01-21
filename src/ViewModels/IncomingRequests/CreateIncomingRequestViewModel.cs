@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Ardalis.GuardClauses;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OregonNexus.Broker.Domain;
 using src.Models.Courses;
 using src.Models.ProgramAssociations;
@@ -12,6 +13,24 @@ public class CreateIncomingRequestViewModel
 
     public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
 
+    public List<SelectListItem> SelectEducationOrganizations
+    {
+        get {
+            var educationOrganizationSelectList = new List<SelectListItem>();
+            Guard.Against.Null(EducationOrganizations);
+            foreach(var edOrgList in EducationOrganizations)
+            {
+                educationOrganizationSelectList.Add(new SelectListItem()
+                {
+                    Value = edOrgList.Id.ToString(),
+                    Text = $"{edOrgList.ParentOrganization?.Name} / {edOrgList.Name}"
+                });
+            }
+            educationOrganizationSelectList = educationOrganizationSelectList.OrderBy(x => x.Text).ToList();
+            return educationOrganizationSelectList;
+        }
+    }
+
     [Display(Name = "Receiving School")]
     // [Required(ErrorMessage = "Education Organization is required")]
     public Guid? EducationOrganizationId { get; set; }
@@ -19,12 +38,6 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Student")]
     // [Required(ErrorMessage = "Student is required")]
     public string? Student { get; set; } = string.Empty;
-
-    [Display(Name = "SIS Number")]
-    public string? SisNumber { get; set; }
-
-    [Display(Name = "EdFi ID")]
-    public string? Id { get; set; }
 
     [Display(Name = "Student ID")]
     public string? StudentUniqueId { get; set; }
@@ -47,38 +60,31 @@ public class CreateIncomingRequestViewModel
     [Display(Name = "Grade")]
     public string? Grade { get; set; }
 
-    [Display(Name = "District (Optional)")]
-    public string? FromDistrict { get; set; }
-
-    [Display(Name = "School")]
-    public string? FromSchool { get; set; }
-
-    [Display(Name = "Clerk's Email")]
-    public string? FromEmail { get; set; }
-
-    [Display(Name = "Street Number and Name")]
-    public string? FromStreetNumberName { get; set; }
-
-    [Display(Name = "City")]
-    public string? FromCity { get; set; }
-
-    [Display(Name = "State")]
-    public string? FromStateAbbreviation { get; set; }
-
-    [Display(Name = "Postal Code")]
-    public string? FromPostalCode { get; set; }
-
     [Display(Name = "District")]
     public string? ToDistrict { get; set; }
 
     [Display(Name = "School")]
     public string? ToSchool { get; set; }
 
-    [Display(Name = "Clerk's Email")]
+    [Display(Name = "Email")]
     public string? ToEmail { get; set; }
+
+    [Display(Name = "Address")]
+    public string? ToStreetNumberName { get; set; }
+
+    [Display(Name = "City")]
+    public string? ToCity { get; set; }
+
+    [Display(Name = "State")]
+    public string? ToStateAbbreviation { get; set; }
+
+    [Display(Name = "Zip Code")]
+    public string? ToPostalCode { get; set; }
 
     [Display(Name = "Notes")]
     public string? Note { get; set; }
+
+    public string? Additional { get; set; }
 
     [Display(Name = "Contents")]
     public List<string>? Contents { get; set; }
@@ -99,7 +105,6 @@ public class CreateIncomingRequestViewModel
 
     public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
 
-    public IEnumerable<ProgramAssociationResponse> ProgramAssociations { get; set;} = Enumerable.Empty<ProgramAssociationResponse>();
-    public IEnumerable<CourseTranscriptResponse> CourseTranscripts { get; set;} = Enumerable.Empty<CourseTranscriptResponse>();   
+    public List<PayloadContent>? Attachments { get; set; }
     
 }

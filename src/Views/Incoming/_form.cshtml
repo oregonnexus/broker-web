@@ -7,18 +7,31 @@
       <div class="px-4 py-6 sm:p-8 grid gap-8">
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
-              <h2 class="text-base font-semibold leading-7 text-gray-900">Student information</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">Basic information about the student being enrolled.</p>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Student Lookup</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Find the student in your SIS. This is the student record for which the records will be imported.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Student</label>
+                <div class="mt-2">
+                  <Search-Select asp-for="StudentUniqueId" placeholder="@Model.FirstName @Model.LastSurname">
+                </div>
+              </div>
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.StudentUniqueId, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <input asp-for="StudentUniqueId" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="Additional" type="hidden">
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="StudentUniqueId">@Html.ValidationMessageFor(m => m.StudentUniqueId)</p>
               </div>
             </div>
+          </div>
+          <div class="grid gap-6 border-b border-gray-900/10 pb-8">
+            <div>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Student information</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">Basic information about the student being enrolled.</p>
+            </div>  
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
                 @Html.LabelFor(it => it.FirstName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
@@ -75,68 +88,82 @@
           </div>
           <div class="grid gap-6 border-b border-gray-900/10 pb-8">
             <div>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Requesting School Information</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">School that is requesting the records.</p>
+            </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-4">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Requesting School</label>
+                <div class="mt-2">
+                  <Select asp-for="EducationOrganizationId" asp-items="Model.SelectEducationOrganizations" class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"></Select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid gap-6 border-b border-gray-900/10 pb-8">
+            <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Releasing school information</h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">Information about the student's releasing school.</p>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromSchool, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToSchool, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromSchool">@Html.ValidationMessageFor(m => m.FromSchool)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToSchool">@Html.ValidationMessageFor(m => m.ToSchool)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromDistrict, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToDistrict, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromDistrict" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToDistrict" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromDistrict">@Html.ValidationMessageFor(m => m.FromDistrict)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToDistrict">@Html.ValidationMessageFor(m => m.ToDistrict)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromEmail" type="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToEmail" type="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromEmail">@Html.ValidationMessageFor(m => m.FromEmail)</p>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
-              <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromStreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-                <div class="mt-2">
-                  <input asp-for="FromStreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromStreetNumberName">@Html.ValidationMessageFor(m => m.FromStreetNumberName)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToEmail">@Html.ValidationMessageFor(m => m.ToEmail)</p>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromCity, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToStreetNumberName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromCity" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToStreetNumberName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromCity">@Html.ValidationMessageFor(m => m.FromCity)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToStreetNumberName">@Html.ValidationMessageFor(m => m.ToStreetNumberName)</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ToCity, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ToCity" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToCity">@Html.ValidationMessageFor(m => m.ToCity)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromStateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToStateAbbreviation, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
                   <select
-                    asp-for="FromStateAbbreviation"
+                    asp-for="ToStateAbbreviation"
                     asp-items="@Model.States"
                     class="block w-full rounded-md border-0 py-1.5 px-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"
                   >
                     <option value=""></option>
                   </select>
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromStateAbbreviation">@Html.ValidationMessageFor(m => m.FromStateAbbreviation)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToStateAbbreviation">@Html.ValidationMessageFor(m => m.ToStateAbbreviation)</p>
               </div>
               <div class="sm:col-span-2">
-                @Html.LabelFor(it => it.FromPostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                @Html.LabelFor(it => it.ToPostalCode, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
                 <div class="mt-2">
-                  <input asp-for="FromPostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                  <input asp-for="ToPostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="FromPostalCode">@Html.ValidationMessageFor(m => m.FromPostalCode)</p>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ToPostalCode">@Html.ValidationMessageFor(m => m.ToPostalCode)</p>
               </div>
             </div>
           </div>
@@ -153,148 +180,11 @@
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="Note">@Html.ValidationMessageFor(m => m.Note)</p>
               </div>
-              <div class="sm:col-span-6">
-                @Html.LabelFor(it => it.Files, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
-                <div class="mt-2">
-                  <div class="flex items-center justify-center w-full">
-                      <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                          <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                              <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                              </svg>
-                              <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                              <p class="text-xs text-gray-500">PDF, DOC, PNG or JPG (MAX. 2MB each)</p>
-                          </div>
-                          <input id="dropzone-file" type="file" class="hidden" />
-                      </label>
-                  </div> 
-                </div>
-                <p class="mt-2 text-sm text-red-600" asp-validation-for="Files">@Html.ValidationMessageFor(m => m.Files)</p>
-              </div>
+              
             </div>
           </div>
       </div>
 
-      @if (@Model.RequestStatus == @OregonNexus.Broker.Domain.RequestStatus.Approved)
-      {
-        <div class="grid gap-6 px-4 py-6 sm:p-8">
-          <div>
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Releasing School Student Data</h2>
-              <p class="mt-1 text-sm leading-6 text-gray-600">The student data provided by the releasing school.</p>
-          </div>
-          <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
-            <div>
-              <h2 class="text-base font-semibold leading-7 text-gray-900">Course Transcript</h2>
-            </div>
-            <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5">
-              <table class="min-w-full divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                      School Year
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      School Code
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-1/4">
-                      School Name
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Course Code
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-1/4">
-                      Course Title
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Att Cr
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Ern Cr
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Letter Grade
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="(courseTranscript, index) in mappedCourseTranscripts">
-                    <tr :class="index % 2 === 0 ? 'bg-gray-50' : ''">
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                        <input x-model="courseTranscript.studentAcademicRecordReference.schoolYear" :placeholder="courseTranscripts[index].studentAcademicRecordReference.schoolYear" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="courseTranscript.assigningOrganizationIdentificationCode" :placeholder="courseTranscripts[index].assigningOrganizationIdentificationCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600 w-1/4">
-                        <input asp-for="@Model.FromSchool" placeholder="@Model.FromSchool" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="courseTranscript.courseReference.courseCode" :placeholder="courseTranscripts[index].courseReference.courseCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600 w-1/4">
-                        <input x-model="courseTranscript.academicSubjects[0].subject" :placeholder="courseTranscripts[index].academicSubjects[0].subject" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="courseTranscript.attemptedCredits" :placeholder="courseTranscripts[index].attemptedCredits" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="courseTranscript.earnedCredits" :placeholder="courseTranscripts[index].earnedCredits" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="courseTranscript.finalLetterGradeEarned" :placeholder="courseTranscripts[index].finalLetterGradeEarned" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          
-          <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5 p-4 lg:col-span-4">
-            <div>
-              <h2 class="text-base font-semibold leading-7 text-gray-900">Program Associations</h2>
-            </div>
-            <div class="grid gap-6 rounded-lg shadow-sm ring-1 ring-gray-900/5">
-              <table class="min-w-full divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                      Program Type
-                    </th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
-                      Program Name
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Begin Date
-                    </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      End Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="(programAssociation, index) in mappedProgramAssociations">
-                    <tr :class="index % 2 === 0 ? 'bg-gray-50': ''">
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="programAssociation.programReference.programName" :placeholder="programAssociations[index].programReference.programName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="programAssociation.programReference.programType" :placeholder="programAssociations[index].programReference.programType" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="programAssociation.beginDate" :placeholder="programAssociations[index].beginDate" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input x-model="programAssociation.endDate" :placeholder="programAssociations[index].endDate" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
-                      </td>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      }
       <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <a
           asp-controller="Incoming"
@@ -306,146 +196,10 @@
           Cancel
         </a>
         <input asp-for="RequestId" type="hidden" />
-        <input asp-for="EducationOrganizationId" type="hidden" />
-        @if (@Model.RequestStatus == @OregonNexus.Broker.Domain.RequestStatus.Approved)
-        {
-          <div
-            x-data="{
-              open: false,
-              requestStatus: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Received)),
-              options: [
-                {
-                  id: 'option-menu-item-2', label: 'Receive', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Received)),
-                },
-                {
-                  id: 'option-menu-item-3', label: 'Decline', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Declined)),
-                },
-              ],
-              get selectedOption() { return this.options.find(option => option.value === this.requestStatus) },
-              selectOption(option) {
-                this.requestStatus = option.value
-                this.open = !this.open
-              },
-            }"
-            class="inline-flex rounded-md shadow-sm"
-          >
-            <input asp-for="RequestStatus" :value="requestStatus" type="hidden" />
-            <button
-              x-text="selectedOption.label"
+        <button
               type="submit"
-              class="relative inline-flex items-center rounded-l-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10"
-            >
-            </button>
-            <div class="relative -ml-px block">
-              <button
-                type="button"
-                class="relative inline-flex items-center rounded-r-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10" id="option-menu-button" aria-expanded="true" aria-haspopup="true"
-                @@click="open = !open"
-              >
-                <span class="sr-only">Open options</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                </svg>
-              </button>
-
-              <div
-                  x-show="open"
-                  x-transition:enter="transition ease-out duration-100"
-                  x-transition:enter-start="transform opacity-0 scale-95"
-                  x-transition:enter-end="transform opacity-100 scale-100"
-                  x-transition:leave="transition ease-in duration-75"
-                  x-transition:leave-start="transform opacity-100 scale-100"
-                  x-transition:leave-end="transform opacity-0 scale-95"
-                  class="absolute right-0 z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="option-menu-button" tabindex="-1"
-                >
-                <div class="py-1" role="none">
-                  <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                  <template x-for="option in options">
-                    <a
-                      :id="option.id"
-                      x-text="option.label"
-                      role="menuitem"
-                      tabindex="-1"
-                      class="text-gray-700 block px-4 py-2 text-sm cursor-pointer"
-                      @@click="selectOption(option)"
-                    >
-                    </a>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </div>
-        }
-        else
-        {
-          <div
-            x-data="{
-              open: false,
-              requestStatus: @Html.Raw(Json.Serialize(@Model.RequestStatus)),
-              options: [
-                {
-                  id: 'option-menu-item-0', label: 'Save and send incoming request', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Sent)),
-                },
-                {
-                  id: 'option-menu-item-1', label: 'Save incoming request draft', value: @Html.Raw(Json.Serialize(@OregonNexus.Broker.Domain.RequestStatus.Draft)),
-                },
-              ],
-              get selectedOption() { return this.options.find(option => option.value === this.requestStatus) },
-              selectOption(option) {
-                this.requestStatus = option.value
-                this.open = !this.open
-              },
-            }"
-            class="inline-flex rounded-md shadow-sm"
-          >
-            <input asp-for="RequestStatus" :value="requestStatus" type="hidden" />
-            <button
-              x-text="selectedOption.label"
-              type="submit"
-              class="relative inline-flex items-center rounded-l-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10"
-            >
-            </button>
-            <div class="relative -ml-px block">
-              <button
-                type="button"
-                class="relative inline-flex items-center rounded-r-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10" id="option-menu-button" aria-expanded="true" aria-haspopup="true"
-                @@click="open = !open"
-              >
-                <span class="sr-only">Open options</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                </svg>
-              </button>
-
-              <div
-                  x-show="open"
-                  x-transition:enter="transition ease-out duration-100"
-                  x-transition:enter-start="transform opacity-0 scale-95"
-                  x-transition:enter-end="transform opacity-100 scale-100"
-                  x-transition:leave="transition ease-in duration-75"
-                  x-transition:leave-start="transform opacity-100 scale-100"
-                  x-transition:leave-end="transform opacity-0 scale-95"
-                  class="absolute right-0 z-10 -mr-1 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="option-menu-button" tabindex="-1"
-                >
-                <div class="py-1" role="none">
-                  <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                  <template x-for="option in options">
-                    <a
-                      :id="option.id"
-                      x-text="option.label"
-                      :class="option.class"
-                      role="menuitem"
-                      tabindex="-1"
-                      class="text-gray-700 block px-4 py-2 text-sm cursor-pointer"
-                      @@click="selectOption(option)"
-                    >
-                    </a>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </div>
-        }
+              class="relative inline-flex items-center rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold ring-1 ring-inset ring-tertiary-800 text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700 focus:z-10"
+        >Save</button>
       </div>
     </div>
   </div>

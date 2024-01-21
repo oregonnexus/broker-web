@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Ardalis.Specification;
+using OregonNexus.Broker.Domain;
 
 namespace OregonNexus.Broker.Web.Specifications.Paginations
 {
@@ -72,6 +73,12 @@ namespace OregonNexus.Broker.Web.Specifications.Paginations
                 _ascending = ascending;
                 return this;
             }
+
+            // public Builder WithFilterEducationOrganizationId(string educationOrganizationId)
+            // {
+            //     _searchExpressions.Add(x => x.EducationOrganizationId == educationOrganizationId);
+            //     return this;
+            // }
 
             public Builder WithSortExpression(Expression<Func<T, object>>? sortExpression)
             {

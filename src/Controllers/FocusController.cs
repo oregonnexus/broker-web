@@ -14,12 +14,11 @@ using Ardalis.Specification;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize]
-public class FocusController : AuthenticatedController
+public class FocusController : AuthenticatedController<FocusController>
 {
-    private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
-    public FocusController(
-        IHttpContextAccessor httpContextAccessor,
-        IRepository<EducationOrganization> educationOrganizationRepository) : base(httpContextAccessor)
+    private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
+
+    public FocusController(IReadRepository<EducationOrganization> educationOrganizationRepository)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
     }
@@ -34,7 +33,7 @@ public class FocusController : AuthenticatedController
             return Redirect(model.ReturnUrl);
         }
 
-        _httpContextAccessor.HttpContext?.Session.SetString(FocusOrganizationKey, model.FocusEducationOrganizationId);
+        HttpContext?.Session.SetString(FocusOrganizationKey, model.FocusEducationOrganizationId);
 
         if (Guid.TryParse(model.FocusEducationOrganizationId, out var educationOrganizationId))
         {
@@ -55,9 +54,9 @@ public class FocusController : AuthenticatedController
                 var organizationName = organization.Name;
 
                 if (!string.IsNullOrWhiteSpace(parentOrganizationName))
-                    _httpContextAccessor.HttpContext?.Session.SetString(FocusOrganizationDistrict, parentOrganizationName);
+                    HttpContext?.Session.SetString(FocusOrganizationDistrict, parentOrganizationName);
 
-                _httpContextAccessor.HttpContext?.Session.SetString(FocusOrganizationSchool, organizationName);
+                HttpContext?.Session.SetString(FocusOrganizationSchool, organizationName);
             }
         }
 

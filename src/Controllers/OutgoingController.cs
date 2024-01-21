@@ -19,7 +19,7 @@ using src.Models.Students;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
-public class OutgoingController : AuthenticatedController
+public class OutgoingController : AuthenticatedController<OutgoingController>
 {
     private readonly IRepository<Request> _outgoingRequestRepository;
     private readonly IRepository<PayloadContent> _payloadContentRepository;
@@ -32,7 +32,7 @@ public class OutgoingController : AuthenticatedController
         IRepository<Request> outgoingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IPayloadContentService payloadContentService) : base(httpContextAccessor)
+        IPayloadContentService payloadContentService)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
@@ -101,31 +101,25 @@ public class OutgoingController : AuthenticatedController
 
         var educationOrganizations = await _educationOrganizationRepository.ListAsync();
 
-        var edfiStudent = outgoingRequest.Student?.DeserializeFromJsonDocument<EdfiJsonModel>();
-
-        var responseManifest = outgoingRequest.ResponseManifest?.DeserializeFromJsonDocument<ResponseManifestJsonModel>();
-
         var viewModel = new CreateOutgoingRequestViewModel
         {
-            Id = responseManifest?.Student?.Id,
+            Id = outgoingRequest.ResponseManifest?.Student?.StudentNumber,
             EducationOrganizations = educationOrganizations,
             EducationOrganizationId = outgoingRequest.EducationOrganizationId,
             RequestId = outgoingRequest.Id,
             Date = outgoingRequest.CreatedAt,
-            EdfiId = edfiStudent?.Student?.Id,
-            EdfiStudentUniqueId = responseManifest?.Student?.StudentUniqueId,
-            StudentUniqueId = responseManifest?.Student?.StudentUniqueId,
-            FirstName = responseManifest?.Student?.FirstName,
-            MiddleName = responseManifest?.Student?.MiddleName,
-            LastSurname = responseManifest?.Student?.LastSurname,
-            FromDistrict = responseManifest?.From?.District,
-            FromSchool = responseManifest?.From?.School,
-            FromEmail = responseManifest?.From?.Email,
-            ToDistrict = responseManifest?.To?.District,
-            ToSchool = responseManifest?.To?.School,
-            ToEmail = responseManifest?.To?.Email,
-            Note = responseManifest?.Note,
-            Contents = responseManifest?.Contents,
+            StudentUniqueId = outgoingRequest.ResponseManifest?.Student?.StudentNumber,
+            FirstName = outgoingRequest.ResponseManifest?.Student?.FirstName,
+            MiddleName = outgoingRequest.ResponseManifest?.Student?.MiddleName,
+            LastSurname = outgoingRequest.ResponseManifest?.Student?.LastName,
+            FromDistrict = outgoingRequest.ResponseManifest?.From?.District,
+            FromSchool = outgoingRequest.ResponseManifest?.From?.School,
+            FromEmail = outgoingRequest.ResponseManifest?.From?.Email,
+            ToDistrict = outgoingRequest.ResponseManifest?.To?.District,
+            ToSchool = outgoingRequest.ResponseManifest?.To?.School,
+            ToEmail = outgoingRequest.ResponseManifest?.To?.Email,
+            Note = outgoingRequest.ResponseManifest?.Note,
+            Contents = outgoingRequest.ResponseManifest?.Contents?.Select(x => x.FileName.ToString()).ToList(),
             RequestStatus = outgoingRequest.RequestStatus
         };
 
@@ -145,14 +139,16 @@ public class OutgoingController : AuthenticatedController
 
             if (outgoingRequest is null) return BadRequest();
 
-            var edfiStudentModel = viewModel.MapToEdfiStudentJsonModel();
-            var responseManifest = viewModel.MapToResponseManifestJsonModel();
-
             var today = DateTime.UtcNow;
 
             outgoingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
-            outgoingRequest.Student = edfiStudentModel;
-            outgoingRequest.ResponseManifest = responseManifest;
+            outgoingRequest.Student!.Student!.LastName = viewModel.LastSurname;
+            outgoingRequest.Student!.Student!.FirstName = viewModel.FirstName;
+            outgoingRequest.Student!.Student!.MiddleName = viewModel.MiddleName;
+            // outgoingRequest.Student!.Student!.Gender = viewModel.Gender;
+            // outgoingRequest.Student!.Student!.Grade = viewModel.Grade;
+            outgoingRequest.Student!.Student!.StudentNumber = viewModel.StudentUniqueId;
+            //outgoingRequest.ResponseManifest = responseManifest;
             outgoingRequest.RequestStatus = viewModel.RequestStatus;
             outgoingRequest.UpdatedAt = today;
             outgoingRequest.UpdatedBy = userId;

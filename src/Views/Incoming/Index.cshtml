@@ -1,5 +1,6 @@
 ﻿@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 @model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>
+@using OregonNexus.Broker.Web.Extensions.RequestStatuses;
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -12,23 +13,6 @@
     x-data="incomingRequestsIndex"
     class="grid gap-4"
 >
-    <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-            <h1 class="font-title text-base font-semibold leading-6 text-gray-900">Incoming Requests</h1>
-            <p class="mt-2 text-sm text-gray-700">Incoming record requests.</p>
-        </div>
-        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <a
-                asp-controller="Incoming"
-                asp-action="Create"
-                asp-authorize
-                asp-policy="@TransferIncomingRecords"
-                class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
-            >
-                Make Incoming Request
-            </a>
-        </div>
-    </div>
     <div class="grid gap-4">
         <form
             autocomplete="off"
@@ -41,7 +25,7 @@
                     <label for="searchBy" class="sr-only">Search</label>
                     <div class="flex rounded-md shadow-sm">
                         <div class="flex-grow focus-within:z-10">
-                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:block" placeholder="Search by district, school, or student">
+                            <input x-model="searchBy" type="text" name="searchBy" id="searchBy" class="hidden w-full rounded-none rounded-l-md border-0 py-1.5 text-sm leading-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:block" placeholder="Search by releasing district, releasing school, or student">
                         </div>
                         <button type="submit" class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -110,7 +94,7 @@
                                     <a asp-route-sortBy="district"
                                     asp-route-sortDir="@(Model.SortBy == "district" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        Releasing District
+                                        Receiving Entity
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "district" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "district" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -122,7 +106,7 @@
                                     <a asp-route-sortBy="school"
                                     asp-route-sortDir="@(Model.SortBy == "school" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        Releasing School
+                                        Releasing Entity
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "school" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "school" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -146,7 +130,7 @@
                                     <a asp-route-sortBy="date"
                                     asp-route-sortDir="@(Model.SortBy == "date" && Model.SortDir == "asc" ? "desc" : "asc")"
                                     class="group inline-flex">
-                                        Date
+                                        Sent Date
                                         <span class="ml-2 flex-none rounded @(Model.SortBy == "date" ? "bg-gray-200 text-gray-900 group-hover:bg-gray-300" : "invisible text-gray-400 group-hover:visible group-focus:visible") @(Model.SortBy == "date" && Model.SortDir == "desc" ? "transform rotate-180" : "")">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -176,8 +160,8 @@
                             @foreach (var incomingRequest in Model.Items)
                             {
                                 <tr class="@(even ? "bg-gray-50": "")">
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">@incomingRequest.District</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.School</td>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">@incomingRequest.ReceivingDistrict / @incomingRequest.ReceivingSchool</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.ReleasingDistrict / @incomingRequest.ReleasingSchool</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Student</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@incomingRequest.Date</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
@@ -194,17 +178,32 @@
                                             @incomingRequest.Status
                                         </span>
                                     </td>
-                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a
-                                            asp-controller="Incoming"
-                                            asp-action="Update"
-                                            asp-route-requestId="@incomingRequest.Id"
-                                            asp-authorize
-                                            asp-policy="@TransferIncomingRecords"
-                                            class="text-tertiary-700 hover:text-tertiary-900"
-                                        >
-                                            Edit
-                                        </a>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-3">
+                                        <div class="flex justify-end gap-2">
+                                            <a
+                                                asp-controller="Incoming"
+                                                asp-action="Update"
+                                                asp-route-requestId="@incomingRequest.Id"
+                                                asp-authorize
+                                                asp-policy="@TransferIncomingRecords"
+                                                class="text-tertiary-700 hover:text-tertiary-900"
+                                            >
+                                                Edit
+                                            </a>
+                                            @if (@incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Imported.ToFriendlyString())
+                                            {
+                                                <a
+                                                    asp-controller="Incoming"
+                                                    asp-action="Mapping"
+                                                    asp-route-requestId="@incomingRequest.Id"
+                                                    asp-authorize
+                                                    asp-policy="@TransferIncomingRecords"
+                                                    class="text-tertiary-700 hover:text-tertiary-900"
+                                                >
+                                                    Mapping
+                                                </a>
+                                            }
+                                        </div>
                                     </td>
                                 </tr>
                                 even = !even;
@@ -251,6 +250,19 @@
         </div>
     </div>
 </div>
+
+@section HeaderAction
+{
+  <a
+                asp-controller="Incoming"
+                asp-action="Create"
+                asp-authorize
+                asp-policy="@TransferIncomingRecords"
+                class="block rounded-md bg-tertiary-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700"
+            >
+                Start Incoming Request
+            </a>
+}
 
 @section scripts
 {

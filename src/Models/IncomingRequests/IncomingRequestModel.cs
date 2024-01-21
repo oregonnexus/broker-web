@@ -37,9 +37,9 @@ public class IncomingRequestModel : SearchableModelWithPagination
             "district" => request => request.EducationOrganization.ParentOrganization.Name,
             "school" => request => request.EducationOrganization.Name,
             "student" => request => request.Student,
-            "date" => request => request.CreatedAt,
+            "date" => request => request.InitialRequestSentDate,
             "status" => request => request.RequestStatus,
-            _ => request => request.Id,
+            _ => request => request.CreatedAt,
         };
         return sortExpression;
     }
@@ -48,7 +48,7 @@ public class IncomingRequestModel : SearchableModelWithPagination
     {
         var searchExpressions = new List<Expression<Func<Request, bool>>>
         {
-            request => request.RequestProcessUserId.HasValue
+            //request => request.RequestProcessUserId.HasValue
         };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))

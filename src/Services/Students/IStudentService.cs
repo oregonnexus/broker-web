@@ -1,9 +1,9 @@
-using src.Models.Students;
+// using src.Models.Students;
 
-namespace src.Services.Students;
+// namespace src.Services.Students;
 
-public interface IStudentService
-{
-    Task<IEnumerable<StudentResponse>> GetAllAsync(StudentRequest request);
-    Task<StudentAggregateResponse> GetById(string id);
-}
+// public interface IStudentService
+// {
+//     Task<IEnumerable<StudentResponse>> GetAllAsync(StudentRequest request);
+//     Task<StudentAggregateResponse> GetById(string id);
+// }
