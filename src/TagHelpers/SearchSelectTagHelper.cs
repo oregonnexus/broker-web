@@ -28,7 +28,9 @@ public class SearchSelectTagHelper : TagHelper
     [HtmlAttributeName("asp-name")]
     public string? Name { get; set; }
 
-    public string Placeholder { get; set; }
+    public string Placeholder { get; set; } = default!;
+
+    public string? Template { get; set; }
 
     [HtmlAttributeName(ForAttributeName)]
     public ModelExpression? For { get; set; }
@@ -43,8 +45,18 @@ public class SearchSelectTagHelper : TagHelper
         output.TagName = null; // required to get HTML to output
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/SearchSelect.cshtml", new { Placeholder = Placeholder });
-        output.Content.SetHtmlContent(content);
+        if (Template == "student")
+        {
+            var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/StudentSearchSelect.cshtml", new { Placeholder = Placeholder });
+            output.Content.SetHtmlContent(content);
+        }
+
+        if (Template == "school")
+        {
+            var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/SchoolSearchSelect.cshtml", new { Placeholder = Placeholder });
+            output.Content.SetHtmlContent(content);
+        }
+        
     }
 
 }
