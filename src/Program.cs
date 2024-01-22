@@ -139,7 +139,20 @@ builder.Services.AddExceptionHandler<ForceLogoutExceptionHandler>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddInertia();
-builder.Services.AddHttpClient();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddHttpClient("IgnoreSSL").ConfigurePrimaryHttpMessageHandler(() => {
+        var httpClientHandler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+            {
+                return true;
+            }
+        };
+        return httpClientHandler;
+    });
+}
 
 builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 
@@ -148,8 +161,11 @@ builder.Services.AddConnectorDependencies();
 
 builder.Services.AddBrokerServices();
 
-
 var app = builder.Build();
+
+// Noted this way because of 
+// https://github.com/dotnet/aspnetcore/issues/51888
+app.UseExceptionHandler(o => { });
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

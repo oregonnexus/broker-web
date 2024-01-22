@@ -37,7 +37,10 @@ public class FocusHelper
         var currentUser = _session.GetObjectFromJson<User>("User.Current");
         var allEdOrgs = currentUser?.AllEducationOrganizations;
 
-        if (currentUser?.Id == null) return selectListItems;
+        if (currentUser?.Id == null)
+        {
+            throw new ForceLogoutException();
+        }
 
         var organizations = await _educationOrganizationRepository.ListAsync();
         organizations = organizations.OrderBy(x => x.ParentOrganization?.Name).ThenBy(x => x.Name).ToList();
