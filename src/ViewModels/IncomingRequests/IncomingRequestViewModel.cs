@@ -45,8 +45,8 @@ public class IncomingRequestViewModel
     {
 
         Id = incomingRequest.Id;
-        ReleasingDistrict = incomingRequest.RequestManifest?.To?.District ?? string.Empty;
-        ReleasingSchool = incomingRequest.RequestManifest?.To?.School ?? string.Empty;
+        ReleasingDistrict = incomingRequest.RequestManifest?.To?.District?.Name ?? string.Empty;
+        ReleasingSchool = incomingRequest.RequestManifest?.To?.School?.Name ?? string.Empty;
         ReceivingDistrict = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         ReceivingSchool = incomingRequest.EducationOrganization?.Name ?? string.Empty;
         Student = $"{incomingRequest.RequestManifest?.Student?.FirstName} {incomingRequest.RequestManifest?.Student?.LastName}";

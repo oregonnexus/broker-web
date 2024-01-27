@@ -31,6 +31,7 @@ using System.Text.Json;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OregonNexus.Broker.Web.Utilities;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -134,6 +135,13 @@ public class IncomingController : AuthenticatedController<IncomingController>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateIncomingRequestViewModel viewModel)
     {
+        var district = JsonSerializer.Deserialize<District>(Request.Form["ToDistrict"]!, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        if (district is not null)
+        {
+            district.Schools = null;
+        }
+        var school = JsonSerializer.Deserialize<School>(Request.Form["ToSchool"]!, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        
         if (ModelState.IsValid)
         {
             var userId = Guid.Parse(User.FindFirstValue(claimType: ClaimTypes.NameIdentifier)!);
@@ -168,23 +176,12 @@ public class IncomingController : AuthenticatedController<IncomingController>
                     Note = viewModel.Note,
                     To = new RequestAddress()
                     {
-                        District = viewModel.ToDistrict,
-                        School = viewModel.ToSchool,
-                        Email = viewModel.ToEmail,
-                        StreetNumberName = viewModel.ToStreetNumberName,
-                        City = viewModel.ToCity,
-                        StateAbbreviation = viewModel.ToStateAbbreviation,
-                        PostalCode = viewModel.ToPostalCode
-                    },
-                    From = new RequestAddress()
-                    {
-                        District = edOrg?.ParentOrganization?.Name,
-                        School = edOrg?.Name,
-                        Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
-                        StreetNumberName = edOrg?.Address?.StreetNumberName,
-                        City = edOrg?.Address?.City,
-                        StateAbbreviation = edOrg?.Address?.StateAbbreviation,
-                        PostalCode = edOrg?.Address?.PostalCode
+                        District = district,
+                        School = school,
+                        Sender = new EducationOrganizationContact()
+                        {
+                            Email = User.FindFirstValue(claimType: ClaimTypes.Email)!
+                        }
                     }
                 },
                 ResponseManifest = null,
@@ -224,11 +221,6 @@ public class IncomingController : AuthenticatedController<IncomingController>
             Additional = JsonSerializer.Serialize(incomingRequest.Student?.Connectors),
             ToDistrict = requestManifest?.To?.District,
             ToSchool = requestManifest?.To?.School,
-            ToEmail = requestManifest?.To?.Email,
-            ToStreetNumberName = requestManifest?.To?.StreetNumberName,
-            ToCity = requestManifest?.To?.City,
-            ToStateAbbreviation = requestManifest?.To?.StateAbbreviation,
-            ToPostalCode = requestManifest?.To?.PostalCode,
             Note = requestManifest?.Note,
             Contents = requestManifest?.Contents?.Select(x => x.FileName).ToList(),
             RequestStatus = incomingRequest.RequestStatus,
@@ -245,8 +237,15 @@ public class IncomingController : AuthenticatedController<IncomingController>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(CreateIncomingRequestViewModel viewModel)
     {
-        if (ModelState.IsValid)
+        var district = JsonSerializer.Deserialize<District>(Request.Form["ToDistrict"]!, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        if (district is not null)
         {
+            district.Schools = null;
+        }
+        var school = JsonSerializer.Deserialize<School>(Request.Form["ToSchool"]!, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        
+        if (ModelState.IsValid)
+        {            
             var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(viewModel.RequestId));
 
             Guard.Against.Null(incomingRequest);
@@ -283,23 +282,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
                 Note = viewModel.Note,
                 To = new RequestAddress()
                 {
-                    District = viewModel.ToDistrict,
-                    School = viewModel.ToSchool,
-                    Email = viewModel.ToEmail,
-                    StreetNumberName = viewModel.ToStreetNumberName,
-                    City = viewModel.ToCity,
-                    StateAbbreviation = viewModel.ToStateAbbreviation,
-                    PostalCode = viewModel.ToPostalCode
-                },
-                From = new RequestAddress()
-                {
-                    District = incomingRequest.EducationOrganization?.ParentOrganization?.Name,
-                    School = incomingRequest.EducationOrganization?.Name,
-                    Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
-                    StreetNumberName = incomingRequest.EducationOrganization?.Address?.StreetNumberName,
-                    City = incomingRequest.EducationOrganization?.Address?.City,
-                    StateAbbreviation = incomingRequest.EducationOrganization?.Address?.StateAbbreviation,
-                    PostalCode = incomingRequest.EducationOrganization?.Address?.PostalCode
+                    District = district,
+                    School = school
                 }
             };
             incomingRequest.RequestStatus = viewModel.RequestStatus;

@@ -41,9 +41,9 @@ public class OutgoingRequestViewModel
     {
 
         Id = outgoingRequest.Id;
-        District = outgoingRequest.RequestManifest?.To?.District ?? string.Empty;
-        ReleasingDistrict = outgoingRequest.RequestManifest?.From?.District ?? string.Empty;
-        School = outgoingRequest.RequestManifest?.To?.School ?? string.Empty;
+        // District = outgoingRequest.RequestManifest?.To?.District ?? string.Empty;
+        // ReleasingDistrict = outgoingRequest.RequestManifest?.From?.District ?? string.Empty;
+        // School = outgoingRequest.RequestManifest?.To?.School ?? string.Empty;
         Student = $"{outgoingRequest.ResponseManifest?.Student?.FirstName} {outgoingRequest.ResponseManifest?.Student?.LastName}";
         Date = outgoingRequest.CreatedAt;
         Status = outgoingRequest.RequestStatus == RequestStatus.Sent

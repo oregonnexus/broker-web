@@ -61,25 +61,10 @@ public class CreateIncomingRequestViewModel
     public string? Grade { get; set; }
 
     [Display(Name = "District")]
-    public string? ToDistrict { get; set; }
+    public District? ToDistrict { get; set; }
 
     [Display(Name = "School")]
-    public string? ToSchool { get; set; }
-
-    [Display(Name = "Email")]
-    public string? ToEmail { get; set; }
-
-    [Display(Name = "Address")]
-    public string? ToStreetNumberName { get; set; }
-
-    [Display(Name = "City")]
-    public string? ToCity { get; set; }
-
-    [Display(Name = "State")]
-    public string? ToStateAbbreviation { get; set; }
-
-    [Display(Name = "Zip Code")]
-    public string? ToPostalCode { get; set; }
+    public School? ToSchool { get; set; }
 
     [Display(Name = "Notes")]
     public string? Note { get; set; }

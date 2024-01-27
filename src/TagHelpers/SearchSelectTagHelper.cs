@@ -50,12 +50,6 @@ public class SearchSelectTagHelper : TagHelper
             var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/StudentSearchSelect.cshtml", new { Placeholder = Placeholder });
             output.Content.SetHtmlContent(content);
         }
-
-        if (Template == "school")
-        {
-            var content = await _html.PartialAsync("~/Views/Shared/TagHelpers/SchoolSearchSelect.cshtml", new { Placeholder = Placeholder });
-            output.Content.SetHtmlContent(content);
-        }
         
     }
 

@@ -28,13 +28,13 @@ public static class JsonDocumentMapperExtension
             },
             To = new SchoolJsonModel
             {
-                District = viewModel.ToDistrict,
-                School = viewModel.ToSchool,
-                Email = viewModel.ToEmail,
-                StreetNumberName = viewModel.ToStreetNumberName,
-                City = viewModel.ToCity,
-                StateAbbreviation = viewModel.ToStateAbbreviation,
-                PostalCode = viewModel.ToPostalCode
+                // District = viewModel.ToDistrict,
+                // School = viewModel.ToSchool,
+                // Email = viewModel.ToEmail,
+                // StreetNumberName = viewModel.ToStreetNumberName,
+                // City = viewModel.ToCity,
+                // StateAbbreviation = viewModel.ToStateAbbreviation,
+                // PostalCode = viewModel.ToPostalCode
             },
             Note = viewModel.Note,
             Contents = viewModel.Contents
