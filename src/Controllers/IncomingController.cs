@@ -181,10 +181,10 @@ public class IncomingController : AuthenticatedController<IncomingController>
                         District = edOrg?.ParentOrganization?.Name,
                         School = edOrg?.Name,
                         Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
-                        StreetNumberName = edOrg?.StreetNumberName,
-                        City = edOrg?.City,
-                        StateAbbreviation = edOrg?.StateAbbreviation,
-                        PostalCode = edOrg?.PostalCode
+                        StreetNumberName = edOrg?.Address?.StreetNumberName,
+                        City = edOrg?.Address?.City,
+                        StateAbbreviation = edOrg?.Address?.StateAbbreviation,
+                        PostalCode = edOrg?.Address?.PostalCode
                     }
                 },
                 ResponseManifest = null,
@@ -296,10 +296,10 @@ public class IncomingController : AuthenticatedController<IncomingController>
                     District = incomingRequest.EducationOrganization?.ParentOrganization?.Name,
                     School = incomingRequest.EducationOrganization?.Name,
                     Email = User.FindFirstValue(claimType: ClaimTypes.Email)!,
-                    StreetNumberName = incomingRequest.EducationOrganization?.StreetNumberName,
-                    City = incomingRequest.EducationOrganization?.City,
-                    StateAbbreviation = incomingRequest.EducationOrganization?.StateAbbreviation,
-                    PostalCode = incomingRequest.EducationOrganization?.PostalCode
+                    StreetNumberName = incomingRequest.EducationOrganization?.Address?.StreetNumberName,
+                    City = incomingRequest.EducationOrganization?.Address?.City,
+                    StateAbbreviation = incomingRequest.EducationOrganization?.Address?.StateAbbreviation,
+                    PostalCode = incomingRequest.EducationOrganization?.Address?.PostalCode
                 }
             };
             incomingRequest.RequestStatus = viewModel.RequestStatus;

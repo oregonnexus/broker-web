@@ -25,7 +25,7 @@ public class EducationOrganizationRequestModel : SearchableModelWithPagination
             "name" => educationOrganization => educationOrganization.Name,
             "number" => educationOrganization => educationOrganization.Number,
             "type" => educationOrganization => educationOrganization.EducationOrganizationType,
-            _ => educationOrganization => educationOrganization.Id,
+            _ => educationOrganization => (educationOrganization.ParentOrganization != null) ? educationOrganization.ParentOrganization.Name : educationOrganization.Name,
         };
         return sortExpression;
     }
@@ -71,25 +71,25 @@ public class EducationOrganizationRequestModel : SearchableModelWithPagination
 
         if (!string.IsNullOrWhiteSpace(StreetNumberName))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.StreetNumberName
+            searchExpressions.Add(educationOrganization => educationOrganization.Address.StreetNumberName
                 .ToLower()
                 .Contains(StreetNumberName.ToLower()));
         }
         if (!string.IsNullOrWhiteSpace(City))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.City
+            searchExpressions.Add(educationOrganization => educationOrganization.Address.City
                 .ToLower()
                 .Contains(City.ToLower()));
         }       
         if (!string.IsNullOrWhiteSpace(StateAbbreviation))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.StateAbbreviation
+            searchExpressions.Add(educationOrganization => educationOrganization.Address.StateAbbreviation
                 .ToLower()
                 .Contains(StateAbbreviation.ToLower()));
         }
         if (!string.IsNullOrWhiteSpace(PostalCode))
         {
-            searchExpressions.Add(educationOrganization => educationOrganization.PostalCode
+            searchExpressions.Add(educationOrganization => educationOrganization.Address.PostalCode
                 .ToLower()
                 .Contains(PostalCode.ToLower()));
         }

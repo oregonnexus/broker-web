@@ -39,6 +39,18 @@ public class CreateEducationOrganizationRequestViewModel
     [Display(Name = "Domain")]
     public string? Domain { get; set; }
 
+    [Display(Name = "Name")]
+    public string? ContactName { get; set; }
+
+    [Display(Name = "Job Title")]
+    public string? ContactJobTitle { get; set; }
+
+    [Display(Name = "Phone")]
+    public string? ContactPhone { get; set; }
+
+    [Display(Name = "Email")]
+    public string? ContacEmail { get; set; }
+
     [Display(Name = "Education Organizations")]
     public IEnumerable<SelectListItem> EducationOrganizations { get; set; } = Enumerable.Empty<SelectListItem>();
 

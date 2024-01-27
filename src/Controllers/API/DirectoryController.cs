@@ -48,13 +48,8 @@ public class DirectoryController : Controller
                 Id = districtEdOrg.Id,
                 Name = districtEdOrg.Name,
                 Number = districtEdOrg.Number,
-                Address = (districtEdOrg.StreetNumberName is not null) ? new()
-                {
-                    StreetNumberName = districtEdOrg.StreetNumberName,
-                    City = districtEdOrg.City,
-                    StateAbbreviation = districtEdOrg.StateAbbreviation,
-                    PostalCode = districtEdOrg.PostalCode
-                } : null,
+                Domain = districtEdOrg.Domain,
+                Address = districtEdOrg.Address,
                 Schools = new List<School>()
             };
 
@@ -67,13 +62,8 @@ public class DirectoryController : Controller
                         Id = schoolEdOrg.Id,
                         Name = schoolEdOrg.Name,
                         Number = schoolEdOrg.Number,
-                        Address = (schoolEdOrg.StreetNumberName is not null) ? new()
-                        {
-                            StreetNumberName = schoolEdOrg.StreetNumberName,
-                            City = schoolEdOrg.City,
-                            StateAbbreviation = schoolEdOrg.StateAbbreviation,
-                            PostalCode = schoolEdOrg.PostalCode
-                        } : null
+                        Address = schoolEdOrg.Address,
+                        Contacts = schoolEdOrg.Contacts
                     });
                 }
             }

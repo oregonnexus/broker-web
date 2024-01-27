@@ -34,6 +34,18 @@ public class EducationOrganizationRequestViewModel
     [Display(Name = "Zip Code")]
     public string? PostalCode { get; set; }
 
+    [Display(Name = "Name")]
+    public string? ContactName { get; set; }
+
+    [Display(Name = "Job Title")]
+    public string? ContactJobTitle { get; set; }
+
+    [Display(Name = "Phone")]
+    public string? ContactPhone { get; set; }
+
+    [Display(Name = "Email")]
+    public string? ContacEmail { get; set; }
+
     public EducationOrganization ParentOrganization { get; set; } = new();
 
     public EducationOrganizationRequestViewModel() { }
@@ -47,10 +59,14 @@ public class EducationOrganizationRequestViewModel
         EducationOrganizationType = educationOrganization.EducationOrganizationType;
         ParentOrganizationId = educationOrganization.ParentOrganizationId;
         ParentOrganization = educationOrganization.ParentOrganization ?? new EducationOrganization();
-        StreetNumberName = educationOrganization.StreetNumberName;
-        City = educationOrganization.City;
-        StateAbbreviation = educationOrganization.StateAbbreviation;
-        PostalCode = educationOrganization.PostalCode;
+        StreetNumberName = educationOrganization.Address?.StreetNumberName;
+        City = educationOrganization.Address?.City;
+        StateAbbreviation = educationOrganization.Address?.StateAbbreviation;
+        PostalCode = educationOrganization.Address?.PostalCode;
+        ContactName = educationOrganization.Contacts?.First().Name;
+        ContactJobTitle = educationOrganization.Contacts?.First().JobTitle;
+        ContacEmail = educationOrganization.Contacts?.First().Email;
+        ContactPhone = educationOrganization.Contacts?.First().Phone;
     }
 
     public EducationOrganizationRequestViewModel(

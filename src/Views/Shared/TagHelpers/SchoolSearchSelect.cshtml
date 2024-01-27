@@ -111,7 +111,13 @@
     </div>
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
         <div class="sm:col-span-2">
-            <label class="block text-sm font-medium leading-6 text-gray-900">District Internet Address</label>
+            <div class="block text-sm font-medium leading-6 text-gray-900">District Internet Address</div>
+            <div class="mt-2">
+                <input type="text" id="Domain" name="Domain" value="" placeholder="@Model.Placeholder" aria-invalid="false" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6 valid">
+            </div>
+        </div>
+        <div class="sm:col-span-2">
+            <label class="block text-sm font-medium leading-6 text-gray-900">School</label>
             <div class="mt-2">
                 <div class="flex flex-col items-center">
                     <div class="w-full">
@@ -174,10 +180,17 @@
                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"></textarea>
             </div>
         </div>
-        <div class="sm:col-span-4">
+        <div class="sm:col-span-2">
             <label class="block text-sm font-medium leading-6 text-gray-900">School</label>
             <div class="mt-2">
                 <textarea id="releasing_school" x-text="schoolForDisplay" rows="4" readonly
+                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"></textarea>
+            </div>
+        </div>
+        <div class="sm:col-span-2">
+            <label class="block text-sm font-medium leading-6 text-gray-900">School Records Contact</label>
+            <div class="mt-2">
+                <textarea id="releasing_school_records_contact" x-text="schoolRecordsContactForDisplay" rows="4" readonly
                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6"></textarea>
             </div>
         </div>

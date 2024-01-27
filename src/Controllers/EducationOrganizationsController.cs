@@ -38,13 +38,14 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
 
         var sortExpression = model.BuildSortExpression();
 
-        var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
+        var specificationPre = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
             .WithSortExpression(sortExpression)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
-            .Build();
+            ;
+       var specification = specificationPre.Build();
 
         var totalItems = await _educationOrganizationRepository.CountAsync(
             specification,
@@ -136,11 +137,23 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
             Name = data.Name,
             Number = data.Number,
             EducationOrganizationType = data.EducationOrganizationType,
-            StreetNumberName = data.StreetNumberName,
-            City = data.City,
-            PostalCode = data.PostalCode,
-            StateAbbreviation = data.StateAbbreviation,
-            Domain = data.Domain
+            Address = new Address()
+            {
+                StreetNumberName = data.StreetNumberName,
+                City = data.City,
+                PostalCode = data.PostalCode,
+                StateAbbreviation = data.StateAbbreviation
+            },
+            Domain = data.Domain,
+            Contacts = new List<EducationOrganizationContact>()
+            {
+                new EducationOrganizationContact {
+                    Name = data.ContactName,
+                    Email = data.ContacEmail,
+                    Phone = data.ContactPhone,
+                    JobTitle = data.ContactJobTitle
+                }
+            }
         };
 
         await _educationOrganizationRepository.AddAsync(organization);
@@ -173,9 +186,16 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
                 Name = organization.Name!,
                 EducationOrganizationType = organization.EducationOrganizationType,
                 Number = organization.Number!,
-                StreetNumberName = organization.StreetNumberName!,
+                StreetNumberName = organization.Address?.StreetNumberName!,
+                City = organization.Address?.City,
+                StateAbbreviation = organization.Address?.StateAbbreviation,
+                PostalCode = organization.Address?.PostalCode,
                 States = States.GetSelectList(),
-                Domain = organization.Domain
+                Domain = organization.Domain,
+                ContactName = organization.Contacts?.First().Name,
+                ContactJobTitle = organization.Contacts?.First().JobTitle,
+                ContacEmail = organization.Contacts?.First().Email,
+                ContactPhone = organization.Contacts?.First().Phone
             };
         }
 
@@ -218,11 +238,24 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
         }
         organization.Number = data.Number;
         organization.EducationOrganizationType = data.EducationOrganizationType;
-        organization.StreetNumberName = data.StreetNumberName;
-        organization.City = data.City;
-        organization.PostalCode = data.PostalCode;
-        organization.StateAbbreviation = data.StateAbbreviation;
+        organization.Address = new Address()
+        {
+            StreetNumberName = data.StreetNumberName,
+            City = data.City,
+            PostalCode = data.PostalCode,
+            StateAbbreviation = data.StateAbbreviation
+        };
         organization.Domain = data.Domain;
+
+        organization.Contacts = new List<EducationOrganizationContact>()
+            {
+                new EducationOrganizationContact {
+                    Name = data.ContactName,
+                    Email = data.ContacEmail,
+                    Phone = data.ContactPhone,
+                    JobTitle = data.ContactJobTitle
+                }
+            };
 
         await _educationOrganizationRepository.UpdateAsync(organization);
 

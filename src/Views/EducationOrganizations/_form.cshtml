@@ -61,7 +61,7 @@
               </div>
             </div>
           </div>
-          <div class="grid gap-6 pb-8">
+          <div class="grid gap-6 pb-8" x-show="!isSchool">
             <div>
               <h2 class="text-base font-semibold leading-7 text-gray-900">Broker information</h2>
               <p class="mt-1 text-sm leading-6 text-gray-600">Broker directory information.</p>
@@ -117,6 +117,44 @@
                   <input asp-for="PostalCode" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                 </div>
                 <p class="mt-2 text-sm text-red-600" asp-validation-for="PostalCode">@Html.ValidationMessageFor(m => m.PostalCode)</p>
+              </div>
+            </div>
+          </div>
+          <div class="grid gap-6 pb-8" x-show="isSchool">
+            <div>
+              <h2 class="text-base font-semibold leading-7 text-gray-900">Records Contact information</h2>
+              <p class="mt-1 text-sm leading-6 text-gray-600">School records contact details.</p>
+            </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ContactName, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ContactName" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ContactName">@Html.ValidationMessageFor(m => m.ContactName)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ContactJobTitle, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ContactJobTitle" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ContactJobTitle">@Html.ValidationMessageFor(m => m.ContactJobTitle)</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ContactPhone, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ContactPhone" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="Phone">@Html.ValidationMessageFor(m => m.ContactPhone)</p>
+              </div>
+              <div class="sm:col-span-2">
+                @Html.LabelFor(it => it.ContacEmail, new { @class = "block text-sm font-medium leading-6 text-gray-900" })
+                <div class="mt-2">
+                  <input asp-for="ContacEmail" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
+                </div>
+                <p class="mt-2 text-sm text-red-600" asp-validation-for="ContacEmail">@Html.ValidationMessageFor(m => m.ContacEmail)</p>
               </div>
             </div>
           </div>
