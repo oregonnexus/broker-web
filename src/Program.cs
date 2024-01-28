@@ -161,6 +161,11 @@ builder.Services.AddConnectorDependencies();
 
 builder.Services.AddBrokerServices();
 
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AutomaticAuthentication = false;
+});
+
 var app = builder.Build();
 
 // Noted this way because of 
