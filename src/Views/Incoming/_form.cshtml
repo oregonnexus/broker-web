@@ -165,7 +165,8 @@
                     this.districtForDisplay = `${this.district.name} ${this.district.number}
 ${this.district.domain}`;
 if (this.district.address != null) {
-this.districtForDisplay = `${this.district.address.streetNumberName}
+this.districtForDisplay += `
+${this.district.address.streetNumberName}
 ${this.district.address.city}, ${this.district.address.stateAbbreviation} ${this.district.address.postalCode}`;
 }
                 },
