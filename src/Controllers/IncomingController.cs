@@ -32,6 +32,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OregonNexus.Broker.Web.Utilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using OregonNexus.Broker.Service;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -44,6 +45,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
     private readonly IPayloadContentService _payloadContentService;
     private readonly FocusHelper _focusHelper;
     private readonly ICurrentUser _currentUser;
+    private readonly ManifestService _manifestService;
 
     public IncomingController(
         IReadRepository<EducationOrganization> educationOrganizationRepository,
@@ -51,7 +53,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
         IRepository<Request> incomingRequestRepository,
         IPayloadContentService payloadContentService,
         FocusHelper focusHelper,
-        ICurrentUser currentUser)
+        ICurrentUser currentUser,
+        ManifestService manifestService)
     {
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentRepository = payloadContentRepository;
@@ -59,6 +62,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
         _payloadContentService = payloadContentService;
         _focusHelper = focusHelper;
         _currentUser = currentUser;
+        _manifestService = manifestService;
     }
 
     public async Task<IActionResult> Index(
@@ -72,6 +76,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
         var schools = await _focusHelper.GetFocusedSchools();
 
         searchExpressions.Add(x => schools.Contains(x.EducationOrganization));
+
+        searchExpressions.Add(x => x.IncomingOutgoing == IncomingOutgoing.Incoming);
 
         var sortExpression = model.BuildSortExpression();
 
@@ -162,7 +168,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             var incomingRequest = new Request
             {
-                EducationOrganizationId = viewModel.EducationOrganizationId,
+                EducationOrganizationId = viewModel.EducationOrganizationId.Value,
                 Student = new StudentRequest() {
                     Student = student,
                     Connectors = (jsonConnector is not null) ? new Dictionary<string, object>
@@ -177,16 +183,13 @@ public class IncomingController : AuthenticatedController<IncomingController>
                     To = new RequestAddress()
                     {
                         District = district,
-                        School = school,
-                        Sender = new EducationOrganizationContact()
-                        {
-                            Email = User.FindFirstValue(claimType: ClaimTypes.Email)!
-                        }
+                        School = school
                     }
                 },
                 ResponseManifest = null,
                 RequestProcessUserId = userId,
-                RequestStatus = RequestStatus.Draft
+                RequestStatus = RequestStatus.Draft,
+                IncomingOutgoing = IncomingOutgoing.Incoming
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
@@ -250,7 +253,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             Guard.Against.Null(incomingRequest);
 
-            incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
+            incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId.Value;
 
             var student = new Student()
             {
@@ -289,7 +292,6 @@ public class IncomingController : AuthenticatedController<IncomingController>
             incomingRequest.RequestStatus = viewModel.RequestStatus;
 
             await _incomingRequestRepository.UpdateAsync(incomingRequest);
-            await _incomingRequestRepository.SaveChangesAsync();
 
             await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
@@ -362,6 +364,10 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
         incomingRequest.RequestStatus = RequestStatus.WaitingToSend;
         incomingRequest.RequestProcessUserId = _currentUser.AuthenticatedUserId();
+
+        var manifestWithFrom = await _manifestService.AddFrom(incomingRequest, _currentUser.AuthenticatedUserId()!.Value);
+
+        incomingRequest.RequestManifest = manifestWithFrom;
 
         await _incomingRequestRepository.UpdateAsync(incomingRequest);
 

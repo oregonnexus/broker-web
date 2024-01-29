@@ -44,13 +44,11 @@ public class OutgoingRequestModel : SearchableModelWithPagination
         return sortExpression;
     }
 
-    public List<Expression<Func<Request, bool>>> BuildSearchExpressions(Guid educationOrganizationId)
+    public List<Expression<Func<Request, bool>>> BuildSearchExpressions()
     {
         var searchExpressions = new List<Expression<Func<Request, bool>>>()
         {
-            request => (request.EducationOrganizationId == educationOrganizationId)
-                && request.RequestStatus != RequestStatus.Draft
-                && request.RequestStatus != RequestStatus.WaitingToSend
+            
         };
 
         if (!string.IsNullOrWhiteSpace(SearchBy))

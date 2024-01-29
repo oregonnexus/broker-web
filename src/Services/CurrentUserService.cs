@@ -14,6 +14,10 @@ public class CurrentUserService : ICurrentUser
     public Guid? AuthenticatedUserId()
     {
         var SessionUserId = _httpContext.HttpContext!.User.Claims.Where(v => v.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").FirstOrDefault()?.Value;
-        return Guid.Parse(SessionUserId!);
+        if (Guid.TryParse(SessionUserId, out var sessionId))
+        {
+            return sessionId;
+        }
+        return null;
     }
 }

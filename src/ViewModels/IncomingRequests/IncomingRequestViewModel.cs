@@ -30,7 +30,7 @@ public class IncomingRequestViewModel
 
     [Required]
     [Display(Name = "Date")]
-    public DateTimeOffset? Date { get; set; }
+    public string? Date { get; set; }
 
     [Required]
     [Display(Name = "Status")]
@@ -49,8 +49,13 @@ public class IncomingRequestViewModel
         ReleasingSchool = incomingRequest.RequestManifest?.To?.School?.Name ?? string.Empty;
         ReceivingDistrict = incomingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
         ReceivingSchool = incomingRequest.EducationOrganization?.Name ?? string.Empty;
-        Student = $"{incomingRequest.RequestManifest?.Student?.FirstName} {incomingRequest.RequestManifest?.Student?.LastName}";
-        Date = incomingRequest.InitialRequestSentDate;
+        Student = $"{incomingRequest.RequestManifest?.Student?.LastName}, {incomingRequest.RequestManifest?.Student?.FirstName}";
+        
+        var pacific = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+        Date = (incomingRequest.InitialRequestSentDate != null) 
+                ? TimeZoneInfo.ConvertTimeFromUtc(incomingRequest.InitialRequestSentDate.Value, pacific).ToString("M/dd/yyyy h:mm tt") 
+                : null;
+
         Status = incomingRequest.RequestStatus == RequestStatus.Approved
                 ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
     }
@@ -70,7 +75,7 @@ public class IncomingRequestViewModel
         ReceivingDistrict = receivingDistrict;
         ReceivingSchool = receivingSchool;
         Student = student;
-        Date = date;
+        Date = date.ToString("M/dd/yyyy h:mm tt");
         Status = status;
     }
 }

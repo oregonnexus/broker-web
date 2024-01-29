@@ -11,11 +11,9 @@ using OregonNexus.Broker.Web.Specifications.Paginations;
 using System.Security.Claims;
 using Ardalis.Specification;
 using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
 using OregonNexus.Broker.Web.Services.PayloadContents;
-using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
-using src.Models.Students;
+using OregonNexus.Broker.Web.Helpers;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
@@ -25,19 +23,21 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
     private readonly IRepository<PayloadContent> _payloadContentRepository;
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IPayloadContentService _payloadContentService;
-
+    private readonly FocusHelper _focusHelper;
 
     public OutgoingController(
         IHttpContextAccessor httpContextAccessor,
         IRepository<Request> outgoingRequestRepository,
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
-        IPayloadContentService payloadContentService)
+        IPayloadContentService payloadContentService,
+        FocusHelper focusHelper)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentService = payloadContentService;
+        _focusHelper = focusHelper;
     }
 
     public async Task<IActionResult> Index(
@@ -46,9 +46,14 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
     {
         RefreshSession();
 
-        var searchExpressions = model.BuildSearchExpressions(GetFocusOrganizationId());
+        var searchExpressions = model.BuildSearchExpressions();
+
+        searchExpressions.Add(x => x.IncomingOutgoing == IncomingOutgoing.Outgoing);
+
+        var schools = await _focusHelper.GetFocusedSchools();
+        searchExpressions.Add(x => schools.Contains(x.EducationOrganization));
+
         var sortExpression = model.BuildSortExpression();
-        var organizationName = GetFocusOrganizationDistrict();
 
         var specification = new SearchableWithPaginationSpecification<Request>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
@@ -71,14 +76,13 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
         var outgoingRequestViewModels = outgoingRequests
             .Select(outgoingRequest => new OutgoingRequestViewModel(outgoingRequest));
 
-        outgoingRequestViewModels = outgoingRequestViewModels.Where(request => request.ReleasingDistrict == organizationName);
         totalItems = outgoingRequestViewModels.Count();
 
         if (!string.IsNullOrWhiteSpace(model.SearchBy))
         {
             outgoingRequestViewModels = outgoingRequestViewModels
-                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.District.ToLower().Contains(model.SearchBy)
-                 || request.School.ToLower().Contains(model.SearchBy));
+                .Where(request => request.Student?.ToLower().Contains(model.SearchBy) is true || request.ReceivingSchool.ToLower().Contains(model.SearchBy)
+                 || request.ReceivingSchool.ToLower().Contains(model.SearchBy));
             totalItems = outgoingRequestViewModels.Count();
         }
 
@@ -141,7 +145,7 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
 
             var today = DateTime.UtcNow;
 
-            outgoingRequest.EducationOrganizationId = viewModel.EducationOrganizationId;
+            outgoingRequest.EducationOrganizationId = viewModel.EducationOrganizationId.Value;
             outgoingRequest.Student!.Student!.LastName = viewModel.LastSurname;
             outgoingRequest.Student!.Student!.FirstName = viewModel.FirstName;
             outgoingRequest.Student!.Student!.MiddleName = viewModel.MiddleName;

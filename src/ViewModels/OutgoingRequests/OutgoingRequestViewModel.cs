@@ -11,21 +11,24 @@ public class OutgoingRequestViewModel
     [Required]
     public Guid Id { get; set; }
 
-    [Display(Name = "District")]
-    public string District { get; set; } = string.Empty;
+    [Display(Name = "Receiving District")]
+    public string ReceivingDistrict { get; set; } = string.Empty;
+
+    [Display(Name = "Receiving School")]
+    public string ReceivingSchool { get; set; } = string.Empty;
 
     [Display(Name = "Releasing District")]
     public string ReleasingDistrict { get; set; } = string.Empty;
 
-    [Display(Name = "School")]
-    public string School { get; set; } = string.Empty;
+    [Display(Name = "Releasing School")]
+    public string ReleasingSchool { get; set; } = string.Empty;
 
     [Display(Name = "Student")]
     public string? Student { get; set; } = string.Empty;
 
     [Required]
     [Display(Name = "Date")]
-    public DateTimeOffset Date { get; set; }
+    public string? Date { get; set; }
 
     [Required]
     [Display(Name = "Status")]
@@ -39,30 +42,37 @@ public class OutgoingRequestViewModel
 
     public OutgoingRequestViewModel(Request outgoingRequest)
     {
-
         Id = outgoingRequest.Id;
-        // District = outgoingRequest.RequestManifest?.To?.District ?? string.Empty;
-        // ReleasingDistrict = outgoingRequest.RequestManifest?.From?.District ?? string.Empty;
-        // School = outgoingRequest.RequestManifest?.To?.School ?? string.Empty;
-        Student = $"{outgoingRequest.ResponseManifest?.Student?.FirstName} {outgoingRequest.ResponseManifest?.Student?.LastName}";
-        Date = outgoingRequest.CreatedAt;
+        ReceivingDistrict = outgoingRequest.RequestManifest?.From?.District?.Name ?? string.Empty;
+        ReceivingSchool = outgoingRequest.RequestManifest?.From?.School?.Name ?? string.Empty;
+        ReleasingDistrict = outgoingRequest.EducationOrganization?.ParentOrganization?.Name ?? string.Empty;
+        ReleasingSchool = outgoingRequest.EducationOrganization?.Name ?? string.Empty;
+        Student = $"{outgoingRequest.RequestManifest?.Student?.LastName}, {outgoingRequest.RequestManifest?.Student?.FirstName}";
+
+        var pacific = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+        Date = TimeZoneInfo.ConvertTimeFromUtc(outgoingRequest.CreatedAt.DateTime, pacific).ToString("M/dd/yyyy h:mm tt");
+        
         Status = outgoingRequest.RequestStatus == RequestStatus.Sent
                 ? RequestStatus.WaitingApproval.ToFriendlyString() : outgoingRequest.RequestStatus.ToFriendlyString();
     }
 
     public OutgoingRequestViewModel(
         Guid id,
-        string district,
-        string school,
+        string releasingDistrict,
+        string releasingSchool,
+        string receivingDistrict,
+        string receivingSchool,
         string? student,
         DateTime date,
         string status)
     {
         Id = id;
-        District = district;
-        School = school;
+        ReleasingDistrict = releasingDistrict;
+        ReleasingSchool = releasingSchool;
+        ReceivingDistrict = receivingDistrict;
+        ReceivingSchool = receivingSchool;
         Student = student;
-        Date = date;
+        Date = date.ToString("M/dd/yyyy h:mm tt");
         Status = status;
     }
 }
