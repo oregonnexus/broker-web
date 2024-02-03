@@ -1,4 +1,4 @@
-@model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@model OregonNexus.Broker.Web.ViewModels.OutgoingRequests.CreateOutgoingRequestViewModel
 @using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 <div class="my-4">
@@ -10,8 +10,8 @@
                         <div class="block text-sm font-medium leading-6 text-gray-900">Attachments</div>
                         <div class="mt-2">
                             <div class="grid grid-cols-4 gap-0.5 sm:grid-cols-4">
-                                @if(Model.Attachments is not null)
-                                @foreach(var payloadContent in Model.Attachments)
+                                @if(Model.DraftAttachments is not null)
+                                @foreach(var payloadContent in Model.DraftAttachments)
                                 {
                                     <div class="sm:col-span-3">
                                       <div class="flex items-center">

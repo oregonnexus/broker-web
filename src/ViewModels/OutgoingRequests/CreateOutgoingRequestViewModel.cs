@@ -1,4 +1,5 @@
-﻿using OregonNexus.Broker.Domain;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using OregonNexus.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
 namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 
@@ -6,29 +7,14 @@ public class CreateOutgoingRequestViewModel
 {
     public Guid RequestId { get; set; }
 
-    public List<EducationOrganization> EducationOrganizations { get; set; } = new List<EducationOrganization>();
-
-    [Display(Name = "School")]
-    // [Required(ErrorMessage = "Education Organization is required")]
-    public Guid? EducationOrganizationId { get; set; }
-
     [Display(Name = "Student")]
     [Obsolete]
     public string? Student { get; set; } = string.Empty;
 
     [Display(Name = "Date")]
-    public DateTimeOffset Date { get; set; }
+    public DateTimeOffset RequestReceived { get; set; }
 
-    [Display(Name = "EdFi Student Id")]
-    public string? EdfiId { get; set; }
-
-    [Display(Name = "EdFi Student Unique ID")]
-    public string? EdfiStudentUniqueId { get; set; }
-
-    [Display(Name = "EdFi ID")]
-    public string? Id { get; set; }
-
-    [Display(Name = "Student Unique ID")]
+    [Display(Name = "Student ID")]
     public string? StudentUniqueId { get; set; }
 
     [Display(Name = "First Name")]
@@ -40,26 +26,33 @@ public class CreateOutgoingRequestViewModel
     [Display(Name = "Last Name")]
     public string? LastSurname { get; set; }
 
-    [Display(Name = "From District")]
-    public string? FromDistrict { get; set; }
+    [Display(Name = "Birth Date")]
+    public string? BirthDate { get; set; }
 
-    [Display(Name = "From School")]
-    public string? FromSchool { get; set; }
+    [Display(Name = "Gender")]
+    public string? Gender { get; set; }
 
-    [Display(Name = "From Email")]
-    public string? FromEmail { get; set; }
+    [Display(Name = "Grade")]
+    public string? Grade { get; set; }
+    public string? Additional { get; set; }
 
-    [Display(Name = "To District")]
-    public string? ToDistrict { get; set; }
+    [Display(Name = "Receiving Student")]
+    public Student? ReceivingStudent { get; set; }
 
-    [Display(Name = "To School")]
-    public string? ToSchool { get; set; }
+    [Display(Name = "Receiving District")]
+    public District? ReceivingDistrict { get; set; }
 
-    [Display(Name = "Clerk's Email")]
-    public string? ToEmail { get; set; }
+    [Display(Name = "Receiving School")]
+    public School? ReceivingSchool { get; set; }
+
+    [Display(Name = "Receiving School Contact")]
+    public EducationOrganizationContact? ReceivingSchoolContact { get; set; }
+
+    [Display(Name = "Receiving Request Notes")]
+    public string? ReceivingNotes { get; set; }
 
     [Display(Name = "Notes")]
-    public string? Note { get; set; }
+    public string? ReleasingNotes { get; set; }
 
     [Display(Name = "Contents")]
     public List<string>? Contents { get; set; }
@@ -70,4 +63,9 @@ public class CreateOutgoingRequestViewModel
 
     [Display(Name = "Files")]
     public IFormFileCollection Files { get; set; } = new FormFileCollection();
+    public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
+    
+    public List<PayloadContent>? ReceivingAttachments { get; set; }
+
+    public List<PayloadContent>? DraftAttachments { get; set; }
 }

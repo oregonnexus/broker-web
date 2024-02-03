@@ -304,6 +304,34 @@ public class IncomingController : AuthenticatedController<IncomingController>
         return View(viewModel);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> ViewAttachment(Guid id)
+    {
+        var payloadContent = await _payloadContentRepository.GetByIdAsync(id);
+
+        Guard.Against.Null(payloadContent);
+        Guard.Against.Null(payloadContent.ContentType, "ContentType", "ContentType missing from payload content.");
+
+        if (payloadContent.JsonContent is not null)
+        {
+            return Ok(payloadContent.JsonContent.ToJsonString());
+        }
+
+        var stream = new MemoryStream();
+        if (payloadContent.XmlContent is not null)
+        {
+            payloadContent.XmlContent.Save(stream);
+        }
+        if (payloadContent.BlobContent is not null)
+        {
+            await stream.WriteAsync(payloadContent.BlobContent);
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+        return new FileStreamResult(stream, payloadContent.ContentType);
+    }
+
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]

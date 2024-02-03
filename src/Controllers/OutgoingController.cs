@@ -14,6 +14,16 @@ using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 using OregonNexus.Broker.Web.Services.PayloadContents;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 using OregonNexus.Broker.Web.Helpers;
+using OregonNexus.Broker.Web.Extensions.Genders;
+using Ardalis.GuardClauses;
+using System.Text.Json;
+using OregonNexus.Broker.Connector.Payload;
+using OregonNexus.Broker.Domain.Specifications;
+using OregonNexus.Broker.Web.Utilities;
+using OregonNexus.Broker.Web.Constants.DesignSystems;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
@@ -100,31 +110,32 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
 
     public async Task<IActionResult> Update(Guid requestId)
     {
-        var outgoingRequest = await _outgoingRequestRepository.GetByIdAsync(requestId);
+        var outgoingRequest = await _outgoingRequestRepository.FirstOrDefaultAsync(new RequestByIdWithPayloadContents(requestId));
         if (outgoingRequest is null) return NotFound();
-
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
 
         var viewModel = new CreateOutgoingRequestViewModel
         {
-            Id = outgoingRequest.ResponseManifest?.Student?.StudentNumber,
-            EducationOrganizations = educationOrganizations,
-            EducationOrganizationId = outgoingRequest.EducationOrganizationId,
             RequestId = outgoingRequest.Id,
-            Date = outgoingRequest.CreatedAt,
-            StudentUniqueId = outgoingRequest.ResponseManifest?.Student?.StudentNumber,
-            FirstName = outgoingRequest.ResponseManifest?.Student?.FirstName,
-            MiddleName = outgoingRequest.ResponseManifest?.Student?.MiddleName,
-            LastSurname = outgoingRequest.ResponseManifest?.Student?.LastName,
-            // FromDistrict = outgoingRequest.ResponseManifest?.From?.District,
-            // FromSchool = outgoingRequest.ResponseManifest?.From?.School,
-            // FromEmail = outgoingRequest.ResponseManifest?.From?.Email,
-            // ToDistrict = outgoingRequest.ResponseManifest?.To?.District,
-            // ToSchool = outgoingRequest.ResponseManifest?.To?.School,
-            // ToEmail = outgoingRequest.ResponseManifest?.To?.Email,
-            Note = outgoingRequest.ResponseManifest?.Note,
+            RequestReceived = outgoingRequest.CreatedAt,
+            StudentUniqueId = outgoingRequest.Student?.Student?.StudentNumber,
+            Additional = JsonSerializer.Serialize(outgoingRequest.Student?.Connectors),
+            FirstName = outgoingRequest.Student?.Student?.FirstName,
+            MiddleName = outgoingRequest.Student?.Student?.MiddleName,
+            LastSurname = outgoingRequest.Student?.Student?.LastName,
+            Grade = outgoingRequest.Student?.Student?.Grade,
+            Gender = outgoingRequest.Student?.Student?.Gender,
+            BirthDate = outgoingRequest.Student?.Student?.Birthdate!.Value.ToString("yyyy-MM-dd"),
+            ReceivingStudent = outgoingRequest.RequestManifest?.Student,
+            ReceivingDistrict = outgoingRequest.RequestManifest?.From?.District,
+            ReceivingSchool = outgoingRequest.RequestManifest?.From?.School,
+            ReceivingSchoolContact = outgoingRequest.RequestManifest?.From?.Sender,
+            ReceivingNotes = outgoingRequest.RequestManifest?.Note,
+            ReleasingNotes = outgoingRequest.ResponseManifest?.Note,
             Contents = outgoingRequest.ResponseManifest?.Contents?.Select(x => x.FileName.ToString()).ToList(),
-            RequestStatus = outgoingRequest.RequestStatus
+            RequestStatus = outgoingRequest.RequestStatus,
+            Genders = Genders.GetSelectList(),
+            ReceivingAttachments = outgoingRequest.PayloadContents?.Where(x => x.MessageId != null).ToList(),
+            DraftAttachments = outgoingRequest.PayloadContents?.Where(x => x.MessageId == null).ToList()
         };
 
         return View(viewModel);
@@ -141,33 +152,129 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
 
             var outgoingRequest = await _outgoingRequestRepository.GetByIdAsync(viewModel.RequestId);
 
-            if (outgoingRequest is null) return BadRequest();
+            Guard.Against.Null(outgoingRequest);
 
-            var today = DateTime.UtcNow;
+            var student = new Student()
+            {
+                LastName = viewModel.LastSurname,
+                FirstName = viewModel.FirstName,
+                MiddleName = viewModel.MiddleName,
+                Gender = viewModel.Gender,
+                Grade = viewModel.Grade,
+                Birthdate = (viewModel.BirthDate is not null) ? DateOnly.Parse(viewModel.BirthDate) : null,
+                StudentNumber = viewModel.StudentUniqueId
+            };
 
-            outgoingRequest.EducationOrganizationId = viewModel.EducationOrganizationId.Value;
-            outgoingRequest.Student!.Student!.LastName = viewModel.LastSurname;
-            outgoingRequest.Student!.Student!.FirstName = viewModel.FirstName;
-            outgoingRequest.Student!.Student!.MiddleName = viewModel.MiddleName;
-            // outgoingRequest.Student!.Student!.Gender = viewModel.Gender;
-            // outgoingRequest.Student!.Student!.Grade = viewModel.Grade;
-            outgoingRequest.Student!.Student!.StudentNumber = viewModel.StudentUniqueId;
-            //outgoingRequest.ResponseManifest = responseManifest;
-            outgoingRequest.RequestStatus = viewModel.RequestStatus;
-            outgoingRequest.UpdatedAt = today;
-            outgoingRequest.UpdatedBy = userId;
+            // Resolve Student
+            var jsonConnector = (viewModel.Additional is not null) ? JsonSerializer.Deserialize<Dictionary<string, object>>(viewModel.Additional) : null;
+
+            outgoingRequest.Student = new StudentRequest()
+            {
+                Student = student,
+                Connectors = (jsonConnector is not null) ? new Dictionary<string, object>
+                    { 
+                        [jsonConnector.Keys.First()] = jsonConnector.GetValueOrDefault(jsonConnector.Keys.First())!
+                    } : null
+            };
+
+            outgoingRequest.ResponseManifest = new Manifest() {
+                RequestType = typeof(StudentCumulativeRecord).FullName!,
+                Student = student,
+                Note = viewModel.ReleasingNotes,
+                To = new RequestAddress()
+                {
+                    District = outgoingRequest?.RequestManifest?.From?.District,
+                    School = outgoingRequest?.RequestManifest?.From?.School
+                }
+            };
 
             await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
-            await _outgoingRequestRepository.SaveChangesAsync();
 
             await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
-            return RedirectToAction(nameof(Index));
+            TempData[VoiceTone.Positive] = $"Updated request for {viewModel.FirstName} {viewModel.LastSurname} ({outgoingRequest.Id}).";
+
+            return RedirectToAction(nameof(Update), new { requestId = outgoingRequest.Id });
         }
 
-        var educationOrganizations = await _educationOrganizationRepository.ListAsync();
-        viewModel.EducationOrganizations = educationOrganizations;
         return View(viewModel);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> ViewAttachment(Guid id)
+    {
+        var payloadContent = await _payloadContentRepository.GetByIdAsync(id);
+
+        Guard.Against.Null(payloadContent);
+        Guard.Against.Null(payloadContent.ContentType, "ContentType", "ContentType missing from payload content.");
+
+        if (payloadContent.JsonContent is not null)
+        {
+            return Ok(payloadContent.JsonContent.ToJsonString());
+        }
+
+        var stream = new MemoryStream();
+        if (payloadContent.XmlContent is not null)
+        {
+            payloadContent.XmlContent.Save(stream);
+        }
+        if (payloadContent.BlobContent is not null)
+        {
+            await stream.WriteAsync(payloadContent.BlobContent);
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+        return new FileStreamResult(stream, payloadContent.ContentType);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadAttachment(List<IFormFile> files, Guid requestId)
+    {
+        var incomingRequest = await _outgoingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(requestId));
+
+        Guard.Against.Null(incomingRequest);
+
+        foreach (var formFile in files)
+        {
+            if (formFile.Length > 0)
+            {
+                var file = await FileHelpers
+                        .ProcessFormFile<BufferedSingleFileUploadDb>(formFile, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
+                
+                var payloadContent = new PayloadContent()
+                {
+                    Request = incomingRequest,
+                    ContentType = formFile.ContentType,
+                    BlobContent = file,
+                    FileName = formFile.FileName
+                };
+                
+                await _payloadContentRepository.AddAsync(payloadContent);
+            }
+        }
+
+        return RedirectToAction(nameof(Update), new { requestId = requestId });
+    }
+
+    [HttpDelete]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAttachment(Guid requestId, Guid payloadContentId)
+    {
+        var incomingRequest = await _outgoingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(requestId));
+
+        Guard.Against.Null(incomingRequest);
+
+        var payloadContentToDelete = await _payloadContentRepository.GetByIdAsync(payloadContentId);
+
+        Guard.Against.Null(payloadContentToDelete);
+
+        await _payloadContentRepository.DeleteAsync(payloadContentToDelete);
+
+        return RedirectToAction(nameof(Update), new { requestId = requestId });
     }
 
 }

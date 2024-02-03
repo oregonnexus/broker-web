@@ -16,8 +16,8 @@ public class ForceLogoutExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-//        if (exception.InnerException is ForceLogoutException)
- //       {
+        if (exception is ForceLogoutException)
+        {
             httpContext.Response.Redirect("/login/logout");
         
             var exceptionMessage = exception.Message;
@@ -27,8 +27,8 @@ public class ForceLogoutExceptionHandler : IExceptionHandler
             // Return false to continue with the default behavior
             // - or - return true to signal that this exception is handled
             return ValueTask.FromResult(true);
-//        }
+        }
         
- //       return ValueTask.FromResult(false);
+       return ValueTask.FromResult(false);
     }
 }
