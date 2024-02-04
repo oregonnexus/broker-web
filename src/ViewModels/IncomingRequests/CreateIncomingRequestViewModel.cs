@@ -90,6 +90,9 @@ public class CreateIncomingRequestViewModel
 
     public IEnumerable<SelectListItem> Genders { get; set; } = Enumerable.Empty<SelectListItem>();
 
-    public List<PayloadContent>? Attachments { get; set; }
-    
+    public List<PayloadContent>? ReceivingAttachments { get; set; }
+
+    public List<PayloadContent>? DraftAttachments { get; set; }
+
+    public List<PayloadContent>? ReleasingAttachments { get; set; }
 }

@@ -68,4 +68,6 @@ public class CreateOutgoingRequestViewModel
     public List<PayloadContent>? ReceivingAttachments { get; set; }
 
     public List<PayloadContent>? DraftAttachments { get; set; }
+
+    public List<PayloadContent>? ReleasingAttachments { get; set; }
 }

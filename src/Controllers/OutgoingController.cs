@@ -25,6 +25,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using OregonNexus.Broker.Service;
+using MimeKit.Encodings;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
@@ -141,7 +142,8 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
             Contents = outgoingRequest.ResponseManifest?.Contents?.Select(x => x.FileName.ToString()).ToList(),
             RequestStatus = outgoingRequest.RequestStatus,
             Genders = Genders.GetSelectList(),
-            ReceivingAttachments = outgoingRequest.PayloadContents?.Where(x => x.MessageId != null).ToList(),
+            ReceivingAttachments = outgoingRequest.PayloadContents?.Where(x => outgoingRequest.RequestManifest!.Contents!.Select(y => y.FileName).Contains(x.FileName)).ToList(),
+            ReleasingAttachments = (outgoingRequest.ResponseManifest is not null) ? outgoingRequest.PayloadContents?.Where(x => outgoingRequest.ResponseManifest!.Contents!.Select(y => y.FileName).Contains(x.FileName)).ToList() : null,
             DraftAttachments = outgoingRequest.PayloadContents?.Where(x => x.MessageId == null).ToList()
         };
 

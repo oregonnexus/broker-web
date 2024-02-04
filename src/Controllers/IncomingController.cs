@@ -232,7 +232,9 @@ public class IncomingController : AuthenticatedController<IncomingController>
             RequestStatus = incomingRequest.RequestStatus,
             States = States.GetSelectList(),
             Genders = Genders.GetSelectList(),
-            Attachments = incomingRequest.PayloadContents
+            ReceivingAttachments = incomingRequest.PayloadContents?.Where(x => incomingRequest.RequestManifest!.Contents!.Select(y => y.FileName).Contains(x.FileName)).ToList(),
+            ReleasingAttachments = (incomingRequest.ResponseManifest is not null) ? incomingRequest.PayloadContents?.Where(x => incomingRequest.ResponseManifest!.Contents!.Select(y => y.FileName).Contains(x.FileName)).ToList() : null,
+            DraftAttachments = incomingRequest.PayloadContents?.Where(x => x.MessageId == null).ToList()
         };
 
         return View(viewModel);
