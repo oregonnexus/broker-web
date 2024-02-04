@@ -94,7 +94,8 @@ public class RequestsController : Controller
                         EducationOrganizationId = educationOrganizationId.Value,
                         RequestManifest = mainfestJson,
                         RequestStatus = RequestStatus.Received,
-                        IncomingOutgoing = IncomingOutgoing.Outgoing
+                        IncomingOutgoing = IncomingOutgoing.Outgoing,
+                        Payload = mainfestJson.RequestType
                     };
 
                     await _requestRepository.AddAsync(request);

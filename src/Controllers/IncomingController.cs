@@ -192,7 +192,8 @@ public class IncomingController : AuthenticatedController<IncomingController>
                 ResponseManifest = null,
                 RequestProcessUserId = userId,
                 RequestStatus = RequestStatus.Draft,
-                IncomingOutgoing = IncomingOutgoing.Incoming
+                IncomingOutgoing = IncomingOutgoing.Incoming,
+                Payload = typeof(StudentCumulativeRecord).FullName!
             };
 
             await _incomingRequestRepository.AddAsync(incomingRequest);
