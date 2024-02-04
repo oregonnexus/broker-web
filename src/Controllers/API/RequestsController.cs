@@ -91,12 +91,14 @@ public class RequestsController : Controller
                     var fileBlob = await FileHelpers
                         .ProcessFormFile<BufferedSingleFileUploadDb>(file, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
 
+                    var fileContentType = request.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+
                     var messageContent = new PayloadContent()
                     {
                         RequestId = request.Id,
                         MessageId = message.Id,
                         BlobContent = fileBlob,
-                        ContentType = file.ContentType,
+                        ContentType = fileContentType?.ContentType,
                         FileName = file.FileName
                     };
 
