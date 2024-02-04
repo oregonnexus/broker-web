@@ -68,7 +68,7 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
         searchExpressions.Add(x => x.IncomingOutgoing == IncomingOutgoing.Outgoing);
 
         var schools = await _focusHelper.GetFocusedSchools();
-        searchExpressions.Add(x => schools.Contains(x.EducationOrganization));
+        searchExpressions.Add(x => schools.Contains(x.EducationOrganization!));
 
         var sortExpression = model.BuildSortExpression();
 
@@ -195,11 +195,11 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
                 }
             };
 
-            await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
+            await _outgoingRequestRepository.UpdateAsync(outgoingRequest!);
 
             await _payloadContentService.AddPayloadContentsAsync(viewModel.Files, viewModel.RequestId);
 
-            TempData[VoiceTone.Positive] = $"Updated request for {viewModel.FirstName} {viewModel.LastSurname} ({outgoingRequest.Id}).";
+            TempData[VoiceTone.Positive] = $"Updated request for {viewModel.FirstName} {viewModel.LastSurname} ({outgoingRequest!.Id}).";
 
             return RedirectToAction(nameof(Update), new { requestId = outgoingRequest.Id });
         }

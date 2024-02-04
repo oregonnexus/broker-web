@@ -104,8 +104,8 @@ public class LoginController : AuthenticatedController<LoginController>
             var email = info.Principal.Claims.Where(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()!.Value!;
             var user = await _userManager.FindByEmailAsync(email);
 
-            var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
+            var currentUser = await _userRepo.GetByIdAsync(user!.Id);
+            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
             _focusHelper.SetInitialFocus();
             
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
@@ -123,8 +123,8 @@ public class LoginController : AuthenticatedController<LoginController>
             var email = info.Principal.Claims.Where(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()!.Value!;
             var user = await _userManager.FindByEmailAsync(email);
 
-            var currentUser = await _userRepo.GetByIdAsync(user?.Id);
-            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser);
+            var currentUser = await _userRepo.GetByIdAsync(user!.Id);
+            HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
             _focusHelper.SetInitialFocus();
 
             if (user is null)

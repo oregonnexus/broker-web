@@ -106,7 +106,7 @@ public class BrokerClaimsTransformation : IClaimsTransformation
 
             if (userIdentity is not null)
             {
-                _user = await _userRepo.GetBySpecAsync(new ReadOnlyUserSpec(userIdentity.Id));
+                _user = await _userRepo.FirstOrDefaultAsync(new ReadOnlyUserSpec(userIdentity.Id));
             }
         }
         else

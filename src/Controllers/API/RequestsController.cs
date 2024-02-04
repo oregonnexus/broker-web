@@ -69,7 +69,7 @@ public class RequestsController : Controller
             // Check if request id exists
             if (mainfestJson?.RequestId is not null)
             {
-                request = await _requestRepository.GetByIdAsync(mainfestJson.RequestId);
+                request = await _requestRepository.GetByIdAsync(mainfestJson.RequestId.Value);
 
                 if (request is not null && request.EducationOrganizationId == educationOrganizationId)
                 {

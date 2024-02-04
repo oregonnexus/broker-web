@@ -72,7 +72,7 @@ public class DirectoryController : Controller
 
             return Ok(district);
         }
-        catch(NoDistrictForDomainException _)
+        catch (NoDistrictForDomainException)
         {
             var message = $"No district found for domain: {domain}";
             return NotFound(message.ToJsonDocument());

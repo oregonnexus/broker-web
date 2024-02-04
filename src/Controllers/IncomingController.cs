@@ -75,7 +75,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
         var schools = await _focusHelper.GetFocusedSchools();
 
-        searchExpressions.Add(x => schools.Contains(x.EducationOrganization));
+        searchExpressions.Add(x => schools.Contains(x.EducationOrganization!));
 
         searchExpressions.Add(x => x.IncomingOutgoing == IncomingOutgoing.Incoming);
 
