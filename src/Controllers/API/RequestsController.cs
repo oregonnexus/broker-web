@@ -81,6 +81,7 @@ public class RequestsController : Controller
                     {
                         RequestId = request.Id,
                         RequestResponse = RequestResponse.Response,
+                        MessageTimestamp = DateTime.UtcNow,
                         MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.ResponseManifest))
                     };
                     await _messageRepository.AddAsync(message);
@@ -103,6 +104,7 @@ public class RequestsController : Controller
                     {
                         RequestId = request.Id,
                         RequestResponse = RequestResponse.Response,
+                        MessageTimestamp = DateTime.UtcNow,
                         MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.RequestManifest))
                     };
                     await _messageRepository.AddAsync(message);
@@ -139,7 +141,16 @@ public class RequestsController : Controller
                     var fileBlob = await FileHelpers
                         .ProcessFormFile<BufferedSingleFileUploadDb>(file, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
 
-                    var fileContentType = request!.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                    ManifestContent? fileContentType;
+
+                    if (request is not null && request.EducationOrganizationId == educationOrganizationId && request.ResponseManifest is not null)
+                    {
+                        fileContentType = request!.ResponseManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                    }
+                    else
+                    {
+                        fileContentType = request!.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                    }
 
                     var messageContent = new PayloadContent()
                     {
