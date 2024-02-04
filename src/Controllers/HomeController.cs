@@ -68,22 +68,16 @@ public class HomeController : AuthenticatedController<HomeController>
 
         // Only take 5, displaying latest incoming requests
         // Need the total count as well
-        var incomingRequests = requests;
-            //.Where(request => request.ToEducationOrganizationId == educationOrganizationId);
+        var incomingRequests = requests
+            .Where(request => request.IncomingOutgoing == IncomingOutgoing.Incoming
+             && request.RequestStatus != RequestStatus.Draft);
 
         // Only take 5, displaying latest outgoing requests
         // Need the total count as well
         var outgoingRequests = requests
-            .Where(request => request.EducationOrganizationId == educationOrganizationId
-            && request.RequestStatus != RequestStatus.Draft);
+            .Where(request => request.IncomingOutgoing == IncomingOutgoing.Outgoing);
 
         var usersCount = await _userRepository.CountAsync(cancellationToken);
-
-        var educationOrganizations = (await _educationOrganizationRepository.ListAsync(cancellationToken))
-            .Where(educationOrganization => educationOrganization.Id == educationOrganizationId)
-            .OrderByDescending(organization => organization.CreatedAt)
-            .Select(educationOrganization => new EducationOrganizationRequestViewModel(educationOrganization))
-            .ToList();
 
         // Temporary, taking 5 here
         var incomingRequestViewModels = incomingRequests
@@ -104,9 +98,6 @@ public class HomeController : AuthenticatedController<HomeController>
         model.WaitingApprovalCount = requests.Count(request => request.RequestStatus == RequestStatus.WaitingApproval);
         model.ApprovedCount = requests.Count(request => request.RequestStatus == RequestStatus.Approved);
         model.DeclinedCount = requests.Count(request => request.RequestStatus == RequestStatus.Declined);
-        model.EducationOrganizationsCount = educationOrganizations.Count;
-        model.EducationOrganizations = educationOrganizations;
-        model.UsersCount = usersCount;
         model.LatestIncomingRequests = incomingRequestViewModels;
         model.LatestOutgoingRequests = outgoingRequestViewModels;
         model.StartDate = model.StartDate;  

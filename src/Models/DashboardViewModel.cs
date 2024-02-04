@@ -25,12 +25,6 @@ public class DashboardViewModel
     [Display(Name = "Declined Requests Count")]
     public int DeclinedCount { get; set; }
 
-    [Display(Name = "Organizations Count")]
-    public int EducationOrganizationsCount { get; set; }
-
-    [Display(Name = "Users Count")]
-    public int UsersCount { get; set; }
-
     [Display(Name = "Start date")]
     public DateTime? StartDate { get; set; }
 
