@@ -24,6 +24,7 @@ using OregonNexus.Broker.Web.Constants.DesignSystems;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
+using OregonNexus.Broker.Service;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
@@ -34,6 +35,8 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
     private readonly IRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IPayloadContentService _payloadContentService;
     private readonly FocusHelper _focusHelper;
+    private readonly ICurrentUser _currentUser;
+    private readonly ManifestService _manifestService;
 
     public OutgoingController(
         IHttpContextAccessor httpContextAccessor,
@@ -41,13 +44,17 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
         IRepository<PayloadContent> payloadContentRepository,
         IRepository<EducationOrganization> educationOrganizationRepository,
         IPayloadContentService payloadContentService,
-        FocusHelper focusHelper)
+        FocusHelper focusHelper,
+        ICurrentUser currentUser,
+        ManifestService manifestService)
     {
         _outgoingRequestRepository = outgoingRequestRepository;
         _payloadContentRepository = payloadContentRepository;
         _educationOrganizationRepository = educationOrganizationRepository;
         _payloadContentService = payloadContentService;
         _focusHelper = focusHelper;
+        _currentUser = currentUser;
+        _manifestService = manifestService;
     }
 
     public async Task<IActionResult> Index(
@@ -275,6 +282,48 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
         await _payloadContentRepository.DeleteAsync(payloadContentToDelete);
 
         return RedirectToAction(nameof(Update), new { requestId = requestId });
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Load(Guid id)
+    {
+        var outgoingRequest = await _outgoingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(id));
+
+        Guard.Against.Null(outgoingRequest);
+
+        outgoingRequest.RequestStatus = RequestStatus.Loaded; // RequestStatus.WaitingToLoad;
+
+        await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
+
+        TempData[VoiceTone.Positive] = $"Request set to load outgoing payload ({outgoingRequest.Id}).";
+        return RedirectToAction(nameof(Update), new { requestId = id });
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Send(Guid id)
+    {
+        var outgoingRequest = await _outgoingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(id));
+
+        Guard.Against.Null(outgoingRequest);
+
+        outgoingRequest.RequestStatus = RequestStatus.WaitingToSend;
+        outgoingRequest.ResponseProcessUserId = _currentUser.AuthenticatedUserId();
+
+        var manifestWithFrom = await _manifestService.AddFrom(outgoingRequest, _currentUser.AuthenticatedUserId()!.Value);
+
+        outgoingRequest.ResponseManifest = manifestWithFrom;
+
+        // Copy over receiving school's request ID
+        outgoingRequest.ResponseManifest!.RequestId = outgoingRequest.RequestManifest?.RequestId;
+
+        await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
+
+        TempData[VoiceTone.Positive] = $"Request marked to send ({outgoingRequest.Id}).";
+        return RedirectToAction(nameof(Update), new { requestId = id });
     }
 
 }

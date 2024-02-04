@@ -63,25 +63,73 @@ public class RequestsController : Controller
                 return NotFound($"EducationOrganization {educationOrganizationId} not found.");
             }
 
-            // Create request
-            var request = new Request()
-            {
-                EducationOrganizationId = educationOrganizationId.Value,
-                RequestManifest = mainfestJson,
-                RequestStatus = RequestStatus.Received,
-                IncomingOutgoing = IncomingOutgoing.Outgoing
-            };
+            Request? request = null;
+            Message? message = null;
 
-            await _requestRepository.AddAsync(request);
-
-            // Create message
-            var message = new Message()
+            // Check if request id exists
+            if (mainfestJson?.RequestId is not null)
             {
-                RequestId = request.Id,
-                RequestResponse = RequestResponse.Response,
-                MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.RequestManifest))
-            };
-            await _messageRepository.AddAsync(message);
+                request = await _requestRepository.GetByIdAsync(mainfestJson.RequestId);
+
+                if (request is not null && request.EducationOrganizationId == educationOrganizationId)
+                {
+                    request.ResponseManifest = mainfestJson;
+                    await _requestRepository.UpdateAsync(request);
+
+                    // Create message
+                    message = new Message()
+                    {
+                        RequestId = request.Id,
+                        RequestResponse = RequestResponse.Response,
+                        MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.ResponseManifest))
+                    };
+                    await _messageRepository.AddAsync(message);
+                }
+                else
+                {
+                    // Create request
+                    request = new Request()
+                    {
+                        EducationOrganizationId = educationOrganizationId.Value,
+                        RequestManifest = mainfestJson,
+                        RequestStatus = RequestStatus.Received,
+                        IncomingOutgoing = IncomingOutgoing.Outgoing
+                    };
+
+                    await _requestRepository.AddAsync(request);
+
+                    // Create message
+                    message = new Message()
+                    {
+                        RequestId = request.Id,
+                        RequestResponse = RequestResponse.Response,
+                        MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.RequestManifest))
+                    };
+                    await _messageRepository.AddAsync(message);
+                }
+            }
+            else
+            {
+                // Create request
+                request = new Request()
+                {
+                    EducationOrganizationId = educationOrganizationId.Value,
+                    RequestManifest = mainfestJson,
+                    RequestStatus = RequestStatus.Received,
+                    IncomingOutgoing = IncomingOutgoing.Outgoing
+                };
+
+                await _requestRepository.AddAsync(request);
+
+                // Create message
+                message = new Message()
+                {
+                    RequestId = request.Id,
+                    RequestResponse = RequestResponse.Response,
+                    MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.RequestManifest))
+                };
+                await _messageRepository.AddAsync(message);
+            }
 
             // Add any attachments
             if (files is not null && files.Count > 0)
@@ -91,12 +139,12 @@ public class RequestsController : Controller
                     var fileBlob = await FileHelpers
                         .ProcessFormFile<BufferedSingleFileUploadDb>(file, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
 
-                    var fileContentType = request.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                    var fileContentType = request!.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
 
                     var messageContent = new PayloadContent()
                     {
                         RequestId = request.Id,
-                        MessageId = message.Id,
+                        MessageId = message!.Id,
                         BlobContent = fileBlob,
                         ContentType = fileContentType?.ContentType,
                         FileName = file.FileName
@@ -106,7 +154,7 @@ public class RequestsController : Controller
                 }
             }
 
-            return Created("requests", request.Id.ToString());
+            return Created("requests", request!.Id.ToString());
         }
         catch(Exception ex)
         {

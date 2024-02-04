@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Domain.Extensions;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Extensions.RequestStatuses;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
 
 namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
 
@@ -52,8 +51,7 @@ public class OutgoingRequestViewModel
         var pacific = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
         Date = TimeZoneInfo.ConvertTimeFromUtc(outgoingRequest.CreatedAt.DateTime, pacific).ToString("M/dd/yyyy h:mm tt");
         
-        Status = outgoingRequest.RequestStatus == RequestStatus.Sent
-                ? RequestStatus.WaitingApproval.ToFriendlyString() : outgoingRequest.RequestStatus.ToFriendlyString();
+        Status = outgoingRequest.RequestStatus.GetDescription();
     }
 
     public OutgoingRequestViewModel(

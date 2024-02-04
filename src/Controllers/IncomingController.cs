@@ -166,8 +166,10 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             var jsonConnector = (viewModel.Additional is not null) ? JsonSerializer.Deserialize<Dictionary<string, object>>(viewModel.Additional) : null;
 
+            var incomingRequestId = Guid.NewGuid();
             var incomingRequest = new Request
             {
+                Id = incomingRequestId,
                 EducationOrganizationId = viewModel.EducationOrganizationId.Value,
                 Student = new StudentRequest() {
                     Student = student,
@@ -178,6 +180,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
                 }, 
                 RequestManifest = new Manifest() {
                     RequestType = typeof(StudentCumulativeRecord).FullName!,
+                    RequestId = incomingRequestId,
                     Student = student,
                     Note = viewModel.Note,
                     To = new RequestAddress()
@@ -253,7 +256,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             Guard.Against.Null(incomingRequest);
 
-            incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId.Value;
+            incomingRequest.EducationOrganizationId = viewModel.EducationOrganizationId!.Value;
 
             var student = new Student()
             {

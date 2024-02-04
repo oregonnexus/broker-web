@@ -1,6 +1,6 @@
 ﻿@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
-@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>
-@using OregonNexus.Broker.Web.Extensions.RequestStatuses;
+@using OregonNexus.Broker.Domain.Extensions;
+@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.IncomingRequests.IncomingRequestViewModel>;
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -190,7 +190,7 @@
                                             >
                                                 Edit
                                             </a>
-                                            @if (@incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Imported.ToFriendlyString())
+                                            @if (@incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Imported.GetDescription())
                                             {
                                                 <a
                                                     asp-controller="Incoming"

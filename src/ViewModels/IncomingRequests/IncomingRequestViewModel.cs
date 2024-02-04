@@ -1,10 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Domain.Extensions;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Extensions.RequestStatuses;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
-using src.Models.Courses;
-using src.Models.ProgramAssociations;
 
 namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 
@@ -56,8 +53,7 @@ public class IncomingRequestViewModel
                 ? TimeZoneInfo.ConvertTimeFromUtc(incomingRequest.InitialRequestSentDate.Value, pacific).ToString("M/dd/yyyy h:mm tt") 
                 : null;
 
-        Status = incomingRequest.RequestStatus == RequestStatus.Approved
-                ? RequestStatus.Imported.ToFriendlyString() : incomingRequest.RequestStatus.ToFriendlyString();
+        Status = incomingRequest.RequestStatus.GetDescription();
     }
     public IncomingRequestViewModel(
         Guid id,
