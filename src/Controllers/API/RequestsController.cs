@@ -1,15 +1,10 @@
 using System.Net;
 using System.Text.Json;
 using Ardalis.GuardClauses;
-using Azure.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using OregonNexus.Broker.Connector.PayloadContentTypes;
 using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web;
 using OregonNexus.Broker.Web.Controllers;
 using OregonNexus.Broker.Web.Utilities;
 
@@ -67,6 +62,8 @@ public class RequestsController : Controller
             Request? request = null;
             Message? message = null;
 
+            RequestStatus? statusToSet = null;
+
             // Check if request id exists
             if (mainfestJson?.RequestId is not null)
             {
@@ -86,6 +83,9 @@ public class RequestsController : Controller
                         MessageContents = JsonDocument.Parse(JsonSerializer.Serialize(request.ResponseManifest))
                     };
                     await _messageRepository.AddAsync(message);
+
+                    // Need to set as received
+                    statusToSet = RequestStatus.Received;
                 }
                 else
                 {
@@ -177,6 +177,12 @@ public class RequestsController : Controller
                     }
                     
                 }
+            }
+
+            if (statusToSet is not null)
+            {
+                request.RequestStatus = RequestStatus.Received;
+                await _requestRepository.UpdateAsync(request);
             }
 
             return Created("requests", request!.Id.ToString());

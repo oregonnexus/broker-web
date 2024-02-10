@@ -177,7 +177,7 @@ public static class FileHelpers
                     $"The file exceeds {megabyteSizeLimit:N1} MB.");
                 }
                 else if (!IsValidFileExtensionAndSignature(
-                    contentDisposition.FileName.Value, memoryStream, 
+                    contentDisposition.FileName.Value!, memoryStream, 
                     permittedExtensions))
                 {
                     modelState.AddModelError("File",
