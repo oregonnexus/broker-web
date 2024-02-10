@@ -5,6 +5,7 @@ using Azure.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using OregonNexus.Broker.Connector.PayloadContentTypes;
 using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
@@ -139,30 +140,42 @@ public class RequestsController : Controller
             {
                 foreach(var file in files)
                 {
-                    var fileBlob = await FileHelpers
-                        .ProcessFormFile<BufferedSingleFileUploadDb>(file, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
-
-                    ManifestContent? fileContentType;
-
-                    if (request is not null && request.EducationOrganizationId == educationOrganizationId && request.ResponseManifest is not null)
+                    if (file.Length > 0)
                     {
-                        fileContentType = request!.ResponseManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                        var fileBlob = await FileHelpers
+                            .ProcessFormFile<BufferedSingleFileUploadDb>(file, ModelState, [".png", ".txt", ".pdf", ".json"], 2097152);
+
+                        ManifestContent? fileContentType;
+
+                        if (request is not null && request.EducationOrganizationId == educationOrganizationId && request.ResponseManifest is not null)
+                        {
+                            fileContentType = request!.ResponseManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                        }
+                        else
+                        {
+                            fileContentType = request!.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
+                        }
+
+                        var messageContent = new PayloadContent()
+                        {
+                            RequestId = request.Id,
+                            MessageId = message!.Id,
+                            ContentType = fileContentType?.ContentType,
+                            FileName = file.FileName
+                        };
+
+                        if (messageContent.ContentType == "application/json")
+                        {
+                            messageContent.JsonContent = JsonDocument.Parse(System.Text.Encoding.Default.GetString(fileBlob));
+                        }
+                        else
+                        {
+                            messageContent.BlobContent = fileBlob;
+                        }
+
+                        await _payloadContentRepository.AddAsync(messageContent);
                     }
-                    else
-                    {
-                        fileContentType = request!.RequestManifest?.Contents?.Where(i => i.FileName == file.FileName).FirstOrDefault();
-                    }
-
-                    var messageContent = new PayloadContent()
-                    {
-                        RequestId = request.Id,
-                        MessageId = message!.Id,
-                        BlobContent = fileBlob,
-                        ContentType = fileContentType?.ContentType,
-                        FileName = file.FileName
-                    };
-
-                    await _payloadContentRepository.AddAsync(messageContent);
+                    
                 }
             }
 

@@ -52,6 +52,10 @@ public static class FileHelpers
             {
                 new byte[] { 0x25, 0x50, 0x44, 0x46 },
             }
+        },
+        { ".json", new List<byte[]>()
+        },
+        { ".txt", new List<byte[]>()
         }
     };
 
@@ -73,9 +77,9 @@ public static class FileHelpers
         // name isn't found, error messages simply won't show
         // a display name.
         MemberInfo property =
-            typeof(T).GetProperty(
+            typeof(T)!.GetProperty(
                 formFile.Name.Substring(formFile.Name.IndexOf(".",
-                StringComparison.Ordinal) + 1));
+                StringComparison.Ordinal) + 1))!;
 
         if (property != null)
         {
@@ -215,7 +219,7 @@ public static class FileHelpers
 
         using (var reader = new BinaryReader(data))
         {
-            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".prn"))
+            if (ext.Equals(".txt") || ext.Equals(".json") || ext.Equals(".csv") || ext.Equals(".prn"))
             {
                 if (_allowedChars.Length == 0)
                 {

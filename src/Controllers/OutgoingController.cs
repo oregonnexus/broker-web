@@ -295,7 +295,7 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
 
         Guard.Against.Null(outgoingRequest);
 
-        outgoingRequest.RequestStatus = RequestStatus.Loaded; // RequestStatus.WaitingToLoad;
+        outgoingRequest.RequestStatus = RequestStatus.WaitingToLoad;
 
         await _outgoingRequestRepository.UpdateAsync(outgoingRequest);
 
