@@ -13,25 +13,18 @@ using OregonNexus.Broker.Web.Models.IncomingRequests;
 using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
 using Microsoft.EntityFrameworkCore;
 using OregonNexus.Broker.Web.Services.PayloadContents;
-using OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
 using System.Linq.Expressions;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 using OregonNexus.Broker.Web.Extensions.States;
 using OregonNexus.Broker.Web.Extensions.Genders;
-using src.Models.ProgramAssociations;
-using src.Models.Courses;
 using OregonNexus.Broker.Connector.Payload;
 using OregonNexus.Broker.Web.Helpers;
 using OregonNexus.Broker.Domain.Specifications;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Ardalis.GuardClauses;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
 using System.Text.Json;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OregonNexus.Broker.Web.Utilities;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 using OregonNexus.Broker.Service;
 
 namespace OregonNexus.Broker.Web.Controllers;
@@ -206,9 +199,10 @@ public class IncomingController : AuthenticatedController<IncomingController>
         return View(viewModel);
     }
 
-    public async Task<IActionResult> Update(Guid requestId)
+    [Route("/incoming-requests/Update/{id:guid}")]
+    public async Task<IActionResult> Update(Guid id)
     {
-        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdWithPayloadContents(requestId));
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdWithPayloadContents(id));
         if (incomingRequest is null) return NotFound();
 
         var requestManifest = incomingRequest.RequestManifest;

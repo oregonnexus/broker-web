@@ -183,7 +183,7 @@
                                             <a
                                                 asp-controller="Incoming"
                                                 asp-action="Update"
-                                                asp-route-requestId="@incomingRequest.Id"
+                                                asp-route-id="@incomingRequest.Id"
                                                 asp-authorize
                                                 asp-policy="@TransferIncomingRecords"
                                                 class="text-tertiary-700 hover:text-tertiary-900"
@@ -195,7 +195,7 @@
                                                 <a
                                                     asp-controller="Incoming"
                                                     asp-action="Mapping"
-                                                    asp-route-requestId="@incomingRequest.Id"
+                                                    asp-route-id="@incomingRequest.Id"
                                                     asp-authorize
                                                     asp-policy="@TransferIncomingRecords"
                                                     class="text-tertiary-700 hover:text-tertiary-900"

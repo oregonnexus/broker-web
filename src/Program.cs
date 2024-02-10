@@ -195,8 +195,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-//app.UseMiddleware<ScopedHttpContextMiddleware>();
-
 app.MapControllerRoutes("organizations", "EducationOrganizations");
 app.MapControllerRoutes("incoming-requests", "Incoming");
 app.MapControllerRoutes("outgoing-requests", "Outgoing");
