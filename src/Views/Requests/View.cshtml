@@ -36,13 +36,13 @@
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.Request?.ResponseManifest?.To?.District?.Name
-                                @Model.Request?.ResponseManifest?.To?.District?.Number</div>
-                            <div>@Model.Request?.ResponseManifest?.To?.District?.Address?.StreetNumberName</div>
-                            <div>@Model.Request?.ResponseManifest?.To?.District?.Address?.City,
-                                @Model.Request?.ResponseManifest?.To?.District?.Address?.StateAbbreviation
-                                @Model.Request?.ResponseManifest?.To?.District?.Address?.PostalCode</div>
-                            <div>@Model.Request?.ResponseManifest?.To?.District?.Domain</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.District?.Name
+                                @Model.Request?.ResponseManifest?.From?.District?.Number</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.District?.Address?.StreetNumberName</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.District?.Address?.City,
+                                @Model.Request?.ResponseManifest?.From?.District?.Address?.StateAbbreviation
+                                @Model.Request?.ResponseManifest?.From?.District?.Address?.PostalCode</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.District?.Domain</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
@@ -116,10 +116,10 @@
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
                         <dd class="mt-2 text-sm text-gray-900">
-                            @if (Model.RequestingPayloadContents is not null && Model.RequestingPayloadContents.Count > 0)
+                            @if (Model.Request?.RequestManifest?.Contents is not null && Model.Request?.RequestManifest?.Contents?.Count > 0)
                             {
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
-                                    @foreach (var payloadContent in Model.RequestingPayloadContents)
+                                    @foreach (var payloadContent in Model.Request?.RequestManifest?.Contents!)
                                     {
                                         <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
                                             <div class="flex w-0 flex-1 items-center">
@@ -144,11 +144,11 @@
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
                         <dd class="mt-2 text-sm text-gray-900">
-                            @if (Model.ReleasingPayloadContents is not null && Model.ReleasingPayloadContents.Count > 0)
+                            @if (Model.Request?.ResponseManifest?.Contents is not null && Model.Request?.ResponseManifest?.Contents?.Count > 0)
                             {
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
 
-                                    @foreach (var payloadContent in Model.ReleasingPayloadContents)
+                                    @foreach (var payloadContent in Model.Request?.ResponseManifest?.Contents!)
                                     {
                                         <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
                                             <div class="flex w-0 flex-1 items-center">

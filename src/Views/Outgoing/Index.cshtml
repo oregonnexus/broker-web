@@ -1,4 +1,5 @@
 @using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+@using OregonNexus.Broker.Domain.Extensions;
 @model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.OutgoingRequests.OutgoingRequestViewModel>
 @{
     // Copyright: 2023 Education Nexus Oregon
@@ -176,7 +177,10 @@
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        <a
+                                        @if (outgoingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Received.GetDescription() ||
+                                            outgoingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Loaded.GetDescription())
+                                            {
+                                            <a
                                             asp-controller="Outgoing"
                                             asp-action="Update"
                                             asp-route-requestId="@outgoingRequest.Id"
@@ -184,8 +188,23 @@
                                             asp-policy="@TransferOutgoingRecords"
                                             class="text-tertiary-700 hover:text-tertiary-900"
                                         >
-                                            View
+                                            Edit
                                         </a>
+                                            }
+                                            else
+                                            {
+                                            <a
+                                                asp-controller="Requests"
+                                                asp-action="View"
+                                                asp-route-id="@outgoingRequest.Id"
+                                                asp-authorize
+                                                asp-policy="@TransferOutgoingRecords"
+                                                class="text-tertiary-700 hover:text-tertiary-900"
+                                            >
+                                                View
+                                            </a>
+                                            }
+                                        
                                     </td>
                                 </tr>
                                 even = !even;

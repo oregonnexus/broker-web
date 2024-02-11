@@ -24,11 +24,16 @@ public class RequestsController : AuthenticatedController<RequestsController>
 
     public async Task<IActionResult> View(Guid id)
     {
-        var request = await _requestRepository.GetByIdAsync(id);
+        var request = await _requestRepository.FirstOrDefaultAsync(new RequestByIdWithMessagesPayloadContents(id));
+        
+        Guard.Against.Null(request);
 
-        var payloadContents = await _payloadContentRepository.ListAsync(new PayloadContentsByRequestIdWithMessage(id));
-        var releasingPayloadContents = payloadContents.Where(x => x.Message?.RequestResponse == RequestResponse.Response).ToList();
-        var requestingPayloadContents = payloadContents.Where(x => x.Message?.RequestResponse == RequestResponse.Request).ToList();
+        var payloadContents = request.PayloadContents;
+        var releasingFileNames = request.ResponseManifest?.Contents?.Select(x => x.FileName).ToList();
+        var releasingPayloadContents = request.PayloadContents?.Where(y => releasingFileNames!.Contains(y.FileName!)).ToList();
+        
+        var requestingFileNames = request.ResponseManifest?.Contents?.Select(x => x.FileName).ToList();
+        var requestingPayloadContents = request.PayloadContents?.Where(y => requestingFileNames!.Contains(y.FileName!)).ToList();
 
         return View(
             new RequestViewModel() { 
