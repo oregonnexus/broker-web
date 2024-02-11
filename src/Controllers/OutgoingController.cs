@@ -21,11 +21,7 @@ using OregonNexus.Broker.Connector.Payload;
 using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.Web.Utilities;
 using OregonNexus.Broker.Web.Constants.DesignSystems;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using Microsoft.AspNetCore.Http.HttpResults;
 using OregonNexus.Broker.Service;
-using MimeKit.Encodings;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]

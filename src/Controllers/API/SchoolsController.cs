@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Service.Lookup;
 
-namespace OregonNexus.Broker.Controllers;
+namespace OregonNexus.Broker.Controllers.Api;
 
 [Authorize]
 [ApiController]

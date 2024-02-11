@@ -6,7 +6,7 @@ using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web;
 
-namespace OregonNexus.Broker.Controllers;
+namespace OregonNexus.Broker.Controllers.Api;
 
 [AllowAnonymous]
 [ApiController]

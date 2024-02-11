@@ -180,6 +180,8 @@
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-3">
                                         <div class="flex justify-end gap-2">
+                                            @if (incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Draft.GetDescription())
+                                            {
                                             <a
                                                 asp-controller="Incoming"
                                                 asp-action="Update"
@@ -190,6 +192,20 @@
                                             >
                                                 Edit
                                             </a>
+                                            }
+                                            else
+                                            {
+                                            <a
+                                                asp-controller="Requests"
+                                                asp-action="View"
+                                                asp-route-id="@incomingRequest.Id"
+                                                asp-authorize
+                                                asp-policy="@TransferIncomingRecords"
+                                                class="text-tertiary-700 hover:text-tertiary-900"
+                                            >
+                                                View
+                                            </a>
+                                            }
                                             @if (@incomingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Imported.GetDescription())
                                             {
                                                 <a

@@ -1,0 +1,177 @@
+@model OregonNexus.Broker.Domain.Request
+@using OregonNexus.Broker.Domain.Extensions
+@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+@using System.Text.Json;
+@{
+    // Copyright: 2023 Education Nexus Oregon
+    // Author: Makoa Jacobsen, makoa@makoajacobsen.com
+    ViewData["Title"] = "Request Detail";
+    Layout = "_AuthenticatedLayout";
+    ViewData["FocusBar"] = true;
+    ViewData["FocusBarReadOnly"] = true;
+}
+<div class="space-y-10 divide-y divide-gray-900/10">
+    <div class="px-4 sm:px-0">
+        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+            <div class="px-4 py-6 sm:p-8 grid gap-8">
+                <dl class="grid grid-cols-1 sm:grid-cols-2">
+                    <div class="border-t border-gray-100 sm:col-span-1 sm:px-0">
+                        <dt class="text-base font-semibold leading-7 text-gray-900">Requesting</dt>
+                    </div>
+                    <div class="border-t border-gray-100 sm:col-span-1 sm:px-0">
+                        <dt class="text-base font-semibold leading-7 text-gray-900">Releasing</dt>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.RequestManifest?.From?.District?.Name
+                                @Model.RequestManifest?.From?.District?.Number</div>
+                            <div>@Model.RequestManifest?.From?.District?.Address?.StreetNumberName</div>
+                            <div>@Model.RequestManifest?.From?.District?.Address?.City,
+                                @Model.RequestManifest?.From?.District?.Address?.StateAbbreviation
+                                @Model.RequestManifest?.From?.District?.Address?.PostalCode</div>
+                            <div>@Model.RequestManifest?.From?.District?.Domain</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.ResponseManifest?.To?.District?.Name
+                                @Model.ResponseManifest?.To?.District?.Number</div>
+                            <div>@Model.ResponseManifest?.To?.District?.Address?.StreetNumberName</div>
+                            <div>@Model.ResponseManifest?.To?.District?.Address?.City,
+                                @Model.ResponseManifest?.To?.District?.Address?.StateAbbreviation
+                                @Model.ResponseManifest?.To?.District?.Address?.PostalCode</div>
+                            <div>@Model.ResponseManifest?.To?.District?.Domain</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">School</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.RequestManifest?.From?.School?.Name @Model.RequestManifest?.From?.School?.Number
+                            </div>
+                            <div>@Model.RequestManifest?.From?.School?.Address?.StreetNumberName</div>
+                            <div>@Model.RequestManifest?.From?.School?.Address?.City,
+                                @Model.RequestManifest?.From?.School?.Address?.StateAbbreviation
+                                @Model.RequestManifest?.From?.School?.Address?.PostalCode</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">School</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.ResponseManifest?.From?.School?.Name
+                                @Model.ResponseManifest?.From?.School?.Number</div>
+                            <div>@Model.ResponseManifest?.From?.School?.Address?.StreetNumberName</div>
+                            <div>@Model.ResponseManifest?.From?.School?.Address?.City,
+                                @Model.ResponseManifest?.From?.School?.Address?.StateAbbreviation
+                                @Model.ResponseManifest?.From?.School?.Address?.PostalCode</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">School Contact</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.RequestManifest?.From?.Sender?.Name</div>
+                            <div>@Model.RequestManifest?.From?.Sender?.JobTitle</div>
+                            <div>@Model.RequestManifest?.From?.Sender?.Email</div>
+                            <div>@Model.RequestManifest?.From?.Sender?.Phone</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">School Contact</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.ResponseManifest?.From?.Sender?.Name</div>
+                            <div>@Model.ResponseManifest?.From?.Sender?.JobTitle</div>
+                            <div>@Model.ResponseManifest?.From?.Sender?.Email</div>
+                            <div>@Model.ResponseManifest?.From?.Sender?.Phone</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Student</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.RequestManifest?.Student?.LastName, @Model.RequestManifest?.Student?.FirstName
+                                @Model.RequestManifest?.Student?.MiddleName</div>
+                            <div>@Model.RequestManifest?.Student?.Birthdate @Model.RequestManifest?.Student?.Gender
+                            </div>
+                            <div>@Model.RequestManifest?.Student?.StudentNumber</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Student</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                            <div>@Model.ResponseManifest?.Student?.LastName, @Model.ResponseManifest?.Student?.FirstName
+                                @Model.ResponseManifest?.Student?.MiddleName</div>
+                            <div>@Model.ResponseManifest?.Student?.Birthdate @Model.ResponseManifest?.Student?.Gender
+                            </div>
+                            <div>@Model.ResponseManifest?.Student?.StudentNumber</div>
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.RequestManifest?.Note</dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.ResponseManifest?.Note</dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
+                        <dd class="mt-2 text-sm text-gray-900">
+                            @if (Model.RequestManifest?.Contents is not null && Model.RequestManifest?.Contents.Count > 0)
+                            {
+                                <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                    @foreach (var payloadContent in Model.RequestManifest?.Contents!)
+                                    {
+                                        <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
+                                            <div class="flex w-0 flex-1 items-center">
+                                                <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+                                                    fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                        d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                                    <span class="truncate font-medium"><a target="_blank"
+                                                            asp-action="ViewAttachment"
+                                                            asp-route-id="@payloadContent.Id">@payloadContent.FileName</a></span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </dd>
+                    </div>
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
+                        <dd class="mt-2 text-sm text-gray-900">
+                            @if (Model.ResponseManifest?.Contents is not null && Model.ResponseManifest?.Contents.Count > 0)
+                            {
+                                <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+
+                                    @foreach (var payloadContent in Model.ResponseManifest?.Contents!)
+                                    {
+                                        <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
+                                            <div class="flex w-0 flex-1 items-center">
+                                                <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20"
+                                                    fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                        d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                                    <span class="truncate font-medium"><a target="_blank"
+                                                            asp-action="ViewAttachment"
+                                                            asp-route-id="@payloadContent.Id">@payloadContent.FileName</a></span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

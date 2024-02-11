@@ -1,16 +1,11 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.SharedKernel;
 using OregonNexus.Broker.Web.Controllers;
-using src.Models.Students;
 using OregonNexus.Broker.Service.Lookup;
 using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Connector.Student;
-using System.Text.Json;
-using OregonNexus.Broker.Connector.StudentLookup;
 
-namespace OregonNexus.Broker.Controllers;
+namespace OregonNexus.Broker.Controllers.Api;
 
 [Authorize]
 [ApiController]
