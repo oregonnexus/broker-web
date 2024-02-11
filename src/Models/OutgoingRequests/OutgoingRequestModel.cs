@@ -39,7 +39,7 @@ public class OutgoingRequestModel : SearchableModelWithPagination
             "student" => request => request.Student,
             "date" => request => request.CreatedAt,
             "status" => request => request.RequestStatus,
-            _ => request => request.Id,
+            _ => request => request.CreatedAt,
         };
         return sortExpression;
     }
