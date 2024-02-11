@@ -12,13 +12,16 @@ namespace OregonNexus.Broker.Web.Controllers;
 [Authorize(Policy = TransferOutgoingRecords)]
 public class RequestsController : AuthenticatedController<RequestsController>
 {
-    private readonly IRepository<Request> _requestRepository;
-    private readonly IRepository<PayloadContent> _payloadContentRepository;
+    private readonly IReadRepository<Request> _requestRepository;
+    private readonly IReadRepository<Message> _messageRepository;
+    private readonly IReadRepository<PayloadContent> _payloadContentRepository;
 
-    public RequestsController(IRepository<Request> requestRepository,
-        IRepository<PayloadContent> payloadContentRepository)
+    public RequestsController(IReadRepository<Request> requestRepository,
+        IReadRepository<Message> messageRepository,
+        IReadRepository<PayloadContent> payloadContentRepository)
     {
         _requestRepository = requestRepository;
+        _messageRepository = messageRepository;
         _payloadContentRepository = payloadContentRepository;
     }
 
@@ -42,6 +45,17 @@ public class RequestsController : AuthenticatedController<RequestsController>
                 RequestingPayloadContents = requestingPayloadContents
             }
         );
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> ViewMessage(Guid id)
+    {
+        var message = await _messageRepository.GetByIdAsync(id);
+
+        Guard.Against.Null(message);
+
+        return Ok(message.MessageContents?.ToJsonString());
     }
 
     [HttpGet]

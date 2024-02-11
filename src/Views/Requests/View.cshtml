@@ -170,6 +170,30 @@
                             }
                         </dd>
                     </div>
+
+                    <div class="border-t border-gray-100 px-4 py-6 sm:col-span-2 sm:px-0">
+                        <dt class="text-sm font-medium leading-6 text-gray-900">Messages</dt>
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <tr>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Timestamp</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Request/Response</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Message Contents</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Transmission Details</th>
+                            </tr>
+                            @if(Model.Request?.Messages != null && Model.Request.Messages.Count > 0)
+                            @foreach(var message in Model.Request.Messages)
+                            {
+                                <tr class="even:bg-gray-50">
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@message.MessageTimestamp</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@message.RequestResponse</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <a asp-action="ViewMessage" asp-route-id="@message.Id" target="_blank">View</a>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">@message.TransmissionDetails</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
                 </dl>
             </div>
         </div>
