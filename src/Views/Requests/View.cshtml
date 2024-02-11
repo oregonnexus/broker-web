@@ -15,15 +15,15 @@
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
             <div class="px-4 py-6 sm:p-8 grid gap-8">
                 <dl class="grid grid-cols-1 sm:grid-cols-2">
-                    <div class="border-t border-gray-100 sm:col-span-1 sm:px-0">
+                    <div class="sm:col-span-1 sm:px-0">
                         <dt class="text-base font-semibold leading-7 text-gray-900">Requesting</dt>
                     </div>
-                    <div class="border-t border-gray-100 sm:col-span-1 sm:px-0">
+                    <div class="sm:col-span-1 sm:px-0">
                         <dt class="text-base font-semibold leading-7 text-gray-900">Releasing</dt>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">District</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 mr-6">
                             <div>@Model.Request?.RequestManifest?.From?.District?.Name
                                 @Model.Request?.RequestManifest?.From?.District?.Number</div>
                             <div>@Model.Request?.RequestManifest?.From?.District?.Address?.StreetNumberName</div>
@@ -46,8 +46,8 @@
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">School</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">School</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 mr-6">
                             <div>@Model.Request?.RequestManifest?.From?.School?.Name @Model.Request?.RequestManifest?.From?.School?.Number
                             </div>
                             <div>@Model.Request?.RequestManifest?.From?.School?.Address?.StreetNumberName</div>
@@ -68,8 +68,8 @@
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">School Contact</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">School Contact</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 mr-6">
                             <div>@Model.Request?.RequestManifest?.From?.Sender?.Name</div>
                             <div>@Model.Request?.RequestManifest?.From?.Sender?.JobTitle</div>
                             <div>@Model.Request?.RequestManifest?.From?.Sender?.Email</div>
@@ -86,8 +86,8 @@
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">Student</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">Student</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 mr-6">
                             <div>@Model.Request?.RequestManifest?.Student?.LastName, @Model.Request?.RequestManifest?.Student?.FirstName
                                 @Model.Request?.RequestManifest?.Student?.MiddleName</div>
                             <div>@Model.Request?.RequestManifest?.Student?.Birthdate @Model.Request?.RequestManifest?.Student?.Gender
@@ -106,16 +106,16 @@
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.Request?.RequestManifest?.Note</dd>
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">Note</dt>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 mr-6">@Model.Request?.RequestManifest?.Note</dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.Request?.ResponseManifest?.Note</dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
-                        <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
-                        <dd class="mt-2 text-sm text-gray-900">
+                        <dt class="text-sm font-medium leading-6 text-gray-900 mr-6">Attachments</dt>
+                        <dd class="mt-2 text-sm text-gray-900 mr-6">
                             @if (Model.Request?.RequestManifest?.Contents is not null && Model.Request?.RequestManifest?.Contents?.Count > 0)
                             {
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">

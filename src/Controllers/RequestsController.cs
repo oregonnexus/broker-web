@@ -33,10 +33,10 @@ public class RequestsController : AuthenticatedController<RequestsController>
 
         var payloadContents = request.PayloadContents;
         var releasingFileNames = request.ResponseManifest?.Contents?.Select(x => x.FileName).ToList();
-        var releasingPayloadContents = request.PayloadContents?.Where(y => releasingFileNames!.Contains(y.FileName!)).ToList();
+        var releasingPayloadContents = (releasingFileNames?.Count > 0) ? request.PayloadContents?.Where(y => releasingFileNames!.Contains(y.FileName!)).ToList() : null;
         
         var requestingFileNames = request.ResponseManifest?.Contents?.Select(x => x.FileName).ToList();
-        var requestingPayloadContents = request.PayloadContents?.Where(y => requestingFileNames!.Contains(y.FileName!)).ToList();
+        var requestingPayloadContents = (requestingFileNames?.Count > 0) ? request.PayloadContents?.Where(y => requestingFileNames!.Contains(y.FileName!)).ToList() : null;
 
         return View(
             new RequestViewModel() { 

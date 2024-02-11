@@ -199,7 +199,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
         return View(viewModel);
     }
 
-    [Route("/incoming-requests/Update/{id:guid}")]
+    [Route("/incoming-requests/edit/{id:guid}")]
     public async Task<IActionResult> Update(Guid id)
     {
         var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdWithPayloadContents(id));
@@ -297,7 +297,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
             TempData[VoiceTone.Positive] = $"Updated request for {viewModel.FirstName} {viewModel.LastSurname} ({incomingRequest.Id}).";
 
-            return RedirectToAction(nameof(Update), new { requestId = incomingRequest.Id });
+            return RedirectToAction(nameof(Update), new { id = incomingRequest.Id });
         }
 
         viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();
@@ -360,7 +360,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
             }
         }
 
-        return RedirectToAction(nameof(Update), new { requestId = requestId });
+        return RedirectToAction(nameof(Update), new { id = requestId });
     }
 
     [HttpDelete]
@@ -378,7 +378,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
 
         await _payloadContentRepository.DeleteAsync(payloadContentToDelete);
 
-        return RedirectToAction(nameof(Update), new { requestId = requestId });
+        return RedirectToAction(nameof(Update), new { id = requestId });
     }
 
     [HttpPut]
@@ -400,7 +400,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
         await _incomingRequestRepository.UpdateAsync(incomingRequest);
 
         TempData[VoiceTone.Positive] = $"Request marked to send ({incomingRequest.Id}).";
-        return RedirectToAction(nameof(Update), new { requestId = id });
+        return RedirectToAction(nameof(Update), new { id = id });
     }
 }
 
