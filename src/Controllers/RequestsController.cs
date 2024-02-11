@@ -2,7 +2,9 @@ using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Domain;
+using OregonNexus.Broker.Domain.Specifications;
 using OregonNexus.Broker.SharedKernel;
+using OregonNexus.Broker.Web.ViewModels.Requests;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 namespace OregonNexus.Broker.Web.Controllers;
@@ -24,7 +26,17 @@ public class RequestsController : AuthenticatedController<RequestsController>
     {
         var request = await _requestRepository.GetByIdAsync(id);
 
-        return View(request);
+        var payloadContents = await _payloadContentRepository.ListAsync(new PayloadContentsByRequestIdWithMessage(id));
+        var releasingPayloadContents = payloadContents.Where(x => x.Message?.RequestResponse == RequestResponse.Response).ToList();
+        var requestingPayloadContents = payloadContents.Where(x => x.Message?.RequestResponse == RequestResponse.Request).ToList();
+
+        return View(
+            new RequestViewModel() { 
+                Request = request, 
+                ReleasingPayloadContents = releasingPayloadContents, 
+                RequestingPayloadContents = requestingPayloadContents
+            }
+        );
     }
 
     [HttpGet]

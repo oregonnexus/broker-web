@@ -1,4 +1,4 @@
-@model OregonNexus.Broker.Domain.Request
+@model OregonNexus.Broker.Web.ViewModels.Requests.RequestViewModel
 @using OregonNexus.Broker.Domain.Extensions
 @using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 @using System.Text.Json;
@@ -24,102 +24,102 @@
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.RequestManifest?.From?.District?.Name
-                                @Model.RequestManifest?.From?.District?.Number</div>
-                            <div>@Model.RequestManifest?.From?.District?.Address?.StreetNumberName</div>
-                            <div>@Model.RequestManifest?.From?.District?.Address?.City,
-                                @Model.RequestManifest?.From?.District?.Address?.StateAbbreviation
-                                @Model.RequestManifest?.From?.District?.Address?.PostalCode</div>
-                            <div>@Model.RequestManifest?.From?.District?.Domain</div>
+                            <div>@Model.Request?.RequestManifest?.From?.District?.Name
+                                @Model.Request?.RequestManifest?.From?.District?.Number</div>
+                            <div>@Model.Request?.RequestManifest?.From?.District?.Address?.StreetNumberName</div>
+                            <div>@Model.Request?.RequestManifest?.From?.District?.Address?.City,
+                                @Model.Request?.RequestManifest?.From?.District?.Address?.StateAbbreviation
+                                @Model.Request?.RequestManifest?.From?.District?.Address?.PostalCode</div>
+                            <div>@Model.Request?.RequestManifest?.From?.District?.Domain</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">District</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.ResponseManifest?.To?.District?.Name
-                                @Model.ResponseManifest?.To?.District?.Number</div>
-                            <div>@Model.ResponseManifest?.To?.District?.Address?.StreetNumberName</div>
-                            <div>@Model.ResponseManifest?.To?.District?.Address?.City,
-                                @Model.ResponseManifest?.To?.District?.Address?.StateAbbreviation
-                                @Model.ResponseManifest?.To?.District?.Address?.PostalCode</div>
-                            <div>@Model.ResponseManifest?.To?.District?.Domain</div>
+                            <div>@Model.Request?.ResponseManifest?.To?.District?.Name
+                                @Model.Request?.ResponseManifest?.To?.District?.Number</div>
+                            <div>@Model.Request?.ResponseManifest?.To?.District?.Address?.StreetNumberName</div>
+                            <div>@Model.Request?.ResponseManifest?.To?.District?.Address?.City,
+                                @Model.Request?.ResponseManifest?.To?.District?.Address?.StateAbbreviation
+                                @Model.Request?.ResponseManifest?.To?.District?.Address?.PostalCode</div>
+                            <div>@Model.Request?.ResponseManifest?.To?.District?.Domain</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">School</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.RequestManifest?.From?.School?.Name @Model.RequestManifest?.From?.School?.Number
+                            <div>@Model.Request?.RequestManifest?.From?.School?.Name @Model.Request?.RequestManifest?.From?.School?.Number
                             </div>
-                            <div>@Model.RequestManifest?.From?.School?.Address?.StreetNumberName</div>
-                            <div>@Model.RequestManifest?.From?.School?.Address?.City,
-                                @Model.RequestManifest?.From?.School?.Address?.StateAbbreviation
-                                @Model.RequestManifest?.From?.School?.Address?.PostalCode</div>
+                            <div>@Model.Request?.RequestManifest?.From?.School?.Address?.StreetNumberName</div>
+                            <div>@Model.Request?.RequestManifest?.From?.School?.Address?.City,
+                                @Model.Request?.RequestManifest?.From?.School?.Address?.StateAbbreviation
+                                @Model.Request?.RequestManifest?.From?.School?.Address?.PostalCode</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">School</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.ResponseManifest?.From?.School?.Name
-                                @Model.ResponseManifest?.From?.School?.Number</div>
-                            <div>@Model.ResponseManifest?.From?.School?.Address?.StreetNumberName</div>
-                            <div>@Model.ResponseManifest?.From?.School?.Address?.City,
-                                @Model.ResponseManifest?.From?.School?.Address?.StateAbbreviation
-                                @Model.ResponseManifest?.From?.School?.Address?.PostalCode</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.School?.Name
+                                @Model.Request?.ResponseManifest?.From?.School?.Number</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.School?.Address?.StreetNumberName</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.School?.Address?.City,
+                                @Model.Request?.ResponseManifest?.From?.School?.Address?.StateAbbreviation
+                                @Model.Request?.ResponseManifest?.From?.School?.Address?.PostalCode</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">School Contact</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.RequestManifest?.From?.Sender?.Name</div>
-                            <div>@Model.RequestManifest?.From?.Sender?.JobTitle</div>
-                            <div>@Model.RequestManifest?.From?.Sender?.Email</div>
-                            <div>@Model.RequestManifest?.From?.Sender?.Phone</div>
+                            <div>@Model.Request?.RequestManifest?.From?.Sender?.Name</div>
+                            <div>@Model.Request?.RequestManifest?.From?.Sender?.JobTitle</div>
+                            <div>@Model.Request?.RequestManifest?.From?.Sender?.Email</div>
+                            <div>@Model.Request?.RequestManifest?.From?.Sender?.Phone</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">School Contact</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.ResponseManifest?.From?.Sender?.Name</div>
-                            <div>@Model.ResponseManifest?.From?.Sender?.JobTitle</div>
-                            <div>@Model.ResponseManifest?.From?.Sender?.Email</div>
-                            <div>@Model.ResponseManifest?.From?.Sender?.Phone</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.Sender?.Name</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.Sender?.JobTitle</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.Sender?.Email</div>
+                            <div>@Model.Request?.ResponseManifest?.From?.Sender?.Phone</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Student</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.RequestManifest?.Student?.LastName, @Model.RequestManifest?.Student?.FirstName
-                                @Model.RequestManifest?.Student?.MiddleName</div>
-                            <div>@Model.RequestManifest?.Student?.Birthdate @Model.RequestManifest?.Student?.Gender
+                            <div>@Model.Request?.RequestManifest?.Student?.LastName, @Model.Request?.RequestManifest?.Student?.FirstName
+                                @Model.Request?.RequestManifest?.Student?.MiddleName</div>
+                            <div>@Model.Request?.RequestManifest?.Student?.Birthdate @Model.Request?.RequestManifest?.Student?.Gender
                             </div>
-                            <div>@Model.RequestManifest?.Student?.StudentNumber</div>
+                            <div>@Model.Request?.RequestManifest?.Student?.StudentNumber</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Student</dt>
                         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-                            <div>@Model.ResponseManifest?.Student?.LastName, @Model.ResponseManifest?.Student?.FirstName
-                                @Model.ResponseManifest?.Student?.MiddleName</div>
-                            <div>@Model.ResponseManifest?.Student?.Birthdate @Model.ResponseManifest?.Student?.Gender
+                            <div>@Model.Request?.ResponseManifest?.Student?.LastName, @Model.Request?.ResponseManifest?.Student?.FirstName
+                                @Model.Request?.ResponseManifest?.Student?.MiddleName</div>
+                            <div>@Model.Request?.ResponseManifest?.Student?.Birthdate @Model.Request?.ResponseManifest?.Student?.Gender
                             </div>
-                            <div>@Model.ResponseManifest?.Student?.StudentNumber</div>
+                            <div>@Model.Request?.ResponseManifest?.Student?.StudentNumber</div>
                         </dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.RequestManifest?.Note</dd>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.Request?.RequestManifest?.Note</dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Note</dt>
-                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.ResponseManifest?.Note</dd>
+                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">@Model.Request?.ResponseManifest?.Note</dd>
                     </div>
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
                         <dd class="mt-2 text-sm text-gray-900">
-                            @if (Model.RequestManifest?.Contents is not null && Model.RequestManifest?.Contents.Count > 0)
+                            @if (Model.RequestingPayloadContents is not null && Model.RequestingPayloadContents.Count > 0)
                             {
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
-                                    @foreach (var payloadContent in Model.RequestManifest?.Contents!)
+                                    @foreach (var payloadContent in Model.RequestingPayloadContents)
                                     {
                                         <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
                                             <div class="flex w-0 flex-1 items-center">
@@ -144,11 +144,11 @@
                     <div class="border-t border-gray-100 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt class="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
                         <dd class="mt-2 text-sm text-gray-900">
-                            @if (Model.ResponseManifest?.Contents is not null && Model.ResponseManifest?.Contents.Count > 0)
+                            @if (Model.ReleasingPayloadContents is not null && Model.ReleasingPayloadContents.Count > 0)
                             {
                                 <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
 
-                                    @foreach (var payloadContent in Model.ResponseManifest?.Contents!)
+                                    @foreach (var payloadContent in Model.ReleasingPayloadContents)
                                     {
                                         <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm leading-6">
                                             <div class="flex w-0 flex-1 items-center">
