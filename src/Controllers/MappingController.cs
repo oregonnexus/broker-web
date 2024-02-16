@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OregonNexus.Broker.Domain;
@@ -10,7 +11,7 @@ using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 namespace OregonNexus.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferIncomingRecords)]
-public class MappingController : AuthenticatedController<IncomingController>
+public class MappingController : AuthenticatedController<MappingController>
 {
     private readonly IReadRepository<EducationOrganization> _educationOrganizationRepository;
     private readonly IRepository<Request> _incomingRequestRepository;
@@ -22,9 +23,9 @@ public class MappingController : AuthenticatedController<IncomingController>
         _educationOrganizationRepository = educationOrganizationRepository;
         _incomingRequestRepository = incomingRequestRepository;
     }
-    public async Task<IActionResult> Mapping(Guid requestId)
+    public async Task<IActionResult> MapRequest(Guid id)
     {
-        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(requestId);
+        var incomingRequest = await _incomingRequestRepository.GetByIdAsync(id);
         if (incomingRequest is null) return NotFound();
 
         var educationOrganizationList = await _educationOrganizationRepository.ListAsync();

@@ -192,7 +192,7 @@ public class IncomingController : AuthenticatedController<IncomingController>
             await _incomingRequestRepository.AddAsync(incomingRequest);
 
             TempData[VoiceTone.Positive] = $"Created request for {viewModel.FirstName} {viewModel.LastSurname} ({incomingRequest.Id}).";
-            return RedirectToAction(nameof(Update), new { requestId = incomingRequest.Id });
+            return RedirectToAction(nameof(Update), new { id = incomingRequest.Id });
         }
 
         viewModel.EducationOrganizations = await _focusHelper.GetFocusedSchools();
