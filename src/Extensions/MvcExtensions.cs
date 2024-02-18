@@ -27,4 +27,13 @@ public static class MvcExtensions
             ? cssActiveClass
             : cssRegularClass;
     }
+
+    public static string ActiveClassForId(this IHtmlHelper htmlHelper, string Id, string cssActiveClass = "active", string cssRegularClass = "link")
+    {
+        var currentId = htmlHelper?.ViewContext.RouteData.Values["id"] as string;
+
+        return currentId == Id
+            ? cssActiveClass
+            : cssRegularClass;
+    }
 }
