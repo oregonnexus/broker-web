@@ -1,4 +1,5 @@
 @model OregonNexus.Broker.Web.ViewModels.Mappings.MappingViewModel;
+@using OregonNexus.Broker.Web.ViewModels.Mappings;
 @using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 @{
   // Copyright: 2023 Education Nexus Oregon
@@ -7,9 +8,12 @@
   Layout = "_AuthenticatedLayout";
   ViewData["FocusBar"] = true;
   ViewData["FocusBarReadOnly"] = true;
+
+  var propertyCounter = 0;
 }
 
 <form method="post" asp-action="Update" autocomplete="off">
+  <input type="hidden" name="MappingId" value="@Model.MappingId" />
   <input type="hidden" name="_METHOD" value="PUT" />
   <div class="space-y-10 divide-y divide-gray-900/10">
     <div class="px-4 sm:px-0">
@@ -38,13 +42,13 @@
               <table class="min-w-full divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    @foreach(var property in Model.Properties!)
+                    @foreach(var property in Model.EditingProperties!)
                     {
                       <th colspan="2" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">@Model.GetPropertyDisplayName(property)?.DisplayName</th>
                     }
                   </tr>
                   <tr>
-                    @foreach(var property in Model.Properties!)
+                    @foreach(var property in Model.EditingProperties!)
                     {
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Sent</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Import</th>
@@ -52,16 +56,22 @@
                   </tr>
                 </thead>
                 <tbody>
+                  @foreach(var record in Model.MappingDestinationRecords!)
+                  {
                   <tr class="even:bg-gray-50">
-                    @foreach(var property in Model.Properties!)
+                    <input type="hidden" name="@MappingViewModel.InputName(Model.Mapping!.MappingType!, propertyCounter, "BrokerId")" value="@record.BrokerId">
+                    <input type="hidden" name="@MappingViewModel.InputName(Model.Mapping!.MappingType!, propertyCounter, "BrokerOriginalId")" value="@record.BrokerOriginalId">
+                    @foreach(var property in Model.EditingProperties!)
                     {
-                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">Orig</td>
+                      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">@MappingViewModel.ValueForProperty(record, Model.MappingSourceRecords, property)</td>
                       <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
-                        <input type="text"
+                        <input name="@MappingViewModel.InputName(Model.Mapping!.MappingType!, propertyCounter, property)" type="text" value="@MappingViewModel.ValueForProperty(record, property)"
                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                       </td>
                     }
                   </tr>
+                    propertyCounter++;
+                  }
                 </tbody>
               </table>
             </div>
