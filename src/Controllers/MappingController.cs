@@ -120,6 +120,23 @@ public class MappingController : AuthenticatedController<MappingController>
         await _mappingRepository.UpdateAsync(mapping);
         
         TempData[VoiceTone.Positive] = $"Updated mapping ({mapping.Id}).";
-        return RedirectToAction("Edit", new { id = mappingId });
+        return RedirectToAction(nameof(Edit), new { id = mappingId });
+    }
+
+    [HttpPut]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Import(Guid id)
+    {
+        var incomingRequest = await _incomingRequestRepository.FirstOrDefaultAsync(new RequestByIdwithEdOrgs(id));
+
+        Guard.Against.Null(incomingRequest);
+
+        incomingRequest.RequestStatus = RequestStatus.WaitingToImport;
+
+        await _incomingRequestRepository.UpdateAsync(incomingRequest);
+
+        TempData[VoiceTone.Positive] = $"Request waiting to import ({incomingRequest.Id}).";
+        return RedirectToAction(nameof(Index), new { id = id });
     }
 }
