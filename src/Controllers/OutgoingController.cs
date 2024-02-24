@@ -247,15 +247,23 @@ public class OutgoingController : AuthenticatedController<OutgoingController>
             if (formFile.Length > 0)
             {
                 var file = await FileHelpers
-                        .ProcessFormFile<BufferedSingleFileUploadDb>(formFile, ModelState, new string[] { ".png", ".txt", ".pdf" }, 2097152);
+                        .ProcessFormFile<BufferedSingleFileUploadDb>(formFile, ModelState, new string[] { ".png", ".txt", ".pdf", ".json" }, 2097152);
                 
                 var payloadContent = new PayloadContent()
                 {
                     Request = incomingRequest,
                     ContentType = formFile.ContentType,
-                    BlobContent = file,
                     FileName = formFile.FileName
                 };
+
+                if (payloadContent.ContentType == "application/json")
+                {
+                    payloadContent.JsonContent = JsonDocument.Parse(System.Text.Encoding.Default.GetString(file));
+                }
+                else
+                {
+                    payloadContent.BlobContent = file;
+                }
                 
                 await _payloadContentRepository.AddAsync(payloadContent);
             }
