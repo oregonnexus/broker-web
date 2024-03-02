@@ -2,11 +2,15 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using OregonNexus.Broker.Domain;
 using System.Reflection;
+using OregonNexus.Broker.Connector;
+using OregonNexus.Broker.Service.Lookup;
 
 namespace OregonNexus.Broker.Web.ViewModels.Mappings;
 
 public class MappingViewModel
 {
+    public MappingLookupService MappingLookupService { get; set; }
+    
     public Guid? MappingId { get; set; }
 
     public List<Mapping>? RequestMappings { get; set; }
@@ -39,6 +43,16 @@ public class MappingViewModel
         if (dataType is not null && dataType.Count() > 0)
         {
             return (DataTypeAttribute)dataType.FirstOrDefault()!;
+        }
+        return null;
+    }
+
+    public static LookupAttribute? GetPropertyLookupType(PropertyInfo property)
+    {
+        var dataType = property?.GetCustomAttributes(false).Where(x => x.GetType() == typeof(LookupAttribute));
+        if (dataType is not null && dataType.Count() > 0)
+        {
+            return (LookupAttribute)dataType.FirstOrDefault()!;
         }
         return null;
     }

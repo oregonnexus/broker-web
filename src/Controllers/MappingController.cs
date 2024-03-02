@@ -12,6 +12,7 @@ using OregonNexus.Broker.Web.Extensions.Genders;
 using OregonNexus.Broker.Web.Extensions.States;
 using OregonNexus.Broker.Web.ViewModels.Mappings;
 using OregonNexus.Broker.Web.ViewModels.Requests;
+using OregonNexus.Broker.Service.Lookup;
 using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
 
 namespace OregonNexus.Broker.Web.Controllers;
@@ -88,7 +89,8 @@ public class MappingController : AuthenticatedController<MappingController>
             RequestMappings = mappings,
             MappingSourceRecords = JsonConvert.DeserializeObject(mapping.SourceMapping.ToJsonString()!, mappingCollectionType)!,
             MappingDestinationRecords = JsonConvert.DeserializeObject(mapping.DestinationMapping.ToJsonString()!, mappingCollectionType)!,
-            Mapping = mapping
+            Mapping = mapping,
+            MappingLookupService = _serviceProvider.GetService<MappingLookupService>()
         };
 
         viewModel.SetProperties(mapping.MappingType!);
