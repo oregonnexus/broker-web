@@ -49,8 +49,8 @@ public class IncomingRequestViewModel
         Student = $"{incomingRequest.RequestManifest?.Student?.LastName}, {incomingRequest.RequestManifest?.Student?.FirstName}";
         
         var pacific = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-        Date = (incomingRequest.InitialRequestSentDate != null) 
-                ? TimeZoneInfo.ConvertTimeFromUtc(incomingRequest.InitialRequestSentDate.Value, pacific).ToString("M/dd/yyyy h:mm tt") 
+        Date = (incomingRequest.InitialRequestSentDate != null) ?
+                TimeZoneInfo.ConvertTimeFromUtc(incomingRequest.InitialRequestSentDate.Value.DateTime, pacific).ToString("M/dd/yyyy h:mm tt") 
                 : null;
 
         Status = incomingRequest.RequestStatus.GetDescription();
