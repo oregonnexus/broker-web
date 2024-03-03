@@ -44,14 +44,14 @@
                   <tr>
                     @foreach(var property in Model.EditingProperties!)
                     {
-                      <th colspan="2" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">@Model.GetPropertyDisplayName(property)?.DisplayName</th>
+                      <th colspan="2" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3 border-x-2">@Model.GetPropertyDisplayName(property)?.DisplayName</th>
                     }
                   </tr>
                   <tr>
                     @foreach(var property in Model.EditingProperties!)
                     {
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3 w-8">Sent</th>
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3 w-8">Import</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-3 w-8 border-l-2">Sent</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-3 w-8 border-r-2">Import</th>
                     }
                   </tr>
                 </thead>
@@ -63,8 +63,8 @@
                     <input type="hidden" name="@MappingViewModel.InputName(Model.Mapping!.MappingType!, propertyCounter, "BrokerOriginalId")" value="@record.BrokerOriginalId">
                     @foreach(var property in Model.EditingProperties!)
                     {
-                      <td class="whitespace-nowrap px-0.5 py-1 text-sm text-gray-600">@MappingViewModel.ValueForProperty(record, Model.MappingSourceRecords, property)</td>
-                      <td class="whitespace-nowrap px-0.5 py-1 text-sm text-gray-600">
+                      <td class="whitespace-nowrap px-0.5 py-1 text-sm text-center text-gray-600 border-l-2">@MappingViewModel.ValueForProperty(record, Model.MappingSourceRecords, property)</td>
+                      <td class="whitespace-nowrap px-0.5 py-1 text-sm text-center text-gray-600 border-r-2">
                         @if(MappingViewModel.GetPropertyLookupType(property) != null)
                         {
                           var optionValues = await Model.MappingLookupService!.SelectAsync(MappingViewModel.GetPropertyLookupType(property), MappingViewModel.ValueForProperty(record, property));

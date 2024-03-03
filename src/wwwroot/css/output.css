@@ -1475,6 +1475,11 @@ select {
   border-width: 0px;
 }
 
+.border-x-2 {
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -1489,6 +1494,10 @@ select {
 
 .border-l-2 {
   border-left-width: 2px;
+}
+
+.border-r-2 {
+  border-right-width: 2px;
 }
 
 .border-t {
