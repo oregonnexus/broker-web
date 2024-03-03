@@ -9,7 +9,7 @@ namespace OregonNexus.Broker.Web.ViewModels.Mappings;
 
 public class MappingViewModel
 {
-    public MappingLookupService MappingLookupService { get; set; }
+    public MappingLookupService? MappingLookupService { get; set; }
     
     public Guid? MappingId { get; set; }
 
