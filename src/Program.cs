@@ -23,6 +23,7 @@ using src.Services.Tokens;
 using src.Services.Shared;
 using Microsoft.Extensions.Caching.Memory;
 using OregonNexus.Broker.Web.Exceptions;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,13 +78,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.AccessDeniedPath = "/AccessDenied";
     options.Cookie.Name = "OregonNexus.Broker.Identity";
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    // options.Cookie.HttpOnly = true;
+    // options.Cookie.SameSite = SameSiteMode.Strict;
+    // options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.LoginPath = "/Login";
-    // ReturnUrlParameter requires 
-    //using Microsoft.AspNetCore.Authentication.Cookies;
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
     options.SlidingExpiration = true;
 });
@@ -100,6 +99,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddAuthentication()
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
@@ -190,6 +190,13 @@ app.UseHttpMethodOverride(new HttpMethodOverrideOptions()
 });
 
 app.UseRouting();
+
+// app.UseCookiePolicy(new CookiePolicyOptions()
+// {
+//     HttpOnly = HttpOnlyPolicy.Always,
+//     Secure = CookieSecurePolicy.Always,
+//     MinimumSameSitePolicy = SameSiteMode.Lax
+// });
 
 app.UseAuthentication();
 app.UseAuthorization();

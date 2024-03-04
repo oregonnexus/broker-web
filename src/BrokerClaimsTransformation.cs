@@ -101,7 +101,7 @@ public class BrokerClaimsTransformation : IClaimsTransformation
         {
             _logger.LogInformation("Current user not loaded for claims processing. Loading user.");
             // Get logged in user
-            var email = principal.Claims.Where(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()!.Value!;
+            var email = principal.Claims.Where(x => x.Type == ClaimTypes.Email).FirstOrDefault()!.Value!;
             var userIdentity = await _userManager.FindByEmailAsync(email);
 
             if (userIdentity is not null)

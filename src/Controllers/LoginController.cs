@@ -11,6 +11,11 @@ using OregonNexus.Broker.Domain;
 using OregonNexus.Broker.SharedKernel;
 using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
 using OregonNexus.Broker.Web.Helpers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using OregonNexus.Broker.Service.Resolvers;
+using Ardalis.GuardClauses;
+using Microsoft.Identity.Web;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -25,6 +30,7 @@ public class LoginController : AuthenticatedController<LoginController>
     private readonly SignInManager<IdentityUser<Guid>> _signInManager;
     private readonly IRepository<User> _userRepo;
     private readonly FocusHelper _focusHelper;
+    private readonly AuthenticationProviderResolver _authenticationProviderResolver;
 
     public LoginController(
         ILogger<LoginController> logger,
@@ -32,7 +38,8 @@ public class LoginController : AuthenticatedController<LoginController>
         UserManager<IdentityUser<Guid>> userManager,
         SignInManager<IdentityUser<Guid>> signInManager,
         IRepository<User> userRepo,
-        FocusHelper focusHelper)
+        FocusHelper focusHelper,
+        AuthenticationProviderResolver authenticationProviderResolver)
     {
         _logger = logger;
         _db = db;
@@ -40,6 +47,7 @@ public class LoginController : AuthenticatedController<LoginController>
         _signInManager = signInManager;
         _userRepo = userRepo;
         _focusHelper = focusHelper;
+        _authenticationProviderResolver = authenticationProviderResolver;
     }
 
     [HttpGet]
@@ -150,7 +158,47 @@ public class LoginController : AuthenticatedController<LoginController>
         }
     }
 
-    [AllowAnonymous]
+    [HttpGet]
+    [Route("login/{provider}")]
+    public async Task<IActionResult> ProviderLogin(string provider)
+    {
+        // Find provider
+        var authenticationProvider = _authenticationProviderResolver.Resolve(provider);
+        
+        Guard.Against.Null(authenticationProvider, "authenticationProvider", $"Unable to find authentication provider for {provider}");
+
+        var authUser = await authenticationProvider.AuthenticateAsync(HttpContext.Request);
+
+        var user = await _userManager.FindByEmailAsync(authUser.Email);
+
+        if (user is null)
+        {
+            _logger.LogInformation("{Email} not found in database.", authUser.Email);
+            return RedirectToAction("Index");
+        }
+
+        var currentUser = await _userRepo.GetByIdAsync(user!.Id);
+        HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
+        _focusHelper.SetInitialFocus();
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Email, user.Email)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(
+            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        
+
+        await HttpContext!.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity));
+
+        return RedirectToAction("Index", "Home");
+    }
+
     [Route("login/logout")]
     public async Task<IActionResult> Logout()
     {
