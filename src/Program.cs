@@ -24,6 +24,9 @@ using src.Services.Shared;
 using Microsoft.Extensions.Caching.Memory;
 using OregonNexus.Broker.Web.Exceptions;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,8 +82,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/AccessDenied";
     options.Cookie.Name = "OregonNexus.Broker.Identity";
     // options.Cookie.HttpOnly = true;
-    // options.Cookie.SameSite = SameSiteMode.Strict;
-    // options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    //options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.ExpireTimeSpan = TimeSpan.FromHours(4);
     options.LoginPath = "/Login";
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
@@ -93,13 +96,12 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = "OregonNexus.Broker.Session";
     options.IdleTimeout = TimeSpan.FromHours(4);
     options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    //options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddAuthentication()
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
@@ -116,21 +118,27 @@ builder.Services.AddAuthorization(options => {
     options.AddPolicy("SuperAdmin",
       policy => policy.RequireClaim("SuperAdmin", "true")
     );
-
     options.AddPolicy("AllEducationOrganizations",
       policy => policy.RequireClaim("AllEducationOrganizations", PermissionType.Read.ToString(), PermissionType.Write.ToString())
     );
-
     options.AddPolicy("TransferRecords",
       policy => policy.RequireClaim("TransferRecords", "true")
     );
-
     options.AddPolicy(TransferIncomingRecords,
       policy => policy.RequireClaim(TransferIncomingRecords, "true")
     );
-        options.AddPolicy(TransferOutgoingRecords,
+    options.AddPolicy(TransferOutgoingRecords,
       policy => policy.RequireClaim(TransferOutgoingRecords, "true")
     );
+
+    // var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+    //     CookieAuthenticationDefaults.AuthenticationScheme
+    //     // "Identity.Application",
+    //     // "Identity.External",
+    //     // GoogleDefaults.AuthenticationScheme
+    // );
+    // defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+    // options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
 });
 
 builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>();

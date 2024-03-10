@@ -109,7 +109,7 @@ public class LoginController : AuthenticatedController<LoginController>
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
         if (result.Succeeded)
         {
-            var email = info.Principal.Claims.Where(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()!.Value!;
+            var email = info.Principal.Claims.Where(x => x.Type == ClaimTypes.Email).FirstOrDefault()!.Value!;
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user!.Id);
@@ -128,7 +128,7 @@ public class LoginController : AuthenticatedController<LoginController>
         else
         {
             // Get user
-            var email = info.Principal.Claims.Where(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()!.Value!;
+            var email = info.Principal.Claims.Where(x => x.Type == ClaimTypes.Email).FirstOrDefault()!.Value!;
             var user = await _userManager.FindByEmailAsync(email);
 
             var currentUser = await _userRepo.GetByIdAsync(user!.Id);
@@ -159,9 +159,10 @@ public class LoginController : AuthenticatedController<LoginController>
     }
 
     [HttpGet]
-    [Route("login/{provider}")]
-    public async Task<IActionResult> ProviderLogin(string provider)
+    [Route("login/connector/{provider}")]
+    public async Task<IActionResult> ProviderLogin(string provider, string returnUrl)
     {
+        returnUrl = returnUrl ?? Url.Content("~/");
         // Find provider
         var authenticationProvider = _authenticationProviderResolver.Resolve(provider);
         
@@ -178,8 +179,6 @@ public class LoginController : AuthenticatedController<LoginController>
         }
 
         var currentUser = await _userRepo.GetByIdAsync(user!.Id);
-        HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
-        _focusHelper.SetInitialFocus();
 
         var claims = new List<Claim>
         {
@@ -189,14 +188,17 @@ public class LoginController : AuthenticatedController<LoginController>
         };
 
         var claimsIdentity = new ClaimsIdentity(
-            claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        
+            claims, IdentityConstants.ApplicationScheme);
 
         await HttpContext!.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
+            IdentityConstants.ApplicationScheme,
             new ClaimsPrincipal(claimsIdentity));
+        
+        HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
+        _focusHelper.SetInitialFocus();
+        HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
 
-        return RedirectToAction("Index", "Home");
+        return LocalRedirect(returnUrl);
     }
 
     [Route("login/logout")]
@@ -205,7 +207,7 @@ public class LoginController : AuthenticatedController<LoginController>
          await _signInManager.SignOutAsync();
         HttpContext?.Session.Clear();
         _logger.LogInformation("User logged out.");
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index");
     }
 
 }
