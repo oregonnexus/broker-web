@@ -66,8 +66,9 @@ public class FocusHelper
         }
         else
         {
-            var userRoleSpec = new UserRolesByUserSpec(currentUser.Id);
-            var userRoles = await _userRoleRepo.ListAsync(userRoleSpec);
+            var userRoleSpec = new UserWithUserRolesByUserSpec(currentUser.Id);
+            var user = await _userRepo.FirstOrDefaultAsync(userRoleSpec);
+            var userRoles = user.UserRoles;
 
             foreach(var userRole in userRoles.Where(role => role.EducationOrganization?.ParentOrganizationId is not null))
             {
@@ -140,9 +141,19 @@ public class FocusHelper
         }
         else
         {
-            var userRoleSpec = new UserRolesByUserSpec(currentUser.Id);
-            var userRoles = await _userRoleRepo.ListAsync(userRoleSpec);
-            var first = userRoles.Where(role => role.EducationOrganization?.ParentOrganizationId is not null).FirstOrDefault();
+            var userWithRoles = await _userRepo.FirstOrDefaultAsync(new UserWithUserRolesByUserSpec(currentUser!.Id));
+            var userRoles = userWithRoles!.UserRoles;
+
+            UserRole? first = null;
+            if (userRoles!.Where(role => role.EducationOrganization?.ParentOrganizationId is not null).Any())
+            {
+                first = userRoles!.Where(role => role.EducationOrganization?.ParentOrganizationId is not null).FirstOrDefault();
+            }
+            else
+            {
+                first = userRoles!.Where(role => role.EducationOrganizationId is not null).FirstOrDefault()!;
+            }
+            if (first?.EducationOrganizationId is not null)
             _session.SetString(FocusOrganizationKey, first!.EducationOrganization!.Id.ToString());
         }
     }
