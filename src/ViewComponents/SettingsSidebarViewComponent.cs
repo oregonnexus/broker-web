@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Connector;
-using OregonNexus.Broker.Web.Models;
+using EdNexusData.Broker.Connector;
+using EdNexusData.Broker.Web.Models;
 
-namespace OregonNexus.Broker.Web.ViewComponents;
+namespace EdNexusData.Broker.Web.ViewComponents;
 
 public class SettingsSidebarViewComponent : ViewComponent
 {

@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Ardalis.Specification;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.Specifications.Paginations
+namespace EdNexusData.Broker.Web.Specifications.Paginations
 {
     public class SearchableWithPaginationSpecification<T> : Specification<T>
     {

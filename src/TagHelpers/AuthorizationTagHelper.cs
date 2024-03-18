@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace OregonNexus.Broker.Web.TagHelpers;
+namespace EdNexusData.Broker.Web.TagHelpers;
 
 [HtmlTargetElement(Attributes = "asp-authorize")]
 [HtmlTargetElement(Attributes = "asp-authorize,asp-policy")]

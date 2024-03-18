@@ -2,10 +2,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Connector;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Connector;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.Models;
+namespace EdNexusData.Broker.Web.Models;
 
 public class SettingsSidebarViewModel
 {

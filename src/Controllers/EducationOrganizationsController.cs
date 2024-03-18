@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Helpers;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Models.OutgoingRequests;
-using OregonNexus.Broker.Web.Models.Paginations;
-using OregonNexus.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Web.Helpers;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Web.Models.OutgoingRequests;
+using EdNexusData.Broker.Web.Models.Paginations;
+using EdNexusData.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
-using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
+using EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
 using System.Linq.Expressions;
-using OregonNexus.Broker.Web.Extensions.States;
+using EdNexusData.Broker.Web.Extensions.States;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
 public class EducationOrganizationsController : AuthenticatedController<EducationOrganizationsController>

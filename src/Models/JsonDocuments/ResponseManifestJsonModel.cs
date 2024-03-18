@@ -1,7 +1,7 @@
 ﻿using src.Models.Courses;
 using src.Models.ProgramAssociations;
 
-namespace OregonNexus.Broker.Web.Models.JsonDocuments;
+namespace EdNexusData.Broker.Web.Models.JsonDocuments;
 #nullable disable
 public class ResponseManifestJsonModel
 {

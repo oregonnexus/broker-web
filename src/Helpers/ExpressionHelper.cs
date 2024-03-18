@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace OregonNexus.Broker.Web.Helpers;
+namespace EdNexusData.Broker.Web.Helpers;
 
 public class ExpressionHelper
 {

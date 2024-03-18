@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Mime;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
 using src.Models.Tokens;
 
 namespace src.Services.Tokens;
@@ -24,11 +24,11 @@ public class TokenService : ITokenService
         {
             var educationOrganizationSettings = await _educationOrganizationConnectorSettings.ListAsync();
             var educationOrganizationSetting = educationOrganizationSettings.FirstOrDefault(
-                educationOrganization => educationOrganization.Connector == "OregonNexus.Broker.Connector.EdFiAlliance.EdFi"
+                educationOrganization => educationOrganization.Connector == "EdNexusData.Broker.Connector.EdFiAlliance.EdFi"
             ) ?? throw new Exception("Education organization settings not found.");
 
             var connection = educationOrganizationSetting.Settings?.RootElement
-                .GetProperty("OregonNexus.Broker.Connector.EdFiAlliance.EdFi.Configuration.Connection");
+                .GetProperty("EdNexusData.Broker.Connector.EdFiAlliance.EdFi.Configuration.Connection");
 
             var apiUrl = connection?.GetProperty("EdFiApiUrl").GetString();
             var clientId = connection?.GetProperty("Key").GetString();

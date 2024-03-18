@@ -1,9 +1,9 @@
-﻿using OregonNexus.Broker.Domain;
+﻿using EdNexusData.Broker.Domain;
 using System.Linq.Expressions;
-using OregonNexus.Broker.Web.Models.Searchables;
+using EdNexusData.Broker.Web.Models.Searchables;
 using System.Net.NetworkInformation;
 
-namespace OregonNexus.Broker.Web.Models.Users;
+namespace EdNexusData.Broker.Web.Models.Users;
 
 public class UserRequestModel : SearchableModelWithPagination
 {

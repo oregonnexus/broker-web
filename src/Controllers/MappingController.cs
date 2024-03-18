@@ -4,18 +4,18 @@ using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Extensions.Genders;
-using OregonNexus.Broker.Web.Extensions.States;
-using OregonNexus.Broker.Web.ViewModels.Mappings;
-using OregonNexus.Broker.Web.ViewModels.Requests;
-using OregonNexus.Broker.Service.Lookup;
-using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Web.Extensions.Genders;
+using EdNexusData.Broker.Web.Extensions.States;
+using EdNexusData.Broker.Web.ViewModels.Mappings;
+using EdNexusData.Broker.Web.ViewModels.Requests;
+using EdNexusData.Broker.Service.Lookup;
+using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferIncomingRecords)]
 public class MappingController : AuthenticatedController<MappingController>

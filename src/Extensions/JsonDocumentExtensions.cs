@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace OregonNexus.Broker.Web;
+namespace EdNexusData.Broker.Web;
 
 public static class JsonDocumentExtensions
 {

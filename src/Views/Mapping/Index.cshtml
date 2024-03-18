@@ -1,4 +1,4 @@
-@model OregonNexus.Broker.Domain.Request;
+@model EdNexusData.Broker.Domain.Request;
 @{
     ViewData["Title"] = "Prepare Mapping";
     Layout = "_AuthenticatedLayout";
@@ -6,8 +6,8 @@
     ViewData["FocusBarReadOnly"] = true;
 }
 
-@if(Model.RequestStatus != OregonNexus.Broker.Domain.RequestStatus.WaitingToPrepare
-    && Model.RequestStatus != OregonNexus.Broker.Domain.RequestStatus.Preparing)
+@if(Model.RequestStatus != EdNexusData.Broker.Domain.RequestStatus.WaitingToPrepare
+    && Model.RequestStatus != EdNexusData.Broker.Domain.RequestStatus.Preparing)
 {
 <form
   method="post"

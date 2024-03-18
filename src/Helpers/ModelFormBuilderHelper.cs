@@ -1,8 +1,8 @@
-using IConfiguration = OregonNexus.Broker.Connector.Configuration.IConfiguration;
+using IConfiguration = EdNexusData.Broker.Connector.Configuration.IConfiguration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace OregonNexus.Broker.Web.Helpers;
+namespace EdNexusData.Broker.Web.Helpers;
 
 public class ModelFormBuilderHelper
 {

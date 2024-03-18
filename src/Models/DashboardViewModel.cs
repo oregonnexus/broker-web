@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
-using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
-using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
+using EdNexusData.Broker.Web.ViewModels.IncomingRequests;
+using EdNexusData.Broker.Web.ViewModels.OutgoingRequests;
 
-namespace OregonNexus.Broker.Web.Models;
+namespace EdNexusData.Broker.Web.Models;
 
 public class DashboardViewModel
 {

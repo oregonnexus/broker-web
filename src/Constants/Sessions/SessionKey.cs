@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Constants.Sessions;
+﻿namespace EdNexusData.Broker.Web.Constants.Sessions;
 
 public class SessionKey
 {

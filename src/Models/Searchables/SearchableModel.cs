@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Models.Searchables;
+﻿namespace EdNexusData.Broker.Web.Models.Searchables;
 
 public class SearchableModel 
 {

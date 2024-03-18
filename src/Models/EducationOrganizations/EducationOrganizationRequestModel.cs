@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Models.Searchables;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Web.Models.Searchables;
 #nullable disable
 
-namespace OregonNexus.Broker.Web.Models.OutgoingRequests;
+namespace EdNexusData.Broker.Web.Models.OutgoingRequests;
 
 public class EducationOrganizationRequestModel : SearchableModelWithPagination
 {

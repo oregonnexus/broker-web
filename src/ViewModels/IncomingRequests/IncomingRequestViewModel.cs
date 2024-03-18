@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Extensions;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Extensions;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
 
-namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
+namespace EdNexusData.Broker.Web.ViewModels.IncomingRequests;
 
 public class IncomingRequestViewModel
 {

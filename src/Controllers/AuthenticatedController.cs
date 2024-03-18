@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Data;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
-using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
+using EdNexusData.Broker.Data;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
+using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 public class AuthenticatedController<T> : Controller where T : AuthenticatedController<T>
 {

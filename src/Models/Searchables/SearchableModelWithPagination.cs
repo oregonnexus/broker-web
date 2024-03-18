@@ -1,6 +1,6 @@
-﻿using OregonNexus.Broker.Web.Models.Paginations;
+﻿using EdNexusData.Broker.Web.Models.Paginations;
 
-namespace OregonNexus.Broker.Web.Models.Searchables
+namespace EdNexusData.Broker.Web.Models.Searchables
 {
 	public class SearchableModelWithPagination : PaginationModel
 	{

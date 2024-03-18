@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OregonNexus.Broker.Data;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Models;
-using OregonNexus.Broker.Web.Models.Paginations;
-using OregonNexus.Broker.Web.Models.Users;
-using OregonNexus.Broker.Web.Specifications.Paginations;
-using OregonNexus.Broker.Web.ViewModels.Users;
+using EdNexusData.Broker.Data;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Web.Models;
+using EdNexusData.Broker.Web.Models.Paginations;
+using EdNexusData.Broker.Web.Models.Users;
+using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.ViewModels.Users;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
 public class UsersController : AuthenticatedController<UsersController>

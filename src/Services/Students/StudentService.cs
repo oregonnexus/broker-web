@@ -1,6 +1,6 @@
 // using System.Net.Http.Headers;
-// using OregonNexus.Broker.Domain;
-// using OregonNexus.Broker.SharedKernel;
+// using EdNexusData.Broker.Domain;
+// using EdNexusData.Broker.SharedKernel;
 // using src.Models.Assessments;
 // using src.Models.Courses;
 // using src.Models.Grades;

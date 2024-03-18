@@ -1,8 +1,8 @@
-﻿using OregonNexus.Broker.Domain;
+﻿using EdNexusData.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace OregonNexus.Broker.Web.ViewModels.Users;
+namespace EdNexusData.Broker.Web.ViewModels.Users;
 
 public class UserRequestViewModel
 {

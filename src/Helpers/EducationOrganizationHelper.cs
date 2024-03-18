@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
 
-namespace OregonNexus.Broker.Web.Helpers;
+namespace EdNexusData.Broker.Web.Helpers;
 
 public class EducationOrganizationHelper
 {

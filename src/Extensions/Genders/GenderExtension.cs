@@ -1,8 +1,8 @@
 
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.Extensions.Genders;
+namespace EdNexusData.Broker.Web.Extensions.Genders;
 
 public static class GenderFriendlyString
 {

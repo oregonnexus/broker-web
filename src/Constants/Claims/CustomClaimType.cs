@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Constants.Claims;
+﻿namespace EdNexusData.Broker.Web.Constants.Claims;
 
 public class CustomClaimType
 {

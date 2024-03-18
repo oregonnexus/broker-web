@@ -1,11 +1,11 @@
 ﻿using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 using src.Models.Courses;
 using src.Models.ProgramAssociations;
 using System.ComponentModel.DataAnnotations;
 
-namespace OregonNexus.Broker.Web.ViewModels.IncomingRequests;
+namespace EdNexusData.Broker.Web.ViewModels.IncomingRequests;
 
 public class CreateIncomingRequestViewModel
 {

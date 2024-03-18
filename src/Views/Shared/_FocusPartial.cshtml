@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor httpContextAccessor
-@inject OregonNexus.Broker.Web.Helpers.FocusHelper focusHelper
-@model OregonNexus.Broker.Web.Models.FocusViewModel;
+@inject EdNexusData.Broker.Web.Helpers.FocusHelper focusHelper
+@model EdNexusData.Broker.Web.Models.FocusViewModel;
 
 @{
     var returnUrl = httpContextAccessor?.HttpContext?.Request.Path.ToString();

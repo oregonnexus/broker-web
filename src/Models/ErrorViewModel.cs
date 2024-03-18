@@ -1,7 +1,7 @@
 // Copyright: 2023 Education Nexus Oregon
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
-namespace OregonNexus.Broker.Web.Models;
+namespace EdNexusData.Broker.Web.Models;
 
 public class ErrorViewModel
 {

@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 using System.Reflection;
-using OregonNexus.Broker.Connector;
-using OregonNexus.Broker.Service.Lookup;
+using EdNexusData.Broker.Connector;
+using EdNexusData.Broker.Service.Lookup;
 
-namespace OregonNexus.Broker.Web.ViewModels.Mappings;
+namespace EdNexusData.Broker.Web.ViewModels.Mappings;
 
 public class MappingViewModel
 {

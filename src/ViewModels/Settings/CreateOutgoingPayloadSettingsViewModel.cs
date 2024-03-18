@@ -1,4 +1,4 @@
-namespace OregonNexus.Broker.Web.ViewModels.Settings;
+namespace EdNexusData.Broker.Web.ViewModels.Settings;
 
 public class CreateOutgoingPayloadSettingsViewModel
 {

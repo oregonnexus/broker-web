@@ -1,5 +1,5 @@
-@model OregonNexus.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
-@using OregonNexus.Broker.Domain.Extensions
+@model EdNexusData.Broker.Web.ViewModels.IncomingRequests.CreateIncomingRequestViewModel
+@using EdNexusData.Broker.Domain.Extensions
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -18,7 +18,7 @@
 
 @section HeaderAction
 {
-  @if (Model.RequestStatus == OregonNexus.Broker.Domain.RequestStatus.Draft)
+  @if (Model.RequestStatus == EdNexusData.Broker.Domain.RequestStatus.Draft)
   {
     <form method="post" asp-action="Send" asp-route-id="@Model.RequestId" autocomplete="off">
       <input type="hidden" name="_METHOD" value="PUT" />

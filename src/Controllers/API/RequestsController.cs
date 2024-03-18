@@ -3,12 +3,12 @@ using System.Text.Json;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Controllers;
-using OregonNexus.Broker.Web.Utilities;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.Controllers;
+using EdNexusData.Broker.Web.Utilities;
 
-namespace OregonNexus.Broker.Controllers.Api;
+namespace EdNexusData.Broker.Controllers.Api;
 
 [AllowAnonymous]
 [ApiController]

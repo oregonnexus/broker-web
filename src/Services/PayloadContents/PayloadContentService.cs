@@ -1,8 +1,8 @@
-﻿using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Models.Results;
+﻿using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.Models.Results;
 
-namespace OregonNexus.Broker.Web.Services.PayloadContents;
+namespace EdNexusData.Broker.Web.Services.PayloadContents;
 
 public class PayloadContentService : IPayloadContentService
 {

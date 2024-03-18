@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
+namespace EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
 
 public class CreateEducationOrganizationRequestViewModel
 {

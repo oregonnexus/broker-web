@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Models.Paginations;
+﻿namespace EdNexusData.Broker.Web.Models.Paginations;
 
 public class PaginatedViewModel<T>
 {

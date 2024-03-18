@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Extensions.Routes
+﻿namespace EdNexusData.Broker.Web.Extensions.Routes
 {
 	public static class RouteExtension
 	{

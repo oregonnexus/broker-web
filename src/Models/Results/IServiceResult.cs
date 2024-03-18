@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Models.Results;
+﻿namespace EdNexusData.Broker.Web.Models.Results;
 
 public interface IServiceResult<T>
 {

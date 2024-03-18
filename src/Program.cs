@@ -1,32 +1,25 @@
 // Copyright: 2023 Education Nexus Oregon
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
-using Microsoft.EntityFrameworkCore;
-using OregonNexus.Broker.Data;
+using EdNexusData.Broker.Data;
 using MediatR;
 using Autofac;
-using OregonNexus.Broker.SharedKernel;
+using EdNexusData.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using InertiaAdapter.Extensions;
-using OregonNexus.Broker.Web;
-using OregonNexus.Broker.Web.Services;
+using EdNexusData.Broker.Web;
+using EdNexusData.Broker.Web.Services;
 using System.Reflection;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Service;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Service;
 using Microsoft.AspNetCore.Authentication;
-using OregonNexus.Broker.Web.Extensions.Routes;
-using OregonNexus.Broker.Web.Services.PayloadContents;
-using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using EdNexusData.Broker.Web.Extensions.Routes;
+using EdNexusData.Broker.Web.Services.PayloadContents;
+using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
 using src.Services.Tokens;
-//using src.Services.Students;
 using src.Services.Shared;
 using Microsoft.Extensions.Caching.Memory;
-using OregonNexus.Broker.Web.Exceptions;
-using Microsoft.AspNetCore.CookiePolicy;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal;
-using Microsoft.AspNetCore.Authentication.Google;
+using EdNexusData.Broker.Web.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +52,7 @@ builder.Services.AddSingleton(typeof(IMemoryCache), typeof(MemoryCache));
 builder.Services.AddScoped(typeof(IMediator), typeof(Mediator));
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-foreach (var assembly in Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => String.Equals(t.Namespace, "OregonNexus.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
+foreach (var assembly in Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => String.Equals(t.Namespace, "EdNexusData.Broker.Web.Helpers", StringComparison.Ordinal)).ToArray())
 {
     builder.Services.AddScoped(assembly, assembly);
 }
@@ -80,7 +73,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.ConfigureApplicationCookie(options => 
 {
     options.AccessDeniedPath = "/AccessDenied";
-    options.Cookie.Name = "OregonNexus.Broker.Identity";
+    options.Cookie.Name = "EdNexusData.Broker.Identity";
     // options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
     //options.Cookie.SecurePolicy = CookieSecurePolicy.None;
@@ -93,7 +86,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = "OregonNexus.Broker.Session";
+    options.Cookie.Name = "EdNexusData.Broker.Session";
     options.IdleTimeout = TimeSpan.FromHours(4);
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
@@ -146,7 +139,6 @@ builder.Services.AddTransient<IClaimsTransformation, BrokerClaimsTransformation>
 builder.Services.AddExceptionHandler<ForceLogoutExceptionHandler>();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddInertia();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -190,7 +182,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseInertia();
 
 app.UseHttpMethodOverride(new HttpMethodOverrideOptions()
 {

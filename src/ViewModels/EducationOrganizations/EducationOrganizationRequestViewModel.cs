@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
+namespace EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
 
 public class EducationOrganizationRequestViewModel
 {

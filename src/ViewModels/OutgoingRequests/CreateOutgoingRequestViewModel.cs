@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 using System.ComponentModel.DataAnnotations;
-namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+namespace EdNexusData.Broker.Web.ViewModels.OutgoingRequests;
 
 public class CreateOutgoingRequestViewModel
 {

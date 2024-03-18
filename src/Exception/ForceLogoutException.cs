@@ -1,4 +1,4 @@
-namespace OregonNexus.Broker.Web.Exceptions;
+namespace EdNexusData.Broker.Web.Exceptions;
 
 public class ForceLogoutException : Exception
 {

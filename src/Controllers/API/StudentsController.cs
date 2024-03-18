@@ -1,11 +1,11 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Web.Controllers;
-using OregonNexus.Broker.Service.Lookup;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Web.Controllers;
+using EdNexusData.Broker.Service.Lookup;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Controllers.Api;
+namespace EdNexusData.Broker.Controllers.Api;
 
 [Authorize]
 [ApiController]

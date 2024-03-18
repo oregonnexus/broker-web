@@ -1,6 +1,6 @@
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.ViewModels.Requests;
+namespace EdNexusData.Broker.Web.ViewModels.Requests;
 
 public class RequestViewModel
 {

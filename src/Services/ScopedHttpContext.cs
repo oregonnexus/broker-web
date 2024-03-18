@@ -1,4 +1,4 @@
-namespace OregonNexus.Broker.Web.Services;
+namespace EdNexusData.Broker.Web.Services;
 
 public class ScopedHttpContext
 {

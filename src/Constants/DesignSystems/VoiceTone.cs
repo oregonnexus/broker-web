@@ -1,4 +1,4 @@
-namespace OregonNexus.Broker.Web.Constants.DesignSystems;
+namespace EdNexusData.Broker.Web.Constants.DesignSystems;
 
 public static class VoiceTone
 {

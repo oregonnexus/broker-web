@@ -1,4 +1,4 @@
-namespace OregonNexus.Broker.Web.Models;
+namespace EdNexusData.Broker.Web.Models;
 
 public class FocusViewModel
 {

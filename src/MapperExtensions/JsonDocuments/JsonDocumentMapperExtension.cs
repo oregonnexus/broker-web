@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Models.JsonDocuments;
-using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
-using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Web.Models.JsonDocuments;
+using EdNexusData.Broker.Web.ViewModels.IncomingRequests;
+using EdNexusData.Broker.Web.ViewModels.OutgoingRequests;
 using src.Models.Students;
 
-namespace OregonNexus.Broker.Web.MapperExtensions.JsonDocuments;
+namespace EdNexusData.Broker.Web.MapperExtensions.JsonDocuments;
 
 public static class JsonDocumentMapperExtension
 {
@@ -14,7 +14,7 @@ public static class JsonDocumentMapperExtension
         var requestManifest = new RequestManifestJsonModel
         {
             RequestId = viewModel.RequestId,
-            RequestType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
+            RequestType = "EdNexusData.Broker.Connector.Payload.StudentCumulativeRecord",
             Student = new StudentJsonModel
             {
                 Id = viewModel.StudentUniqueId,
@@ -68,7 +68,7 @@ public static class JsonDocumentMapperExtension
     //     var responseManifest = new ResponseManifestJsonModel
     //     {
     //         RequestId = Guid.NewGuid(),
-    //         ResponseType = "OregonNexus.Broker.Connector.Payload.StudentCumulativeRecord",
+    //         ResponseType = "EdNexusData.Broker.Connector.Payload.StudentCumulativeRecord",
     //         Student = new StudentJsonModel
     //         {
     //             Id = viewModel.Id,

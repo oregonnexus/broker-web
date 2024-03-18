@@ -1,7 +1,7 @@
-﻿using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Models.Results;
+﻿using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Web.Models.Results;
 
-namespace OregonNexus.Broker.Web.Services.PayloadContents
+namespace EdNexusData.Broker.Web.Services.PayloadContents
 {
     public interface IPayloadContentService
     {

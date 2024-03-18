@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace OregonNexus.Broker.Web.Models.JsonDocuments;
+namespace EdNexusData.Broker.Web.Models.JsonDocuments;
 
 public class SchoolJsonModel
 {

@@ -4,15 +4,15 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Web.Models;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
-using OregonNexus.Broker.Web.ViewModels.IncomingRequests;
-using OregonNexus.Broker.Web.ViewModels.EducationOrganizations;
-using OregonNexus.Broker.Web.Helpers;
+using EdNexusData.Broker.Web.Models;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.ViewModels.OutgoingRequests;
+using EdNexusData.Broker.Web.ViewModels.IncomingRequests;
+using EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
+using EdNexusData.Broker.Web.Helpers;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize]
 public class HomeController : AuthenticatedController<HomeController>

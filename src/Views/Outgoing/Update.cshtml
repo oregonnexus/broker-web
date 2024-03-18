@@ -1,5 +1,5 @@
-@model OregonNexus.Broker.Web.ViewModels.OutgoingRequests.CreateOutgoingRequestViewModel
-@using OregonNexus.Broker.Domain.Extensions
+@model EdNexusData.Broker.Web.ViewModels.OutgoingRequests.CreateOutgoingRequestViewModel
+@using EdNexusData.Broker.Domain.Extensions
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -20,7 +20,7 @@
 {
   <div class="flex space-x-4">
   <div>@Model.RequestStatus.GetDescription()</div>
-  @if (Model.RequestStatus == OregonNexus.Broker.Domain.RequestStatus.Received || Model.RequestStatus == OregonNexus.Broker.Domain.RequestStatus.Loaded)
+  @if (Model.RequestStatus == EdNexusData.Broker.Domain.RequestStatus.Received || Model.RequestStatus == EdNexusData.Broker.Domain.RequestStatus.Loaded)
   {
     <div>
     <form method="post" asp-action="Load" asp-route-id="@Model.RequestId" autocomplete="off">
@@ -32,7 +32,7 @@
     </form>
     </div>
   } 
-  @if (Model.RequestStatus == OregonNexus.Broker.Domain.RequestStatus.Loaded) {
+  @if (Model.RequestStatus == EdNexusData.Broker.Domain.RequestStatus.Loaded) {
     <div>
     <form method="post" asp-action="Send" asp-route-id="@Model.RequestId" autocomplete="off">
       <input type="hidden" name="_METHOD" value="PUT" />

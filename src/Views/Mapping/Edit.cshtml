@@ -1,6 +1,6 @@
-@model OregonNexus.Broker.Web.ViewModels.Mappings.MappingViewModel;
-@using OregonNexus.Broker.Web.ViewModels.Mappings;
-@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+@model EdNexusData.Broker.Web.ViewModels.Mappings.MappingViewModel;
+@using EdNexusData.Broker.Web.ViewModels.Mappings;
+@using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
 @{
   // Copyright: 2023 Education Nexus Oregon
   // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -114,7 +114,7 @@
 {
   <div class="flex space-x-4">
   <div>@Model.Mapping.Request.RequestStatus.ToString()</div>
-  @if (Model.Mapping.Request.RequestStatus == OregonNexus.Broker.Domain.RequestStatus.Prepared)
+  @if (Model.Mapping.Request.RequestStatus == EdNexusData.Broker.Domain.RequestStatus.Prepared)
   {
     <div>
     <form method="post" asp-action="Import" asp-route-id="@Model.Mapping.Request.Id" autocomplete="off">

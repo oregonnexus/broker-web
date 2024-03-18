@@ -1,6 +1,6 @@
-using OregonNexus.Broker.Web.Services;
+using EdNexusData.Broker.Web.Services;
 
-namespace OregonNexus.Broker.Web;
+namespace EdNexusData.Broker.Web;
 
 public class ScopedHttpContextMiddleware 
 {

@@ -2,16 +2,16 @@
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Web.Models;
+using EdNexusData.Broker.Web.Models;
 using Microsoft.AspNetCore.Authorization;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
-using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
+using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Domain;
 using System.Linq.Expressions;
-using OregonNexus.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize]
 public class FocusController : AuthenticatedController<FocusController>

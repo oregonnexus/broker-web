@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Extensions;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Extensions;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
 
-namespace OregonNexus.Broker.Web.ViewModels.OutgoingRequests;
+namespace EdNexusData.Broker.Web.ViewModels.OutgoingRequests;
 
 public class OutgoingRequestViewModel
 {

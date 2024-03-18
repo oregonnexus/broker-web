@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
-namespace OregonNexus.Broker.Web.Utilities;
+namespace EdNexusData.Broker.Web.Utilities;
 
 public static class FileHelpers
 {

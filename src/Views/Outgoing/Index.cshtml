@@ -1,6 +1,6 @@
-@using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
-@using OregonNexus.Broker.Domain.Extensions;
-@model OregonNexus.Broker.Web.Models.Paginations.PaginatedViewModel<OregonNexus.Broker.Web.ViewModels.OutgoingRequests.OutgoingRequestViewModel>
+@using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
+@using EdNexusData.Broker.Domain.Extensions;
+@model EdNexusData.Broker.Web.Models.Paginations.PaginatedViewModel<EdNexusData.Broker.Web.ViewModels.OutgoingRequests.OutgoingRequestViewModel>
 @{
     // Copyright: 2023 Education Nexus Oregon
     // Author: Makoa Jacobsen, makoa@makoajacobsen.com
@@ -59,7 +59,7 @@
                                 <div class="pt-6 sm:pt-4">
                                     <select x-model="status" name="status" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-tertiary-700 sm:text-sm sm:leading-6">
                                         <option value="">Select a Request Status</option>
-                                        @foreach (var status in Enum.GetValues(typeof(OregonNexus.Broker.Domain.RequestStatus)))
+                                        @foreach (var status in Enum.GetValues(typeof(EdNexusData.Broker.Domain.RequestStatus)))
                                         {
                                         <option value="@status">@status</option>
                                         }
@@ -177,8 +177,8 @@
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                                        @if (outgoingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Received.GetDescription() ||
-                                            outgoingRequest.Status == OregonNexus.Broker.Domain.RequestStatus.Loaded.GetDescription())
+                                        @if (outgoingRequest.Status == EdNexusData.Broker.Domain.RequestStatus.Received.GetDescription() ||
+                                            outgoingRequest.Status == EdNexusData.Broker.Domain.RequestStatus.Loaded.GetDescription())
                                             {
                                             <a
                                             asp-controller="Outgoing"

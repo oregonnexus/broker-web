@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Web.Models.Searchables;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Web.Models.Searchables;
 #nullable disable
 
-namespace OregonNexus.Broker.Web.Models.IncomingRequests;
+namespace EdNexusData.Broker.Web.Models.IncomingRequests;
 
 public class IncomingRequestModel : SearchableModelWithPagination
 {

@@ -1,4 +1,4 @@
-﻿namespace OregonNexus.Broker.Web.Models.Results;
+﻿namespace EdNexusData.Broker.Web.Models.Results;
 
 public record ServiceResult<T>(bool IsSuccess, string Message, T? Data) : IServiceResult<T>
 {

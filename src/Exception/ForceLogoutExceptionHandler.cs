@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace OregonNexus.Broker.Web.Exceptions;
+namespace EdNexusData.Broker.Web.Exceptions;
 
 public class ForceLogoutExceptionHandler : IExceptionHandler
 {

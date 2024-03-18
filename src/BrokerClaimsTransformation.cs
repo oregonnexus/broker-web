@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
 using System.Data;
 using System.Security.Claims;
-using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
 
-namespace OregonNexus.Broker.Web;
+namespace EdNexusData.Broker.Web;
 
 public class BrokerClaimsTransformation : IClaimsTransformation
 {

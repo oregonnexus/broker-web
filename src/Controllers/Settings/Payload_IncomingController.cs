@@ -2,12 +2,12 @@ using System.ComponentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.Web.Constants.DesignSystems;
-using OregonNexus.Broker.Web.Helpers;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.Web.Constants.DesignSystems;
+using EdNexusData.Broker.Web.Helpers;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize(Policy = "SuperAdmin")]
 public partial class SettingsController : AuthenticatedController<SettingsController>

@@ -1,8 +1,8 @@
 
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
+using EdNexusData.Broker.Domain;
 
-namespace OregonNexus.Broker.Web.Extensions.States;
+namespace EdNexusData.Broker.Web.Extensions.States;
 
 public static class StateFriendlyString
 {

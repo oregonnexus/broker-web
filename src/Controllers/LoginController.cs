@@ -2,29 +2,29 @@
 // Author: Makoa Jacobsen, makoa@makoajacobsen.com
 
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Data;
+using EdNexusData.Broker.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.SharedKernel;
-using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
-using OregonNexus.Broker.Web.Helpers;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.SharedKernel;
+using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
+using EdNexusData.Broker.Web.Helpers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using OregonNexus.Broker.Service.Resolvers;
+using EdNexusData.Broker.Service.Resolvers;
 using Ardalis.GuardClauses;
 using Microsoft.Identity.Web;
-using OregonNexus.Broker.Domain.Specifications;
+using EdNexusData.Broker.Domain.Specifications;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [AllowAnonymous]
 public class LoginController : AuthenticatedController<LoginController>
 {
     private readonly ILogger<LoginController> _logger;
-    //private readonly OregonNexus.Broker.Connector.Edupoint.Synergy.Authentication.ThirdPartyApplication _auth;
+    //private readonly EdNexusData.Broker.Connector.Edupoint.Synergy.Authentication.ThirdPartyApplication _auth;
     //private readonly AuthenticationProvidersLocator? _authProvidersLocator;
     public readonly BrokerDbContext _db;
     private readonly UserManager<IdentityUser<Guid>> _userManager;

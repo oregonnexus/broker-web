@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Connector;
+using EdNexusData.Broker.Connector;
 
-namespace OregonNexus.Broker.Web.Helpers;
+namespace EdNexusData.Broker.Web.Helpers;
 
 public class ConnectorSelectMenuHelper
 {

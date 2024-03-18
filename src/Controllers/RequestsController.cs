@@ -1,13 +1,13 @@
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.ViewModels.Requests;
-using static OregonNexus.Broker.Web.Constants.Claims.CustomClaimType;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.ViewModels.Requests;
+using static EdNexusData.Broker.Web.Constants.Claims.CustomClaimType;
 
-namespace OregonNexus.Broker.Web.Controllers;
+namespace EdNexusData.Broker.Web.Controllers;
 
 [Authorize(Policy = TransferOutgoingRecords)]
 public class RequestsController : AuthenticatedController<RequestsController>

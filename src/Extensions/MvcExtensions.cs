@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace OregonNexus.Broker.Web;
+namespace EdNexusData.Broker.Web;
 
 public static class MvcExtensions
 {

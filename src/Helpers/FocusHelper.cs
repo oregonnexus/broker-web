@@ -1,14 +1,14 @@
 using System.Linq.Expressions;
 using Ardalis.Specification;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OregonNexus.Broker.Domain;
-using OregonNexus.Broker.Domain.Specifications;
-using OregonNexus.Broker.SharedKernel;
-using OregonNexus.Broker.Web.Exceptions;
-using OregonNexus.Broker.Web.Specifications.Paginations;
-using static OregonNexus.Broker.Web.Constants.Sessions.SessionKey;
+using EdNexusData.Broker.Domain;
+using EdNexusData.Broker.Domain.Specifications;
+using EdNexusData.Broker.SharedKernel;
+using EdNexusData.Broker.Web.Exceptions;
+using EdNexusData.Broker.Web.Specifications.Paginations;
+using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
 
-namespace OregonNexus.Broker.Web.Helpers;
+namespace EdNexusData.Broker.Web.Helpers;
 
 public class FocusHelper
 {
