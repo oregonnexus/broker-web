@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using OregonNexus.Broker.Service.Resolvers;
 using Ardalis.GuardClauses;
 using Microsoft.Identity.Web;
+using OregonNexus.Broker.Domain.Specifications;
 
 namespace OregonNexus.Broker.Web.Controllers;
 
@@ -195,7 +196,7 @@ public class LoginController : AuthenticatedController<LoginController>
             new ClaimsPrincipal(claimsIdentity));
         
         HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
-        _focusHelper.SetInitialFocus();
+        await _focusHelper.SetInitialFocus();
         HttpContext?.Session?.SetString(LastAccessedKey, $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}");
 
         return LocalRedirect(returnUrl);

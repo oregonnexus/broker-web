@@ -129,9 +129,8 @@ public class FocusHelper
         return selectedSelectList;
     }
 
-    public async void SetInitialFocus()
+    public async Task SetInitialFocus()
     {
-        // Get initial user
         var currentUser = _session.GetObjectFromJson<User>("User.Current");
         var allEdOrgs = currentUser?.AllEducationOrganizations;
 
