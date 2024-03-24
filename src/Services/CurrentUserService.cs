@@ -1,4 +1,5 @@
 using EdNexusData.Broker.SharedKernel;
+using Microsoft.Identity.Web;
 
 namespace EdNexusData.Broker.Web.Services;
 
@@ -13,7 +14,7 @@ public class CurrentUserService : ICurrentUser
 
     public Guid? AuthenticatedUserId()
     {
-        var SessionUserId = _httpContext.HttpContext!.User.Claims.Where(v => v.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").FirstOrDefault()?.Value;
+        var SessionUserId = _httpContext.HttpContext!.User.Claims.Where(v => v.Type == ClaimConstants.NameIdentifierId).FirstOrDefault()?.Value;
         if (Guid.TryParse(SessionUserId, out var sessionId))
         {
             return sessionId;

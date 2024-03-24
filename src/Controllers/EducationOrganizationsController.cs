@@ -6,11 +6,11 @@ using EdNexusData.Broker.Web.Helpers;
 using EdNexusData.Broker.Web.Constants.DesignSystems;
 using EdNexusData.Broker.Web.Models.OutgoingRequests;
 using EdNexusData.Broker.Web.Models.Paginations;
-using EdNexusData.Broker.Web.Specifications.Paginations;
 using Ardalis.Specification;
 using EdNexusData.Broker.Web.ViewModels.EducationOrganizations;
 using System.Linq.Expressions;
 using EdNexusData.Broker.Web.Extensions.States;
+using EdNexusData.Broker.Web.Specifications;
 
 namespace EdNexusData.Broker.Web.Controllers;
 
@@ -36,11 +36,11 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
 
         var searchExpressions = model.BuildSearchExpressions();
 
-        var sortExpression = model.BuildSortExpression();
+        var sortExpressions = model.BuildSortExpressions();
 
         var specificationPre = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
-            .WithSortExpression(sortExpression)
+            .WithSortExpressions(sortExpressions)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
                 .Include(educationOrganization => educationOrganization.ParentOrganization))
@@ -79,11 +79,11 @@ public class EducationOrganizationsController : AuthenticatedController<Educatio
 
         var searchExpressions = model.BuildSearchExpressions();
 
-        var sortExpression = model.BuildSortExpression();
+        var sortExpressions = model.BuildSortExpressions();
 
         var specification = new SearchableWithPaginationSpecification<EducationOrganization>.Builder(model.Page, model.Size)
             .WithAscending(model.IsAscending)
-            .WithSortExpression(sortExpression)
+            .WithSortExpressions(sortExpressions)
             .WithSearchExpressions(searchExpressions)
             .WithIncludeEntities(builder => builder
                 .Include(educationOrganization => educationOrganization.ParentOrganization)

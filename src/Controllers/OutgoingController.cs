@@ -7,7 +7,7 @@ using EdNexusData.Broker.SharedKernel;
 using Microsoft.AspNetCore.Authorization;
 using EdNexusData.Broker.Web.Models.OutgoingRequests;
 using EdNexusData.Broker.Web.Models.Paginations;
-using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications;
 using System.Security.Claims;
 using Ardalis.Specification;
 using EdNexusData.Broker.Web.ViewModels.OutgoingRequests;

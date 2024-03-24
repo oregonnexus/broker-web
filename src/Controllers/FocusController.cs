@@ -9,7 +9,7 @@ using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
 using EdNexusData.Broker.SharedKernel;
 using EdNexusData.Broker.Domain;
 using System.Linq.Expressions;
-using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications;
 using Ardalis.Specification;
 namespace EdNexusData.Broker.Web.Controllers;
 

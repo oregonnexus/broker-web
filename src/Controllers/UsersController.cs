@@ -10,7 +10,7 @@ using EdNexusData.Broker.Web.Constants.DesignSystems;
 using EdNexusData.Broker.Web.Models;
 using EdNexusData.Broker.Web.Models.Paginations;
 using EdNexusData.Broker.Web.Models.Users;
-using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications;
 using EdNexusData.Broker.Web.ViewModels.Users;
 
 namespace EdNexusData.Broker.Web.Controllers;

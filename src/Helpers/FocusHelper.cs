@@ -5,7 +5,7 @@ using EdNexusData.Broker.Domain;
 using EdNexusData.Broker.Domain.Specifications;
 using EdNexusData.Broker.SharedKernel;
 using EdNexusData.Broker.Web.Exceptions;
-using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications;
 using static EdNexusData.Broker.Web.Constants.Sessions.SessionKey;
 
 namespace EdNexusData.Broker.Web.Helpers;

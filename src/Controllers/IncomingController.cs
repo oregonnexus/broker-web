@@ -8,7 +8,7 @@ using System.Security.Claims;
 using EdNexusData.Broker.SharedKernel;
 using EdNexusData.Broker.Web.Models.Paginations;
 using Ardalis.Specification;
-using EdNexusData.Broker.Web.Specifications.Paginations;
+using EdNexusData.Broker.Web.Specifications;
 using EdNexusData.Broker.Web.Models.IncomingRequests;
 using EdNexusData.Broker.Web.ViewModels.IncomingRequests;
 using Microsoft.EntityFrameworkCore;

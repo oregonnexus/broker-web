@@ -15,19 +15,34 @@ public class EducationOrganizationRequestModel : SearchableModelWithPagination
     public string City { get; set; }
     public string StateAbbreviation { get; set; }
     public string PostalCode { get; set; }
-    public Expression<Func<EducationOrganization, object>> BuildSortExpression()
+    public List<Expression<Func<EducationOrganization, object>>> BuildSortExpressions()
     {
-        Expression<Func<EducationOrganization, object>> sortExpression = null;
+        var sortExpressions = new List<Expression<Func<EducationOrganization, object>>>();
         var sortBy = SortBy.ToLower();
-        sortExpression = sortBy switch
+        Expression<Func<EducationOrganization, object>> ValueToAdd = sortBy switch
         {
             "district" => educationOrganization => educationOrganization.ParentOrganization.Name,
             "name" => educationOrganization => educationOrganization.Name,
             "number" => educationOrganization => educationOrganization.Number,
             "type" => educationOrganization => educationOrganization.EducationOrganizationType,
-            _ => educationOrganization => (educationOrganization.ParentOrganization != null) ? educationOrganization.ParentOrganization.Name : educationOrganization.Name,
+            _ => null,
         };
-        return sortExpression;
+        if (ValueToAdd != null)
+        {
+            sortExpressions.Add(ValueToAdd);
+        }
+        else
+        {
+            sortExpressions.AddRange(AddDefaultSortExpressions(sortExpressions));
+        }
+        return sortExpressions;
+    }
+
+    private List<Expression<Func<EducationOrganization, object>>> AddDefaultSortExpressions(List<Expression<Func<EducationOrganization, object>>> sortExpressions)
+    {
+        sortExpressions.Add(educationOrganization => educationOrganization.ParentOrganization.Name + educationOrganization.Name);
+        
+        return sortExpressions;
     }
 
     public List<Expression<Func<EducationOrganization, bool>>> BuildSearchExpressions()
