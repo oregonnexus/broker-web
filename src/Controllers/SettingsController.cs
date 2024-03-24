@@ -29,7 +29,6 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
     private Guid? _focusedDistrictEdOrg { get; set; }
 
     public SettingsController(
-        IHttpContextAccessor httpContextAccessor,
         ConnectorLoader connectorLoader, 
         IServiceProvider serviceProvider, 
         IRepository<EducationOrganizationConnectorSettings> repo, 
@@ -72,7 +71,7 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
     [HttpGet("/Settings/Configuration/{assembly}")]
     public async Task<IActionResult> Configuration(string assembly)
     {
-        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict()!;
 
         var connectorDictionary = _connectorLoader.Assemblies.Where(x => x.Key == assembly).FirstOrDefault();
         ArgumentException.ThrowIfNullOrEmpty(assembly);
@@ -83,17 +82,20 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
 
         var forms = new List<dynamic>();
 
-        foreach(var configType in configurations)
+        if (configurations is not null)
         {
-            var configModel = await _configurationSerializer.DeseralizeAsync(configType, _focusedDistrictEdOrg.Value);
-            var displayName = (DisplayNameAttribute)configType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
+            foreach(var configType in configurations)
+            {
+                var configModel = await _configurationSerializer.DeseralizeAsync(configType, _focusedDistrictEdOrg!.Value);
+                var displayName = (DisplayNameAttribute)configType.GetCustomAttributes(false).Where(x => x.GetType() == typeof(DisplayNameAttribute)).FirstOrDefault()!;
 
-            forms.Add(
-                new { 
-                    displayName = displayName.DisplayName, 
-                    html = ModelFormBuilderHelper.HtmlForModel(configModel) 
-                }
-            );
+                forms.Add(
+                    new { 
+                        displayName = displayName.DisplayName, 
+                        html = ModelFormBuilderHelper.HtmlForModel(configModel) 
+                    }
+                );
+            }
         }
         
         return View(forms);
@@ -102,14 +104,14 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
     [HttpPost("/Settings/Configuration/{assembly}")]
     public async Task<IActionResult> Update(IFormCollection collection)
     {
-        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict()!;
 
         var assemblyQualifiedName = collection["ConnectorConfigurationType"];
 
         // Get Connector Config Type
         Type connectorConfigType = Type.GetType(assemblyQualifiedName!, true)!;
 
-        var iconfigModel = await _configurationSerializer.DeseralizeAsync(connectorConfigType, _focusedDistrictEdOrg.Value);
+        var iconfigModel = await _configurationSerializer.DeseralizeAsync(connectorConfigType, _focusedDistrictEdOrg!.Value);
 
         // Loop through properties and set from form
         foreach(var prop in iconfigModel.GetType().GetProperties())
@@ -117,7 +119,7 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
             prop.SetValue(iconfigModel, collection[prop.Name].ToString());
         }
 
-        await _configurationSerializer.SerializeAndSaveAsync(iconfigModel, _focusedDistrictEdOrg.Value);
+        await _configurationSerializer.SerializeAndSaveAsync(iconfigModel, _focusedDistrictEdOrg!.Value);
 
         TempData[VoiceTone.Positive] = $"Updated Settings.";
 
@@ -127,7 +129,7 @@ public partial class SettingsController : AuthenticatedController<SettingsContro
     [HttpGet("/Settings/Mapping")]
     public async Task<IActionResult> Mapping()
     {
-        if (await FocusedToDistrict() is not null) return await FocusedToDistrict();
+        if (await FocusedToDistrict() is not null) return await FocusedToDistrict()!;
         
         return View(new {});
     }

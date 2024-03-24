@@ -1,6 +1,4 @@
-
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using EdNexusData.Broker.Domain;
 using EdNexusData.Broker.Domain.Specifications;
@@ -8,6 +6,7 @@ using EdNexusData.Broker.SharedKernel;
 using EdNexusData.Broker.Web.Constants.DesignSystems;
 using EdNexusData.Broker.Web.Helpers;
 using EdNexusData.Broker.Web.Models;
+using Ardalis.GuardClauses;
 
 namespace EdNexusData.Broker.Web.Controllers;
 
@@ -21,8 +20,9 @@ public class UserRolesController : AuthenticatedController<UserRolesController>
     private readonly EducationOrganizationHelper _edOrgHelper;
     
     public UserRolesController(
-        IHttpContextAccessor httpContextAccessor,
-        IRepository<UserRole> userRoleRepo, IRepository<User> userRepo, EducationOrganizationHelper edOrgHelper)
+        IRepository<UserRole> userRoleRepo, 
+        IRepository<User> userRepo, 
+        EducationOrganizationHelper edOrgHelper)
     {
         _userRoleRepo = userRoleRepo;
         _userRepo = userRepo;
@@ -31,7 +31,9 @@ public class UserRolesController : AuthenticatedController<UserRolesController>
     
     public async Task<IActionResult> Index(Guid? Id)
     {
-        var user = await _userRepo.GetByIdAsync(Id);
+        Guard.Against.Null(Id, "Id", "Missing Id in request");
+        
+        var user = await _userRepo.GetByIdAsync(Id.Value);
 
         if (user is null) { return NotFound(); }
 
@@ -42,20 +44,23 @@ public class UserRolesController : AuthenticatedController<UserRolesController>
 
         var existingOrganizations = new List<EducationOrganization>();
 
-        foreach(var userRole in userRoles)
+        if (userRoles is not null)
         {
-            userRoleViewModels.Add(new UserRoleViewModel() {
-                UserRole = userRole,
-                DisplayText = (userRole.EducationOrganization?.EducationOrganizationType == EducationOrganizationType.District) 
-                    ? userRole.EducationOrganization?.Name 
-                    : $"{userRole.EducationOrganization?.ParentOrganization?.Name} / {userRole.EducationOrganization?.Name}"
+            foreach(var userRole in userRoles)
+            {
+                userRoleViewModels.Add(new UserRoleViewModel() {
+                    UserRole = userRole,
+                    DisplayText = (userRole.EducationOrganization?.EducationOrganizationType == EducationOrganizationType.District) 
+                        ? userRole.EducationOrganization?.Name 
+                        : $"{userRole.EducationOrganization?.ParentOrganization?.Name} / {userRole.EducationOrganization?.Name}"
+                }
+                );
+
+                existingOrganizations.Add(userRole.EducationOrganization!);
             }
-            );
 
-            existingOrganizations.Add(userRole.EducationOrganization);
+            userRoleViewModels = userRoleViewModels.OrderBy(x => x.DisplayText).ToList();
         }
-
-        userRoleViewModels = userRoleViewModels.OrderBy(x => x.DisplayText).ToList();
 
         var userRolesViewModel = new UserRolesViewModel() {
             UserId = user.Id,
@@ -80,7 +85,7 @@ public class UserRolesController : AuthenticatedController<UserRolesController>
             Id = Guid.NewGuid(),
             UserId = model.UserId,
             EducationOrganizationId = model.EducationOrganizationId,
-            Role = model.Role.Value
+            Role = model.Role!.Value
         };
 
         await _userRoleRepo.AddAsync(userRole);
@@ -94,6 +99,8 @@ public class UserRolesController : AuthenticatedController<UserRolesController>
     [HttpDelete]
     public async Task<IActionResult> Delete(Guid? Id)
     {
+        Guard.Against.Null(Id, "Id", "Missing Id in request");
+        
         var organizationRole = await _userRoleRepo.GetByIdAsync(Id.Value);
 
         if (organizationRole is null) { throw new ArgumentException("Not a valid organization role."); }
