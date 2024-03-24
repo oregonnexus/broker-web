@@ -36,7 +36,7 @@
                    asp-authorize
                    asp-policy="@TransferIncomingRecords"
                    class="ml-auto flex items-center gap-x-1 rounded-md bg-tertiary-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-tertiary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-700">
-                    Make Incoming Request
+                    Start Incoming Request
                 </a>
             </div>
         </header>
@@ -152,9 +152,9 @@
                                         </td>
                                         <td class="py-5 text-right">
                                             <div class="flex justify-end">
-                                                <a asp-controller="Incoming"
-                                                   asp-action="Update"
-                                                   asp-route-requestId="@incomingRequest.Id"
+                                                <a asp-controller="Requests"
+                                                   asp-action="View"
+                                                   asp-route-Id="@incomingRequest.Id"
                                                    asp-authorize
                                                    asp-policy="@TransferIncomingRecords"
                                                    class="text-sm font-medium leading-6 text-tertiary-700 hover:text-tertiary-500">
@@ -210,9 +210,9 @@
                                         </td>
                                         <td class="py-5 text-right">
                                             <div class="flex justify-end">
-                                                <a asp-controller="Outgoing"
-                                                   asp-action="Update"
-                                                   asp-route-requestId="@outgoingRequest.Id"
+                                                <a asp-controller="Requests"
+                                                   asp-action="View"
+                                                   asp-route-Id="@outgoingRequest.Id"
                                                    asp-authorize
                                                    asp-policy="@TransferOutgoingRecords"
                                                    class="text-sm font-medium leading-6 text-tertiary-700 hover:text-tertiary-500">
