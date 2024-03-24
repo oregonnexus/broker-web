@@ -115,7 +115,7 @@ public class LoginController : AuthenticatedController<LoginController>
 
             var currentUser = await _userRepo.GetByIdAsync(user!.Id);
             HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
-            _focusHelper.SetInitialFocus();
+            await _focusHelper.SetInitialFocus();
             
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info!.Principal.Identity?.Name, info.LoginProvider);
 
@@ -134,7 +134,7 @@ public class LoginController : AuthenticatedController<LoginController>
 
             var currentUser = await _userRepo.GetByIdAsync(user!.Id);
             HttpContext?.Session?.SetObjectAsJson(UserCurrent, currentUser!);
-            _focusHelper.SetInitialFocus();
+            await _focusHelper.SetInitialFocus();
 
             if (user is null)
             {
@@ -179,13 +179,13 @@ public class LoginController : AuthenticatedController<LoginController>
             return RedirectToAction("Index");
         }
 
-        var currentUser = await _userRepo.GetByIdAsync(user!.Id);
+        var currentUser = await _userRepo.GetByIdAsync(user.Id);
 
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Name, user.Email!),
+            new Claim(ClaimTypes.Email, user.Email!)
         };
 
         var claimsIdentity = new ClaimsIdentity(
