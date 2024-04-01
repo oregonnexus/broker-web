@@ -94,18 +94,24 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddAuthentication()
-    .AddGoogle(googleOptions =>
+if (builder.Configuration["Authentication:Google:ClientId"] is not null)
+{
+    builder.Services.AddAuthentication().AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    })
-    .AddMicrosoftAccount(microsoftOptions =>
+    });
+}
+
+if (builder.Configuration["Authentication:Microsoft:ClientId"] is not null)
+{
+    builder.Services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
     {
         microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
         microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
-    }
-);
+    });
+}
+    
 
 builder.Services.AddAuthorization(options => {
     options.AddPolicy("SuperAdmin",
